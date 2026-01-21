@@ -12,9 +12,9 @@ COUNTRIES = ["PH", "VN"]
 HISTORY_DAYS = 60
 MOVING_AVERAGE_WINDOWS = [7, 30]
 
-# File paths
-DATA_DIR = "data"
-LOGS_DIR = "logs"
+# File paths (relative to repository root)
+DATA_DIR = "../data"
+LOGS_DIR = "../logs"
 
 def get_today():
     """Get today's date."""
