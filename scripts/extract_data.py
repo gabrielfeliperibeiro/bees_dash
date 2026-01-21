@@ -239,13 +239,13 @@ def calculate_moving_average(daily_metrics, window):
     # Get last N days
     recent_data = daily_metrics[-window:]
 
-    # Calculate averages
-    avg_gmv = sum(d["total_gmv"] for d in recent_data) / window
+    # Calculate averages (use USD values for monetary metrics)
+    avg_gmv = sum(d.get("total_gmv_usd", d.get("total_gmv", 0)) for d in recent_data) / window
     avg_orders = sum(d["orders"] for d in recent_data) / window
-    avg_aov = sum(d["aov"] for d in recent_data) / window
+    avg_aov = sum(d.get("aov_usd", d.get("aov", 0)) for d in recent_data) / window
     avg_buyers = sum(d["unique_buyers"] for d in recent_data) / window
     avg_frequency = sum(d["frequency"] for d in recent_data) / window
-    avg_gmv_per_poc = sum(d["gmv_per_poc"] for d in recent_data) / window
+    avg_gmv_per_poc = sum(d.get("gmv_per_poc_usd", d.get("gmv_per_poc", 0)) for d in recent_data) / window
 
     return {
         "gmv": round(avg_gmv, 2),
