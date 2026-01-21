@@ -194,7 +194,7 @@ body {
 
 .metric-card {
     background: var(--bg-card);
-    padding: var(--spacing-md);
+    padding: var(--spacing-sm);
     border-radius: var(--radius-md);
     border: 1px solid var(--border-color);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -297,7 +297,7 @@ body {
 /* Comparison Section */
 .comparison-section {
     background: var(--bg-card);
-    padding: var(--spacing-md);
+    padding: var(--spacing-sm);
     border-radius: var(--radius-md);
     border: 1px solid var(--border-color);
 }
@@ -315,8 +315,8 @@ body {
 
 .comparison-table th {
     text-align: left;
-    padding: var(--spacing-sm);
-    font-size: 0.875rem;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.75rem;
     color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -324,7 +324,8 @@ body {
 }
 
 .comparison-table td {
-    padding: var(--spacing-sm);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.8rem;
     font-variant-numeric: tabular-nums;
     border-bottom: 1px solid var(--border-color);
 }
@@ -354,14 +355,14 @@ body {
 
 .chart-container {
     background: var(--bg-card);
-    padding: var(--spacing-md);
+    padding: var(--spacing-sm);
     border-radius: var(--radius-md);
     border: 1px solid var(--border-color);
-    margin-bottom: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
 }
 
 .chart-container canvas {
-    max-height: 180px;
+    max-height: 140px;
     width: 100% !important;
     height: auto !important;
 }
@@ -375,14 +376,14 @@ body {
     }
 
     .chart-container canvas {
-        max-height: 200px;
+        max-height: 120px;
     }
 }
 
 /* Laptop/Desktop (1400px - 1919px) */
 @media (max-width: 1919px) and (min-width: 1400px) {
     .chart-container canvas {
-        max-height: 180px;
+        max-height: 140px;
     }
 }
 
@@ -394,7 +395,7 @@ body {
     }
 
     .chart-container canvas {
-        max-height: 160px;
+        max-height: 130px;
     }
 }
 
@@ -413,7 +414,7 @@ body {
     }
 
     .chart-container canvas {
-        max-height: 150px;
+        max-height: 120px;
     }
 }
 
@@ -448,7 +449,7 @@ body {
     }
 
     .chart-container canvas {
-        max-height: 150px;
+        max-height: 120px;
     }
 
     .container {
