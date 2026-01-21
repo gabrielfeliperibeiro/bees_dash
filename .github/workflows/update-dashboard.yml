@@ -8,11 +8,6 @@ on:
   # Allow manual trigger
   workflow_dispatch:
 
-  # Run on push to main
-  push:
-    branches:
-      - main
-
 jobs:
   update-data:
     runs-on: ubuntu-latest

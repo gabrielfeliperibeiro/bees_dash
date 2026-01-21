@@ -51,9 +51,17 @@ body {
 }
 
 .container {
-    max-width: 1800px;
+    max-width: 100%;
+    width: 100%;
     margin: 0 auto;
     padding: var(--spacing-md);
+    box-sizing: border-box;
+}
+
+@media (min-width: 2560px) {
+    .container {
+        max-width: 2400px;
+    }
 }
 
 /* Header */
@@ -233,6 +241,13 @@ body {
     background: rgba(160, 160, 160, 0.1);
 }
 
+.metric-comparison {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+    font-weight: 500;
+}
+
 /* Comparison Section */
 .comparison-section {
     background: var(--bg-card);
@@ -296,23 +311,77 @@ body {
     padding: var(--spacing-md);
     border-radius: var(--radius-md);
     border: 1px solid var(--border-color);
+    margin-bottom: var(--spacing-md);
 }
 
 .chart-container canvas {
-    max-height: 250px;
+    max-height: 400px;
+    width: 100% !important;
+    height: auto !important;
 }
 
 /* Responsive Design */
-@media (max-width: 1400px) {
-    .main-content {
-        grid-template-columns: 1fr;
+
+/* Large TV/Monitor (1920px+) */
+@media (min-width: 1920px) {
+    .container {
+        max-width: 2400px;
+    }
+
+    .chart-container canvas {
+        max-height: 500px;
     }
 }
 
-@media (max-width: 768px) {
+/* Laptop/Desktop (1400px - 1919px) */
+@media (max-width: 1919px) and (min-width: 1400px) {
+    .chart-container canvas {
+        max-height: 400px;
+    }
+}
+
+/* Tablet Landscape / Small Laptop (1024px - 1399px) */
+@media (max-width: 1399px) and (min-width: 1024px) {
+    .main-content {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-xl);
+    }
+
+    .chart-container canvas {
+        max-height: 350px;
+    }
+}
+
+/* Tablet Portrait (768px - 1023px) */
+@media (max-width: 1023px) and (min-width: 768px) {
+    .main-content {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-metrics {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .secondary-metrics {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .chart-container canvas {
+        max-height: 300px;
+    }
+}
+
+/* Mobile (max 767px) */
+@media (max-width: 767px) {
     .header-content {
         flex-direction: column;
         gap: var(--spacing-sm);
+    }
+
+    .header-info {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
     }
 
     .hero-metrics,
@@ -330,5 +399,13 @@ body {
 
     .hero-metrics .metric-value {
         font-size: 2rem;
+    }
+
+    .chart-container canvas {
+        max-height: 250px;
+    }
+
+    .container {
+        padding: var(--spacing-sm);
     }
 }
