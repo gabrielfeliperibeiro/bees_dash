@@ -473,11 +473,17 @@ function updateChart(canvasId, existingChart, labels, data, ma7, ma30, label, is
                 },
                 ticks: {
                     color: '#a0a0a0',
-                    font: { size: 10 },
+                    font: { size: 9 },
                     maxRotation: 45,
                     minRotation: 45,
-                    autoSkip: true,
-                    maxTicksLimit: 15
+                    autoSkip: false,
+                    callback: function(value, index, ticks) {
+                        // Show every 3rd label to avoid crowding, but always show first and last
+                        if (index === 0 || index === ticks.length - 1 || index % 3 === 0) {
+                            return this.getLabelForValue(value);
+                        }
+                        return '';
+                    }
                 }
             },
             y: {
