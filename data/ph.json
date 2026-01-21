@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-01-21T18:30:32.975285Z",
+  "last_updated": "2026-01-21T18:39:29.117990Z",
   "today": {
     "date": "2026-01-22",
     "total_gmv": 0,
@@ -838,6 +838,34 @@
       "unique_buyers": 3510.7,
       "frequency": 1.03,
       "gmv_per_poc": 32.89
+    }
+  },
+  "channel_breakdown_today": {
+    "customer": {
+      "gmv_usd": 0,
+      "orders": 0,
+      "gmv_percent": 0,
+      "orders_percent": 0
+    },
+    "cx_tlp": {
+      "gmv_usd": 0,
+      "orders": 0,
+      "gmv_percent": 0,
+      "orders_percent": 0
+    }
+  },
+  "channel_breakdown_mtd": {
+    "customer": {
+      "gmv_usd": 1431385.36,
+      "orders": 46880,
+      "gmv_percent": 69.6,
+      "orders_percent": 50.1
+    },
+    "cx_tlp": {
+      "gmv_usd": 623800.98,
+      "orders": 46696,
+      "gmv_percent": 30.4,
+      "orders_percent": 49.9
     }
   }
 }
