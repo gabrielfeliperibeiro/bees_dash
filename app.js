@@ -296,27 +296,34 @@ function updateComparisonTable(country, data) {
     const mtd = data.mtd;
 
     const metrics = [
-        { label: 'GMV', key: 'total_gmv', decimals: 2 },
-        { label: 'Orders', key: 'orders', decimals: 0 },
-        { label: 'Buyers', key: 'unique_buyers', decimals: 0 },
-        { label: 'AOV', key: 'aov', decimals: 2 },
-        { label: 'Frequency', key: 'frequency', decimals: 2 },
-        { label: 'GMV/POCs', key: 'gmv_per_poc', decimals: 2 }
+        { label: 'GMV (USD)', key: 'total_gmv', decimals: 2, useUSD: true },
+        { label: 'Orders', key: 'orders', decimals: 0, useUSD: false },
+        { label: 'Buyers', key: 'unique_buyers', decimals: 0, useUSD: false },
+        { label: 'AOV (USD)', key: 'aov', decimals: 2, useUSD: true },
+        { label: 'Frequency', key: 'frequency', decimals: 2, useUSD: false },
+        { label: 'GMV/POCs (USD)', key: 'gmv_per_poc', decimals: 2, useUSD: true }
     ];
 
     tbody.innerHTML = metrics.map(metric => {
-        const todayValue = today[metric.key];
-        const lastWeekValue = lastWeek[metric.key];
-        const mtdValue = mtd[metric.key];
+        const todayKey = metric.useUSD ? metric.key + '_usd' : metric.key;
+        const todayValue = today[todayKey] !== undefined ? today[todayKey] : today[metric.key];
+        const lastWeekValue = lastWeek[todayKey] !== undefined ? lastWeek[todayKey] : lastWeek[metric.key];
+        const mtdValue = mtd[todayKey] !== undefined ? mtd[todayKey] : mtd[metric.key];
+
         const change = calculateChange(todayValue, lastWeekValue);
+        const diff = todayValue - lastWeekValue;
+
+        const prefix = metric.useUSD ? '$' : '';
+        const diffDisplay = diff >= 0 ? `+${prefix}${formatNumber(Math.abs(diff), metric.decimals)}` : `-${prefix}${formatNumber(Math.abs(diff), metric.decimals)}`;
 
         return `
             <tr>
                 <td><strong>${metric.label}</strong></td>
-                <td>${formatNumber(todayValue, metric.decimals)}</td>
-                <td>${formatNumber(lastWeekValue, metric.decimals)}</td>
+                <td>${prefix}${formatNumber(todayValue, metric.decimals)}</td>
+                <td>${prefix}${formatNumber(lastWeekValue, metric.decimals)}</td>
+                <td class="change-cell ${getChangeClass(change)}">${diffDisplay}</td>
                 <td class="change-cell ${getChangeClass(change)}">${formatChangePercent(change)}</td>
-                <td>${formatNumber(mtdValue, metric.decimals)}</td>
+                <td>${prefix}${formatNumber(mtdValue, metric.decimals)}</td>
             </tr>
         `;
     }).join('');
