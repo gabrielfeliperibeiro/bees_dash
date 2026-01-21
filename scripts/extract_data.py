@@ -236,6 +236,71 @@ def calculate_moving_average(daily_metrics, window):
     }
 
 
+def generate_json_output(country, metrics_today, metrics_last_week, metrics_mtd, daily_metrics, ma_7d, ma_30d):
+    """
+    Generate JSON output structure for a country.
+
+    Args:
+        country: Country code
+        metrics_today: Today's metrics dict
+        metrics_last_week: Same day last week metrics dict
+        metrics_mtd: Month-to-date metrics dict
+        daily_metrics: List of daily metrics dicts
+        ma_7d: 7-day moving average dict
+        ma_30d: 30-day moving average dict
+
+    Returns:
+        dict ready for JSON serialization
+    """
+    today = get_today()
+    same_day_last_week = get_same_day_last_week()
+    mtd_start = get_mtd_start()
+
+    return {
+        "last_updated": datetime.now().isoformat() + "Z",
+        "today": {
+            "date": str(today),
+            **metrics_today
+        },
+        "same_day_last_week": {
+            "date": str(same_day_last_week),
+            **metrics_last_week
+        },
+        "mtd": {
+            "start_date": str(mtd_start),
+            "end_date": str(today),
+            **metrics_mtd
+        },
+        "daily_history": daily_metrics,
+        "moving_averages": {
+            "ma_7d": ma_7d,
+            "ma_30d": ma_30d
+        }
+    }
+
+
+def save_json_file(data, country):
+    """
+    Save data to JSON file.
+
+    Args:
+        data: Data dict to save
+        country: Country code for filename
+    """
+    Path(DATA_DIR).mkdir(exist_ok=True)
+
+    filename = f"{DATA_DIR}/{country.lower()}.json"
+
+    try:
+        with open(filename, "w") as f:
+            json.dump(data, f, indent=2)
+
+        logger.info(f"Saved data to {filename}")
+    except Exception as e:
+        logger.error(f"Failed to save {filename}: {e}")
+        raise
+
+
 def main():
     """Main execution function."""
     logger.info("Starting data extraction...")
@@ -257,7 +322,19 @@ def main():
             df_all = query_orders(connection, country, history_start, today)
 
             if df_all.empty:
-                logger.warning(f"No data for {country}, skipping...")
+                logger.warning(f"No data for {country}, creating empty output...")
+                # Create empty structure
+                empty_metrics = calculate_metrics(pd.DataFrame())
+                data = generate_json_output(
+                    country,
+                    empty_metrics,
+                    empty_metrics,
+                    empty_metrics,
+                    [],
+                    empty_metrics,
+                    empty_metrics,
+                )
+                save_json_file(data, country)
                 continue
 
             # Filter for different time periods
@@ -278,6 +355,18 @@ def main():
             # Calculate moving averages
             ma_7d = calculate_moving_average(daily_metrics, 7)
             ma_30d = calculate_moving_average(daily_metrics, 30)
+
+            # Generate and save JSON
+            data = generate_json_output(
+                country,
+                metrics_today,
+                metrics_last_week,
+                metrics_mtd,
+                daily_metrics,
+                ma_7d,
+                ma_30d,
+            )
+            save_json_file(data, country)
 
             logger.info(f"{country} - Today GMV: {metrics_today['total_gmv']}, Orders: {metrics_today['orders']}")
 
