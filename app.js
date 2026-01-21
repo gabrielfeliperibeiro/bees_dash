@@ -343,8 +343,8 @@ function updateCharts(country, data) {
         return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     });
 
-    // GMV data
-    const gmvData = last30Days.map(d => d.total_gmv);
+    // GMV data (use USD values)
+    const gmvData = last30Days.map(d => d.total_gmv_usd || d.total_gmv);
     const gmvMA7 = new Array(last30Days.length).fill(movingAverages.ma_7d?.gmv || 0);
     const gmvMA30 = new Array(last30Days.length).fill(movingAverages.ma_30d?.gmv || 0);
 
