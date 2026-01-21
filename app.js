@@ -35,7 +35,13 @@ async function fetchWithRetry(url, attemptNumber = 0) {
 
         console.log(`Fetching ${url} (attempt ${attemptNumber + 1}/${CONFIG.retryAttempts})`);
 
-        const response = await fetch(url + '?t=' + Date.now()); // Cache busting
+        const response = await fetch(url + '?t=' + Date.now(), {
+            cache: 'no-store',
+            headers: {
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache'
+            }
+        }); // Cache busting
 
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
