@@ -92,7 +92,8 @@ def query_orders(connection, country, start_date, end_date):
         order_gmv_usd,
         account_id,
         vendor_account_id,
-        order_status
+        order_status,
+        channel
     FROM wh_am.sandbox.orders_live_tracking
     WHERE country = '{country}'
     AND TO_DATE(DATE_TRUNC('DAY', placement_date)) >= '{start_date}'
@@ -182,6 +183,66 @@ def calculate_metrics(df, country=None):
     }
 
 
+def calculate_channel_metrics(df, country=None):
+    """
+    Calculate channel breakdown metrics (Customer vs CX_TLP).
+
+    Args:
+        df: pandas DataFrame with order data including channel column
+        country: Country code (PH or VN) for USD conversion
+
+    Returns:
+        dict with channel breakdown metrics
+    """
+    if df.empty or 'channel' not in df.columns:
+        return {
+            "customer": {"gmv_usd": 0, "orders": 0, "gmv_percent": 0, "orders_percent": 0},
+            "cx_tlp": {"gmv_usd": 0, "orders": 0, "gmv_percent": 0, "orders_percent": 0}
+        }
+
+    # Convert numeric columns
+    df["order_gmv"] = pd.to_numeric(df["order_gmv"], errors='coerce')
+    usd_rate = CURRENCY_RATES.get(country, 1) if country else 1
+
+    # Total metrics
+    total_gmv = df["order_gmv"].sum()
+    total_gmv_usd = total_gmv / usd_rate
+    total_orders = df["order_number"].nunique()
+
+    # Customer channel (not CX_TLP)
+    df_customer = df[df["channel"] != "CX_TLP"]
+    customer_gmv = df_customer["order_gmv"].sum()
+    customer_gmv_usd = customer_gmv / usd_rate
+    customer_orders = df_customer["order_number"].nunique()
+
+    # CX_TLP channel
+    df_cx_tlp = df[df["channel"] == "CX_TLP"]
+    cx_tlp_gmv = df_cx_tlp["order_gmv"].sum()
+    cx_tlp_gmv_usd = cx_tlp_gmv / usd_rate
+    cx_tlp_orders = df_cx_tlp["order_number"].nunique()
+
+    # Calculate percentages
+    customer_gmv_pct = (customer_gmv_usd / total_gmv_usd * 100) if total_gmv_usd > 0 else 0
+    customer_orders_pct = (customer_orders / total_orders * 100) if total_orders > 0 else 0
+    cx_tlp_gmv_pct = (cx_tlp_gmv_usd / total_gmv_usd * 100) if total_gmv_usd > 0 else 0
+    cx_tlp_orders_pct = (cx_tlp_orders / total_orders * 100) if total_orders > 0 else 0
+
+    return {
+        "customer": {
+            "gmv_usd": round(customer_gmv_usd, 2),
+            "orders": customer_orders,
+            "gmv_percent": round(customer_gmv_pct, 1),
+            "orders_percent": round(customer_orders_pct, 1)
+        },
+        "cx_tlp": {
+            "gmv_usd": round(cx_tlp_gmv_usd, 2),
+            "orders": cx_tlp_orders,
+            "gmv_percent": round(cx_tlp_gmv_pct, 1),
+            "orders_percent": round(cx_tlp_orders_pct, 1)
+        }
+    }
+
+
 def calculate_daily_metrics(df, country=None):
     """
     Calculate metrics grouped by day.
@@ -257,7 +318,7 @@ def calculate_moving_average(daily_metrics, window):
     }
 
 
-def generate_json_output(country, metrics_today, metrics_last_week, metrics_mtd, daily_metrics, ma_7d, ma_30d):
+def generate_json_output(country, metrics_today, metrics_last_week, metrics_mtd, daily_metrics, ma_7d, ma_30d, channel_metrics_today=None, channel_metrics_mtd=None):
     """
     Generate JSON output structure for a country.
 
@@ -269,6 +330,8 @@ def generate_json_output(country, metrics_today, metrics_last_week, metrics_mtd,
         daily_metrics: List of daily metrics dicts
         ma_7d: 7-day moving average dict
         ma_30d: 30-day moving average dict
+        channel_metrics_today: Today's channel breakdown dict
+        channel_metrics_mtd: MTD channel breakdown dict
 
     Returns:
         dict ready for JSON serialization
@@ -277,7 +340,7 @@ def generate_json_output(country, metrics_today, metrics_last_week, metrics_mtd,
     same_day_last_week = get_same_day_last_week()
     mtd_start = get_mtd_start()
 
-    return {
+    output = {
         "last_updated": datetime.now().isoformat() + "Z",
         "today": {
             "date": str(today),
@@ -298,6 +361,14 @@ def generate_json_output(country, metrics_today, metrics_last_week, metrics_mtd,
             "ma_30d": ma_30d
         }
     }
+
+    # Add channel metrics if available
+    if channel_metrics_today:
+        output["channel_breakdown_today"] = channel_metrics_today
+    if channel_metrics_mtd:
+        output["channel_breakdown_mtd"] = channel_metrics_mtd
+
+    return output
 
 
 def save_json_file(data, country):
@@ -377,6 +448,10 @@ def main():
             ma_7d = calculate_moving_average(daily_metrics, 7)
             ma_30d = calculate_moving_average(daily_metrics, 30)
 
+            # Calculate channel metrics
+            channel_metrics_today = calculate_channel_metrics(df_today, country)
+            channel_metrics_mtd = calculate_channel_metrics(df_mtd, country)
+
             # Generate and save JSON
             data = generate_json_output(
                 country,
@@ -386,6 +461,8 @@ def main():
                 daily_metrics,
                 ma_7d,
                 ma_30d,
+                channel_metrics_today,
+                channel_metrics_mtd,
             )
             save_json_file(data, country)
 
