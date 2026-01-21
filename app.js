@@ -221,31 +221,42 @@ function updateMetricCards(country, data) {
     const today = data.today;
     const lastWeek = data.same_day_last_week;
 
-    // Helper to update a metric card
-    const updateCard = (metric, value, decimals = 0) => {
+    // Helper to update a metric card with optional USD conversion
+    const updateCard = (metric, value, decimals = 0, showUSD = false) => {
         const valueEl = document.getElementById(`${country}-${metric}`);
         const changeEl = document.getElementById(`${country}-${metric}-change`);
 
         if (!valueEl || !changeEl) return;
 
-        // Update value
-        valueEl.textContent = formatNumber(today[value], decimals);
+        // Update value with USD if applicable
+        if (showUSD && today[value + '_usd']) {
+            valueEl.innerHTML = `
+                <div style="font-size: 2.5rem; font-weight: 700;">${formatNumber(today[value + '_usd'], decimals)}</div>
+                <div style="font-size: 1.2rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                    ${country.toUpperCase()}: ${formatNumber(today[value], decimals)}
+                </div>
+            `;
+        } else {
+            valueEl.textContent = formatNumber(today[value], decimals);
+        }
 
         // Calculate and update change
-        const change = calculateChange(today[value], lastWeek[value]);
+        const changeValue = showUSD && today[value + '_usd'] ? today[value + '_usd'] : today[value];
+        const lastWeekValue = showUSD && lastWeek[value + '_usd'] ? lastWeek[value + '_usd'] : lastWeek[value];
+        const change = calculateChange(changeValue, lastWeekValue);
         changeEl.textContent = formatChangePercent(change);
         changeEl.className = 'metric-change ' + getChangeClass(change);
     };
 
-    // Update hero metrics
-    updateCard('gmv', 'total_gmv', 2);
-    updateCard('orders', 'orders', 0);
-    updateCard('aov', 'aov', 2);
+    // Update hero metrics (show USD)
+    updateCard('gmv', 'total_gmv', 2, true);
+    updateCard('orders', 'orders', 0, false);
+    updateCard('aov', 'aov', 2, true);
 
     // Update secondary metrics
-    updateCard('buyers', 'unique_buyers', 0);
-    updateCard('frequency', 'frequency', 2);
-    updateCard('gmv-poc', 'gmv_per_poc', 2);
+    updateCard('buyers', 'unique_buyers', 0, false);
+    updateCard('frequency', 'frequency', 2, false);
+    updateCard('gmv-poc', 'gmv_per_poc', 2, true);
 }
 
 /**

@@ -13,6 +13,8 @@ from config import (
     DATABRICKS_HTTP_PATH,
     DATABRICKS_TOKEN,
     COUNTRIES,
+    CURRENCY_RATES,
+    TIMEZONES,
     DATA_DIR,
     LOGS_DIR,
     get_today,
@@ -120,12 +122,13 @@ def query_orders(connection, country, start_date, end_date):
         raise
 
 
-def calculate_metrics(df):
+def calculate_metrics(df, country=None):
     """
     Calculate sales metrics from order data.
 
     Args:
         df: pandas DataFrame with order data
+        country: Country code (PH or VN) for USD conversion
 
     Returns:
         dict with calculated metrics
@@ -133,12 +136,15 @@ def calculate_metrics(df):
     if df.empty:
         return {
             "total_gmv": 0,
+            "total_gmv_usd": 0,
             "orders": 0,
             "unique_buyers": 0,
             "unique_vendors": 0,
             "aov": 0,
+            "aov_usd": 0,
             "frequency": 0,
             "gmv_per_poc": 0,
+            "gmv_per_poc_usd": 0,
         }
 
     # Convert numeric columns to proper types (Databricks may return strings)
@@ -154,23 +160,33 @@ def calculate_metrics(df):
     frequency = orders / unique_buyers if unique_buyers > 0 else 0
     gmv_per_poc = total_gmv / unique_vendors if unique_vendors > 0 else 0
 
+    # Calculate USD values
+    usd_rate = CURRENCY_RATES.get(country, 1) if country else 1
+    total_gmv_usd = total_gmv / usd_rate
+    aov_usd = aov / usd_rate
+    gmv_per_poc_usd = gmv_per_poc / usd_rate
+
     return {
         "total_gmv": round(total_gmv, 2),
+        "total_gmv_usd": round(total_gmv_usd, 2),
         "orders": orders,
         "unique_buyers": unique_buyers,
         "unique_vendors": unique_vendors,
         "aov": round(aov, 2),
+        "aov_usd": round(aov_usd, 2),
         "frequency": round(frequency, 2),
         "gmv_per_poc": round(gmv_per_poc, 2),
+        "gmv_per_poc_usd": round(gmv_per_poc_usd, 2),
     }
 
 
-def calculate_daily_metrics(df):
+def calculate_daily_metrics(df, country=None):
     """
     Calculate metrics grouped by day.
 
     Args:
         df: pandas DataFrame with order data
+        country: Country code (PH or VN) for USD conversion
 
     Returns:
         list of dicts with daily metrics
@@ -183,7 +199,7 @@ def calculate_daily_metrics(df):
 
     daily_metrics = []
     for date, group in df.groupby("date"):
-        metrics = calculate_metrics(group)
+        metrics = calculate_metrics(group, country)
         metrics["date"] = str(date)
         daily_metrics.append(metrics)
 
@@ -327,7 +343,7 @@ def main():
             if df_all.empty:
                 logger.warning(f"No data for {country}, creating empty output...")
                 # Create empty structure
-                empty_metrics = calculate_metrics(pd.DataFrame())
+                empty_metrics = calculate_metrics(pd.DataFrame(), country)
                 data = generate_json_output(
                     country,
                     empty_metrics,
@@ -348,12 +364,12 @@ def main():
             df_mtd = df_all[df_all["date"] >= mtd_start]
 
             # Calculate metrics
-            metrics_today = calculate_metrics(df_today)
-            metrics_last_week = calculate_metrics(df_last_week)
-            metrics_mtd = calculate_metrics(df_mtd)
+            metrics_today = calculate_metrics(df_today, country)
+            metrics_last_week = calculate_metrics(df_last_week, country)
+            metrics_mtd = calculate_metrics(df_mtd, country)
 
             # Calculate daily history
-            daily_metrics = calculate_daily_metrics(df_all)
+            daily_metrics = calculate_daily_metrics(df_all, country)
 
             # Calculate moving averages
             ma_7d = calculate_moving_average(daily_metrics, 7)

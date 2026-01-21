@@ -1,0 +1,27 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Wings (light purple/blue) -->
+  <ellipse cx="35" cy="65" rx="22" ry="18" fill="#E8E5F5" opacity="0.8"/>
+  <ellipse cx="85" cy="65" rx="22" ry="18" fill="#E8E5F5" opacity="0.8"/>
+
+  <!-- Bee body -->
+  <g>
+    <!-- Head (top rounded part) -->
+    <ellipse cx="60" cy="40" rx="28" ry="20" fill="#000000"/>
+
+    <!-- Eyes -->
+    <ellipse cx="50" cy="37" rx="4" ry="3" fill="#FFFFFF"/>
+    <ellipse cx="70" cy="37" rx="4" ry="3" fill="#FFFFFF"/>
+
+    <!-- Yellow stripe 1 -->
+    <rect x="32" y="52" width="56" height="16" fill="#FFB800" rx="2"/>
+
+    <!-- Black stripe 1 -->
+    <rect x="32" y="68" width="56" height="14" fill="#000000"/>
+
+    <!-- Yellow stripe 2 -->
+    <rect x="35" y="82" width="50" height="14" fill="#FFB800" rx="2"/>
+
+    <!-- Bottom point -->
+    <path d="M 40 96 Q 60 110 80 96 L 75 82 L 45 82 Z" fill="#000000"/>
+  </g>
+</svg>
