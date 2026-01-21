@@ -217,6 +217,7 @@ function updateCountryDashboard(country, data) {
 
     updateMetricCards(country, data);
     updateComparisonTable(country, data);
+    updateChannelBreakdown(country, data);
     updateCharts(country, data);
 }
 
@@ -333,6 +334,47 @@ function updateComparisonTable(country, data) {
             </tr>
         `;
     }).join('');
+}
+
+/**
+ * Update channel breakdown
+ */
+function updateChannelBreakdown(country, data) {
+    const channelData = data.channel_breakdown_mtd;
+
+    if (!channelData) {
+        console.warn(`No channel data for ${country}`);
+        return;
+    }
+
+    const customer = channelData.customer || {};
+    const cxTlp = channelData.cx_tlp || {};
+
+    // Update Customer channel
+    const customerValueEl = document.getElementById(`${country}-channel-customer-value`);
+    const customerBarEl = document.getElementById(`${country}-channel-customer-bar`);
+    const customerPercentEl = document.getElementById(`${country}-channel-customer-percent`);
+    const customerGmvEl = document.getElementById(`${country}-channel-customer-gmv`);
+    const customerOrdersEl = document.getElementById(`${country}-channel-customer-orders`);
+
+    if (customerValueEl) customerValueEl.textContent = `${customer.gmv_percent || 0}%`;
+    if (customerBarEl) customerBarEl.style.width = `${customer.gmv_percent || 0}%`;
+    if (customerPercentEl) customerPercentEl.textContent = `${customer.gmv_percent || 0}%`;
+    if (customerGmvEl) customerGmvEl.textContent = `$${formatNumber(customer.gmv_usd || 0, 0)}`;
+    if (customerOrdersEl) customerOrdersEl.textContent = formatNumber(customer.orders || 0, 0);
+
+    // Update CX_TLP channel
+    const cxTlpValueEl = document.getElementById(`${country}-channel-cx-tlp-value`);
+    const cxTlpBarEl = document.getElementById(`${country}-channel-cx-tlp-bar`);
+    const cxTlpPercentEl = document.getElementById(`${country}-channel-cx-tlp-percent`);
+    const cxTlpGmvEl = document.getElementById(`${country}-channel-cx-tlp-gmv`);
+    const cxTlpOrdersEl = document.getElementById(`${country}-channel-cx-tlp-orders`);
+
+    if (cxTlpValueEl) cxTlpValueEl.textContent = `${cxTlp.gmv_percent || 0}%`;
+    if (cxTlpBarEl) cxTlpBarEl.style.width = `${cxTlp.gmv_percent || 0}%`;
+    if (cxTlpPercentEl) cxTlpPercentEl.textContent = `${cxTlp.gmv_percent || 0}%`;
+    if (cxTlpGmvEl) cxTlpGmvEl.textContent = `$${formatNumber(cxTlp.gmv_usd || 0, 0)}`;
+    if (cxTlpOrdersEl) cxTlpOrdersEl.textContent = formatNumber(cxTlp.orders || 0, 0);
 }
 
 /**

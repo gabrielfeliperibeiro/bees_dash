@@ -368,6 +368,99 @@ body {
     color: var(--red);
 }
 
+/* Channel Breakdown Section */
+.channel-breakdown-section {
+    background: var(--bg-card);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    margin-bottom: var(--spacing-md);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.channel-metrics {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.channel-item {
+    padding: var(--spacing-md);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-sm);
+    transition: all 0.3s;
+}
+
+.channel-item:hover {
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.channel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-sm);
+}
+
+.channel-name {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.channel-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--bees-yellow);
+}
+
+.channel-bar-container {
+    position: relative;
+    height: 40px;
+    background: var(--border-color);
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: var(--spacing-sm);
+}
+
+.channel-bar {
+    height: 100%;
+    border-radius: 20px;
+    transition: width 1s ease-out;
+    display: flex;
+    align-items: center;
+    padding: 0 var(--spacing-md);
+}
+
+.customer-bar {
+    background: linear-gradient(90deg, #8b5cf6, #a78bfa);
+}
+
+.cx-tlp-bar {
+    background: linear-gradient(90deg, #10b981, #34d399);
+}
+
+.channel-percent {
+    position: absolute;
+    right: var(--spacing-md);
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.channel-details {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.channel-details span {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
 /* Charts Section */
 .charts-section {
     display: grid;
