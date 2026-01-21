@@ -4,12 +4,12 @@ const CONFIG = {
         ph: 'data/ph.json',
         vn: 'data/vn.json'
     },
-    refreshInterval: 5 * 60 * 1000, // 5 minutes
+    refreshInterval: 2 * 60 * 1000, // 2 minutes - client-side refresh
     retryAttempts: 3,
     retryDelays: [0, 10000, 20000], // 0s, 10s, 20s (total 30s window)
     staleThresholds: {
-        warning: 10 * 60 * 1000, // 10 minutes
-        error: 30 * 60 * 1000 // 30 minutes
+        warning: 5 * 60 * 1000, // 5 minutes
+        error: 15 * 60 * 1000 // 15 minutes
     }
 };
 

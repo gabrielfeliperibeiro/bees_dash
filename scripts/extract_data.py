@@ -20,6 +20,8 @@ from config import (
     get_today,
     get_same_day_last_week,
     get_mtd_start,
+    get_hk_time,
+    get_hk_now_utc,
 )
 
 # Setup logging

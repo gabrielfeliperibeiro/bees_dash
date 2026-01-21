@@ -44,10 +44,16 @@
 
 body {
     font-family: 'Barlow', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: var(--bg-secondary);
+    background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
     color: var(--text-primary);
     min-height: 100vh;
     line-height: 1.6;
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .container {
@@ -147,8 +153,8 @@ body {
 /* Main Content */
 .main-content {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--spacing-lg);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-xl);
     align-items: start;
 }
 
@@ -156,6 +162,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-md);
+    min-height: 0;
 }
 
 .country-title {
@@ -191,14 +198,52 @@ body {
     border-radius: var(--radius-md);
     border: 1px solid var(--border-color);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: slideUp 0.5s ease-out backwards;
+    position: relative;
+    overflow: hidden;
+}
+
+.metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--bees-yellow), var(--bees-yellow-dark));
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.metric-card:hover::before {
+    transform: scaleX(1);
 }
 
 .metric-card:hover {
-    transform: translateY(-2px);
+    transform: translateY(-4px) scale(1.02);
     border-color: var(--bees-yellow);
-    box-shadow: 0 4px 12px rgba(255, 184, 0, 0.15);
+    box-shadow: 0 8px 24px rgba(255, 184, 0, 0.2);
 }
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hero-metrics .metric-card:nth-child(1) { animation-delay: 0.1s; }
+.hero-metrics .metric-card:nth-child(2) { animation-delay: 0.2s; }
+.hero-metrics .metric-card:nth-child(3) { animation-delay: 0.3s; }
+
+.secondary-metrics .metric-card:nth-child(1) { animation-delay: 0.4s; }
+.secondary-metrics .metric-card:nth-child(2) { animation-delay: 0.5s; }
+.secondary-metrics .metric-card:nth-child(3) { animation-delay: 0.6s; }
 
 .metric-label {
     font-size: 0.875rem;

@@ -31,18 +31,25 @@ DATA_DIR = "../data"
 LOGS_DIR = "../logs"
 
 def get_today():
-    """Get today's date in UTC (database uses UTC timestamps)."""
-    return datetime.now().date()
+    """Get today's date in Hong Kong timezone."""
+    hk_now = datetime.now(TIMEZONES["HK"])
+    return hk_now.date()
 
 def get_same_day_last_week():
-    """Get date for same day last week."""
+    """Get date for same day last week in Hong Kong timezone."""
     return get_today() - timedelta(days=7)
 
 def get_mtd_start():
-    """Get first day of current month."""
-    today = datetime.now()
-    return datetime(today.year, today.month, 1).date()
+    """Get first day of current month in Hong Kong timezone."""
+    hk_now = datetime.now(TIMEZONES["HK"])
+    return datetime(hk_now.year, hk_now.month, 1, tzinfo=TIMEZONES["HK"]).date()
 
 def get_hk_time():
     """Get current time in Hong Kong timezone for display."""
     return datetime.now(TIMEZONES["HK"])
+
+def get_hk_now_utc():
+    """Get current Hong Kong time as UTC for database queries."""
+    hk_now = datetime.now(TIMEZONES["HK"])
+    # Convert to UTC for database queries
+    return hk_now.astimezone(ZoneInfo("UTC"))
