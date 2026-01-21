@@ -361,7 +361,8 @@ function updateCharts(country, data) {
         gmvData,
         gmvMA7,
         gmvMA30,
-        'GMV'
+        'GMV (USD)',
+        true
     );
 
     // Create or update Orders chart
@@ -379,7 +380,7 @@ function updateCharts(country, data) {
 /**
  * Create or update a chart
  */
-function updateChart(canvasId, existingChart, labels, data, ma7, ma30, label) {
+function updateChart(canvasId, existingChart, labels, data, ma7, ma30, label, isUSD = false) {
     const ctx = document.getElementById(canvasId);
     if (!ctx) return;
 
@@ -440,7 +441,22 @@ function updateChart(canvasId, existingChart, labels, data, ma7, ma30, label) {
                 titleColor: '#ffffff',
                 bodyColor: '#a0a0a0',
                 borderColor: '#333333',
-                borderWidth: 1
+                borderWidth: 1,
+                callbacks: {
+                    label: function(context) {
+                        let label = context.dataset.label || '';
+                        if (label) {
+                            label += ': ';
+                        }
+                        if (context.parsed.y !== null) {
+                            label += formatNumber(context.parsed.y, 0);
+                            if (isUSD && context.datasetIndex === 0) {
+                                label += ' USD';
+                            }
+                        }
+                        return label;
+                    }
+                }
             }
         },
         scales: {
@@ -451,7 +467,11 @@ function updateChart(canvasId, existingChart, labels, data, ma7, ma30, label) {
                 },
                 ticks: {
                     color: '#a0a0a0',
-                    font: { size: 10 }
+                    font: { size: 10 },
+                    maxRotation: 45,
+                    minRotation: 45,
+                    autoSkip: true,
+                    maxTicksLimit: 15
                 }
             },
             y: {
