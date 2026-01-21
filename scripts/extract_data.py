@@ -175,8 +175,8 @@ def calculate_daily_metrics(df):
     if df.empty:
         return []
 
-    # Convert placement_date to date (handle ISO8601 format with UTC)
-    df["date"] = pd.to_datetime(df["placement_date"], utc=True).dt.date
+    # Convert placement_date to date (handle mixed ISO8601 formats)
+    df["date"] = pd.to_datetime(df["placement_date"], format='mixed', utc=True).dt.date
 
     daily_metrics = []
     for date, group in df.groupby("date"):
@@ -337,8 +337,8 @@ def main():
                 save_json_file(data, country)
                 continue
 
-            # Filter for different time periods (handle ISO8601 format with UTC)
-            df_all["date"] = pd.to_datetime(df_all["placement_date"], utc=True).dt.date
+            # Filter for different time periods (handle mixed ISO8601 formats)
+            df_all["date"] = pd.to_datetime(df_all["placement_date"], format='mixed', utc=True).dt.date
 
             df_today = df_all[df_all["date"] == today]
             df_last_week = df_all[df_all["date"] == same_day_last_week]
