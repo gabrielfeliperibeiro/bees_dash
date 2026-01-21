@@ -30,11 +30,11 @@
     --red: #ef4444;
 
     /* Spacing */
-    --spacing-xs: 0.25rem;
-    --spacing-sm: 0.5rem;
-    --spacing-md: 0.75rem;
-    --spacing-lg: 1rem;
-    --spacing-xl: 1.5rem;
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2.5rem;
+    --spacing-xl: 3.5rem;
 
     /* Border radius */
     --radius-sm: 8px;
@@ -86,12 +86,12 @@ body {
 }
 
 .logo {
-    font-size: 1.25rem;
+    font-size: 2rem;
     font-weight: 700;
     color: var(--bees-black);
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 1rem;
 }
 
 .logo::before {
@@ -166,16 +166,16 @@ body {
 }
 
 .country-title {
-    font-size: 1.125rem;
+    font-size: 1.75rem;
     font-weight: 700;
     display: flex;
     align-items: center;
     gap: var(--spacing-sm);
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
 }
 
 .country-flag {
-    font-size: 1.5rem;
+    font-size: 2.25rem;
 }
 
 /* Metrics Grid */
@@ -194,10 +194,10 @@ body {
 
 .metric-card {
     background: var(--bg-card);
-    padding: var(--spacing-sm);
+    padding: var(--spacing-lg);
     border-radius: var(--radius-md);
     border: 1px solid var(--border-color);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     animation: slideUp 0.5s ease-out backwards;
     position: relative;
@@ -254,14 +254,14 @@ body {
 }
 
 .metric-value {
-    font-size: 1.5rem;
+    font-size: 2.25rem;
     font-weight: 700;
     margin-bottom: var(--spacing-xs);
     font-variant-numeric: tabular-nums;
 }
 
 .hero-metrics .metric-value {
-    font-size: 1.75rem;
+    font-size: 3rem;
 }
 
 .metric-change {
@@ -297,15 +297,17 @@ body {
 /* Comparison Section */
 .comparison-section {
     background: var(--bg-card);
-    padding: var(--spacing-sm);
+    padding: var(--spacing-lg);
     border-radius: var(--radius-md);
     border: 1px solid var(--border-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .section-title {
-    font-size: 0.875rem;
+    font-size: 1.25rem;
     font-weight: 600;
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+    color: var(--text-primary);
 }
 
 .comparison-table {
@@ -315,17 +317,18 @@ body {
 
 .comparison-table th {
     text-align: left;
-    padding: var(--spacing-xs) var(--spacing-sm);
-    font-size: 0.75rem;
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 0.875rem;
     color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 2px solid var(--border-color);
+    font-weight: 600;
 }
 
 .comparison-table td {
-    padding: var(--spacing-xs) var(--spacing-sm);
-    font-size: 0.8rem;
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 1rem;
     font-variant-numeric: tabular-nums;
     border-bottom: 1px solid var(--border-color);
 }
@@ -355,14 +358,15 @@ body {
 
 .chart-container {
     background: var(--bg-card);
-    padding: var(--spacing-sm);
+    padding: var(--spacing-lg);
     border-radius: var(--radius-md);
     border: 1px solid var(--border-color);
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .chart-container canvas {
-    max-height: 140px;
+    max-height: 350px;
     width: 100% !important;
     height: auto !important;
 }
@@ -376,14 +380,14 @@ body {
     }
 
     .chart-container canvas {
-        max-height: 120px;
+        max-height: 300px;
     }
 }
 
 /* Laptop/Desktop (1400px - 1919px) */
 @media (max-width: 1919px) and (min-width: 1400px) {
     .chart-container canvas {
-        max-height: 140px;
+        max-height: 350px;
     }
 }
 
@@ -395,7 +399,7 @@ body {
     }
 
     .chart-container canvas {
-        max-height: 130px;
+        max-height: 320px;
     }
 }
 
@@ -414,7 +418,7 @@ body {
     }
 
     .chart-container canvas {
-        max-height: 120px;
+        max-height: 300px;
     }
 }
 
@@ -449,7 +453,7 @@ body {
     }
 
     .chart-container canvas {
-        max-height: 120px;
+        max-height: 300px;
     }
 
     .container {
