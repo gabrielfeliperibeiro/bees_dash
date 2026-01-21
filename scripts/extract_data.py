@@ -141,6 +141,9 @@ def calculate_metrics(df):
             "gmv_per_poc": 0,
         }
 
+    # Convert numeric columns to proper types (Databricks may return strings)
+    df["order_gmv"] = pd.to_numeric(df["order_gmv"], errors='coerce')
+
     total_gmv = df["order_gmv"].sum()
     orders = df["order_number"].nunique()
     unique_buyers = df["account_id"].nunique()
