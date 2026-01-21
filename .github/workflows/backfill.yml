@@ -42,4 +42,5 @@ jobs:
         run: |
           git add data/*.json
           git commit -m "data: backfill historical data - $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          git pull --rebase
           git push

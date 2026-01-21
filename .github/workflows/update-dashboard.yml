@@ -56,5 +56,6 @@ jobs:
             echo "No changes to commit"
           else
             git commit -m "data: update dashboard data - $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+            git pull --rebase
             git push
           fi
