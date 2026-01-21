@@ -31,14 +31,18 @@ DATA_DIR = "../data"
 LOGS_DIR = "../logs"
 
 def get_today():
-    """Get today's date in Hong Kong time."""
-    return datetime.now(TIMEZONES["HK"]).date()
+    """Get today's date in UTC (database uses UTC timestamps)."""
+    return datetime.now().date()
 
 def get_same_day_last_week():
     """Get date for same day last week."""
     return get_today() - timedelta(days=7)
 
 def get_mtd_start():
-    """Get first day of current month in Hong Kong time."""
-    today = datetime.now(TIMEZONES["HK"])
-    return datetime(today.year, today.month, 1, tzinfo=TIMEZONES["HK"]).date()
+    """Get first day of current month."""
+    today = datetime.now()
+    return datetime(today.year, today.month, 1).date()
+
+def get_hk_time():
+    """Get current time in Hong Kong timezone for display."""
+    return datetime.now(TIMEZONES["HK"])
