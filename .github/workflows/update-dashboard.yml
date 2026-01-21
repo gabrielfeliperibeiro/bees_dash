@@ -55,7 +55,9 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
+            git fetch origin main
+            git reset --soft origin/main
+            git add data/*.json
             git commit -m "data: update dashboard data - $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
-            git pull --rebase
             git push
           fi

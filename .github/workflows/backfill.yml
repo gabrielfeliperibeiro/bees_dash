@@ -40,7 +40,8 @@ jobs:
 
       - name: Commit and push data
         run: |
+          git fetch origin main
+          git reset --soft origin/main
           git add data/*.json
           git commit -m "data: backfill historical data - $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
-          git pull --rebase
           git push
