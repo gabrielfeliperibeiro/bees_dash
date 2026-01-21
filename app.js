@@ -533,3 +533,10 @@ document.addEventListener('DOMContentLoaded', () => {
         loadDashboardData();
     }, CONFIG.refreshInterval);
 });
+
+// Logout function
+function logout() {
+    sessionStorage.removeItem('authenticated');
+    sessionStorage.removeItem('loginTime');
+    window.location.href = 'login.html';
+}

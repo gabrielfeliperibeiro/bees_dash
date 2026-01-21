@@ -150,6 +150,25 @@ body {
     color: var(--text-secondary);
 }
 
+.logout-btn {
+    padding: 0.5rem 1rem;
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Barlow', sans-serif;
+}
+
+.logout-btn:hover {
+    background: var(--bees-yellow);
+    color: var(--bees-black);
+    border-color: var(--bees-yellow);
+}
+
 /* Main Content */
 .main-content {
     display: grid;
