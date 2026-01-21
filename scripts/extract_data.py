@@ -120,6 +120,122 @@ def query_orders(connection, country, start_date, end_date):
         raise
 
 
+def calculate_metrics(df):
+    """
+    Calculate sales metrics from order data.
+
+    Args:
+        df: pandas DataFrame with order data
+
+    Returns:
+        dict with calculated metrics
+    """
+    if df.empty:
+        return {
+            "total_gmv": 0,
+            "orders": 0,
+            "unique_buyers": 0,
+            "unique_vendors": 0,
+            "aov": 0,
+            "frequency": 0,
+            "gmv_per_poc": 0,
+        }
+
+    total_gmv = df["order_gmv"].sum()
+    orders = df["order_number"].nunique()
+    unique_buyers = df["account_id"].nunique()
+    unique_vendors = df["vendor_account_id"].nunique()
+
+    # Calculate derived metrics
+    aov = total_gmv / orders if orders > 0 else 0
+    frequency = orders / unique_buyers if unique_buyers > 0 else 0
+    gmv_per_poc = total_gmv / unique_vendors if unique_vendors > 0 else 0
+
+    return {
+        "total_gmv": round(total_gmv, 2),
+        "orders": orders,
+        "unique_buyers": unique_buyers,
+        "unique_vendors": unique_vendors,
+        "aov": round(aov, 2),
+        "frequency": round(frequency, 2),
+        "gmv_per_poc": round(gmv_per_poc, 2),
+    }
+
+
+def calculate_daily_metrics(df):
+    """
+    Calculate metrics grouped by day.
+
+    Args:
+        df: pandas DataFrame with order data
+
+    Returns:
+        list of dicts with daily metrics
+    """
+    if df.empty:
+        return []
+
+    # Convert placement_date to date
+    df["date"] = pd.to_datetime(df["placement_date"]).dt.date
+
+    daily_metrics = []
+    for date, group in df.groupby("date"):
+        metrics = calculate_metrics(group)
+        metrics["date"] = str(date)
+        daily_metrics.append(metrics)
+
+    # Sort by date
+    daily_metrics.sort(key=lambda x: x["date"])
+
+    return daily_metrics
+
+
+def calculate_moving_average(daily_metrics, window):
+    """
+    Calculate moving average for metrics.
+
+    Args:
+        daily_metrics: list of daily metric dicts
+        window: number of days for moving average
+
+    Returns:
+        dict with moving average metrics
+    """
+    if len(daily_metrics) < window:
+        logger.warning(f"Not enough data for {window}-day moving average")
+        window = len(daily_metrics)
+
+    if window == 0:
+        return {
+            "gmv": 0,
+            "orders": 0,
+            "aov": 0,
+            "unique_buyers": 0,
+            "frequency": 0,
+            "gmv_per_poc": 0,
+        }
+
+    # Get last N days
+    recent_data = daily_metrics[-window:]
+
+    # Calculate averages
+    avg_gmv = sum(d["total_gmv"] for d in recent_data) / window
+    avg_orders = sum(d["orders"] for d in recent_data) / window
+    avg_aov = sum(d["aov"] for d in recent_data) / window
+    avg_buyers = sum(d["unique_buyers"] for d in recent_data) / window
+    avg_frequency = sum(d["frequency"] for d in recent_data) / window
+    avg_gmv_per_poc = sum(d["gmv_per_poc"] for d in recent_data) / window
+
+    return {
+        "gmv": round(avg_gmv, 2),
+        "orders": round(avg_orders, 2),
+        "aov": round(avg_aov, 2),
+        "unique_buyers": round(avg_buyers, 2),
+        "frequency": round(avg_frequency, 2),
+        "gmv_per_poc": round(avg_gmv_per_poc, 2),
+    }
+
+
 def main():
     """Main execution function."""
     logger.info("Starting data extraction...")
@@ -128,11 +244,42 @@ def main():
         # Connect to Databricks
         connection = connect_to_databricks()
 
-        # Test query for today
+        # Calculate date ranges
         today = get_today()
+        same_day_last_week = get_same_day_last_week()
+        mtd_start = get_mtd_start()
+        history_start = today - timedelta(days=60)
+
         for country in COUNTRIES:
-            df = query_orders(connection, country, today, today)
-            logger.info(f"{country}: {len(df)} orders today")
+            logger.info(f"Processing {country}...")
+
+            # Query all data needed (last 60 days)
+            df_all = query_orders(connection, country, history_start, today)
+
+            if df_all.empty:
+                logger.warning(f"No data for {country}, skipping...")
+                continue
+
+            # Filter for different time periods
+            df_all["date"] = pd.to_datetime(df_all["placement_date"]).dt.date
+
+            df_today = df_all[df_all["date"] == today]
+            df_last_week = df_all[df_all["date"] == same_day_last_week]
+            df_mtd = df_all[df_all["date"] >= mtd_start]
+
+            # Calculate metrics
+            metrics_today = calculate_metrics(df_today)
+            metrics_last_week = calculate_metrics(df_last_week)
+            metrics_mtd = calculate_metrics(df_mtd)
+
+            # Calculate daily history
+            daily_metrics = calculate_daily_metrics(df_all)
+
+            # Calculate moving averages
+            ma_7d = calculate_moving_average(daily_metrics, 7)
+            ma_30d = calculate_moving_average(daily_metrics, 30)
+
+            logger.info(f"{country} - Today GMV: {metrics_today['total_gmv']}, Orders: {metrics_today['orders']}")
 
         connection.close()
         logger.info("Data extraction completed successfully")
