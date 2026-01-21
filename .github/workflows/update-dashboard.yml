@@ -8,6 +8,14 @@ on:
   # Allow manual trigger
   workflow_dispatch:
 
+  # Also run on push, but only when workflow or script changes
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/update-dashboard.yml'
+      - 'scripts/**'
+
 jobs:
   update-data:
     runs-on: ubuntu-latest
