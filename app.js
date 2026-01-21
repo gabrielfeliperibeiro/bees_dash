@@ -191,16 +191,262 @@ function getChangeClass(change) {
     return 'neutral';
 }
 
-// Placeholder for update functions (to be implemented in next task)
+/**
+ * Update dashboard for both countries
+ */
 function updateDashboard() {
     console.log('Updating dashboard...');
     updateCountryDashboard('ph', dashboardData.ph);
     updateCountryDashboard('vn', dashboardData.vn);
 }
 
+/**
+ * Update dashboard for a country
+ */
 function updateCountryDashboard(country, data) {
-    console.log(`Updating ${country} dashboard...`, data);
-    // TODO: Implement in next task
+    if (!data) {
+        console.warn(`No data for ${country}`);
+        return;
+    }
+
+    updateMetricCards(country, data);
+    updateComparisonTable(country, data);
+    updateCharts(country, data);
+}
+
+/**
+ * Update metric cards
+ */
+function updateMetricCards(country, data) {
+    const today = data.today;
+    const lastWeek = data.same_day_last_week;
+
+    // Helper to update a metric card
+    const updateCard = (metric, value, decimals = 0) => {
+        const valueEl = document.getElementById(`${country}-${metric}`);
+        const changeEl = document.getElementById(`${country}-${metric}-change`);
+
+        if (!valueEl || !changeEl) return;
+
+        // Update value
+        valueEl.textContent = formatNumber(today[value], decimals);
+
+        // Calculate and update change
+        const change = calculateChange(today[value], lastWeek[value]);
+        changeEl.textContent = formatChangePercent(change);
+        changeEl.className = 'metric-change ' + getChangeClass(change);
+    };
+
+    // Update hero metrics
+    updateCard('gmv', 'total_gmv', 2);
+    updateCard('orders', 'orders', 0);
+    updateCard('aov', 'aov', 2);
+
+    // Update secondary metrics
+    updateCard('buyers', 'unique_buyers', 0);
+    updateCard('frequency', 'frequency', 2);
+    updateCard('gmv-poc', 'gmv_per_poc', 2);
+}
+
+/**
+ * Update comparison table
+ */
+function updateComparisonTable(country, data) {
+    const tableId = `${country}-comparison-table`;
+    const tbody = document.querySelector(`#${tableId} tbody`);
+
+    if (!tbody) return;
+
+    const today = data.today;
+    const lastWeek = data.same_day_last_week;
+    const mtd = data.mtd;
+
+    const metrics = [
+        { label: 'GMV', key: 'total_gmv', decimals: 2 },
+        { label: 'Orders', key: 'orders', decimals: 0 },
+        { label: 'Buyers', key: 'unique_buyers', decimals: 0 },
+        { label: 'AOV', key: 'aov', decimals: 2 },
+        { label: 'Frequency', key: 'frequency', decimals: 2 },
+        { label: 'GMV/POCs', key: 'gmv_per_poc', decimals: 2 }
+    ];
+
+    tbody.innerHTML = metrics.map(metric => {
+        const todayValue = today[metric.key];
+        const lastWeekValue = lastWeek[metric.key];
+        const mtdValue = mtd[metric.key];
+        const change = calculateChange(todayValue, lastWeekValue);
+
+        return `
+            <tr>
+                <td><strong>${metric.label}</strong></td>
+                <td>${formatNumber(todayValue, metric.decimals)}</td>
+                <td>${formatNumber(lastWeekValue, metric.decimals)}</td>
+                <td class="change-cell ${getChangeClass(change)}">${formatChangePercent(change)}</td>
+                <td>${formatNumber(mtdValue, metric.decimals)}</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+/**
+ * Update charts
+ */
+function updateCharts(country, data) {
+    const dailyHistory = data.daily_history || [];
+    const movingAverages = data.moving_averages || {};
+
+    // Prepare data (last 30 days)
+    const last30Days = dailyHistory.slice(-30);
+    const dates = last30Days.map(d => {
+        const date = new Date(d.date);
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    });
+
+    // GMV data
+    const gmvData = last30Days.map(d => d.total_gmv);
+    const gmvMA7 = new Array(last30Days.length).fill(movingAverages.ma_7d?.gmv || 0);
+    const gmvMA30 = new Array(last30Days.length).fill(movingAverages.ma_30d?.gmv || 0);
+
+    // Orders data
+    const ordersData = last30Days.map(d => d.orders);
+    const ordersMA7 = new Array(last30Days.length).fill(movingAverages.ma_7d?.orders || 0);
+    const ordersMA30 = new Array(last30Days.length).fill(movingAverages.ma_30d?.orders || 0);
+
+    // Create or update GMV chart
+    updateChart(
+        `${country}-gmv-chart`,
+        charts[country].gmv,
+        dates,
+        gmvData,
+        gmvMA7,
+        gmvMA30,
+        'GMV'
+    );
+
+    // Create or update Orders chart
+    updateChart(
+        `${country}-orders-chart`,
+        charts[country].orders,
+        dates,
+        ordersData,
+        ordersMA7,
+        ordersMA30,
+        'Orders'
+    );
+}
+
+/**
+ * Create or update a chart
+ */
+function updateChart(canvasId, existingChart, labels, data, ma7, ma30, label) {
+    const ctx = document.getElementById(canvasId);
+    if (!ctx) return;
+
+    const chartData = {
+        labels: labels,
+        datasets: [
+            {
+                label: label,
+                data: data,
+                borderColor: '#8b5cf6',
+                backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                borderWidth: 2,
+                tension: 0.4,
+                fill: true,
+                pointRadius: 0,
+                pointHoverRadius: 4
+            },
+            {
+                label: '7-day MA',
+                data: ma7,
+                borderColor: '#3b82f6',
+                borderWidth: 2,
+                borderDash: [5, 5],
+                tension: 0.4,
+                fill: false,
+                pointRadius: 0
+            },
+            {
+                label: '30-day MA',
+                data: ma30,
+                borderColor: '#10b981',
+                borderWidth: 2,
+                borderDash: [5, 5],
+                tension: 0.4,
+                fill: false,
+                pointRadius: 0
+            }
+        ]
+    };
+
+    const chartOptions = {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: {
+                display: true,
+                position: 'top',
+                labels: {
+                    color: '#a0a0a0',
+                    font: { size: 11 },
+                    usePointStyle: true
+                }
+            },
+            tooltip: {
+                mode: 'index',
+                intersect: false,
+                backgroundColor: '#252525',
+                titleColor: '#ffffff',
+                bodyColor: '#a0a0a0',
+                borderColor: '#333333',
+                borderWidth: 1
+            }
+        },
+        scales: {
+            x: {
+                grid: {
+                    color: '#333333',
+                    drawBorder: false
+                },
+                ticks: {
+                    color: '#a0a0a0',
+                    font: { size: 10 }
+                }
+            },
+            y: {
+                grid: {
+                    color: '#333333',
+                    drawBorder: false
+                },
+                ticks: {
+                    color: '#a0a0a0',
+                    font: { size: 10 },
+                    callback: function(value) {
+                        return formatNumber(value, 0);
+                    }
+                }
+            }
+        },
+        interaction: {
+            mode: 'nearest',
+            axis: 'x',
+            intersect: false
+        }
+    };
+
+    // Destroy existing chart if it exists
+    if (existingChart) {
+        existingChart.destroy();
+    }
+
+    // Create new chart
+    const country = canvasId.split('-')[0];
+    const chartType = canvasId.includes('gmv') ? 'gmv' : 'orders';
+    charts[country][chartType] = new Chart(ctx, {
+        type: 'line',
+        data: chartData,
+        options: chartOptions
+    });
 }
 
 // Initialize dashboard on page load
