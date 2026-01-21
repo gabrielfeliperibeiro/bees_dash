@@ -45,6 +45,29 @@ Real-time sales dashboard for PH and VN markets with automated data updates from
 
 ## Deployment
 
-GitHub Pages automatically deploys from the `main` branch.
+### GitHub Pages Setup
 
-Dashboard URL: https://[username].github.io/bees_dash/
+1. Go to your repository Settings > Pages
+2. Under "Build and deployment":
+   - Source: GitHub Actions
+3. The site will be available at: `https://[username].github.io/bees_dash/`
+
+### GitHub Secrets Setup
+
+Add the following secret to your repository (Settings > Secrets and variables > Actions):
+
+- **DATABRICKS_TOKEN**: Your Databricks access token
+  - Value: `dapi6b9bd2e011c8b6ea6282d16aa9082efd-3`
+
+### First-Time Setup
+
+1. Run the backfill workflow manually:
+   - Go to Actions > Backfill Historical Data > Run workflow
+   - This will load 60 days of historical data
+
+2. The update workflow will run automatically every 5 minutes after that
+
+### Manual Updates
+
+You can manually trigger data updates:
+- Go to Actions > Update Dashboard Data > Run workflow
