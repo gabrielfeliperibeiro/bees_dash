@@ -412,6 +412,9 @@ async function initialize() {
     const success = await loadDashboardData();
 
     if (success) {
+        // Add loaded class for fade-in animation
+        document.body.classList.add('loaded');
+
         state.refreshTimer = setInterval(() => {
             console.log('[AUTO] Auto-refresh triggered');
             loadDashboardData();
