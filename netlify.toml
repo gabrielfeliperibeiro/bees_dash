@@ -1,0 +1,28 @@
+# Netlify configuration for BEES Dashboard
+# Provides instant deployment (~30 seconds) vs GitHub Pages (5-15 minutes)
+
+[build]
+  publish = "."
+  command = "echo 'Static site - no build needed'"
+
+# Disable caching for data files to ensure fresh data
+[[headers]]
+  for = "/data/*"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    Pragma = "no-cache"
+    Expires = "0"
+
+# Security headers for all files
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+
+# Redirects (if needed in future)
+# [[redirects]]
+#   from = "/old-path"
+#   to = "/new-path"
+#   status = 301

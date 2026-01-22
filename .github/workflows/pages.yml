@@ -1,4 +1,10 @@
-name: Deploy to GitHub Pages
+# NOTE: This workflow deploys to GitHub Pages which has a 5-15 minute delay
+# for private repos. Consider using Vercel, Netlify, or Cloudflare Pages instead.
+# See DEPLOYMENT_FIX.md for setup instructions.
+#
+# To disable: either delete this file or remove from repo Settings > Pages
+
+name: Deploy to GitHub Pages (Slow - 5-15 min delay)
 
 on:
   push:
