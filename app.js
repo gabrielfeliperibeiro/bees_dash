@@ -576,6 +576,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }, CONFIG.refreshInterval);
 });
 
+// Refresh data function
+async function refreshData() {
+    const refreshBtn = document.getElementById('refreshBtn');
+
+    // Disable button and show refreshing state
+    refreshBtn.disabled = true;
+    refreshBtn.classList.add('refreshing');
+
+    try {
+        console.log('Manual refresh triggered');
+        await loadDashboardData();
+        console.log('Manual refresh completed');
+    } catch (error) {
+        console.error('Manual refresh failed:', error);
+    } finally {
+        // Re-enable button and remove refreshing state
+        setTimeout(() => {
+            refreshBtn.disabled = false;
+            refreshBtn.classList.remove('refreshing');
+        }, 500); // Small delay to prevent rapid clicking
+    }
+}
+
 // Logout function
 function logout() {
     sessionStorage.removeItem('authenticated');

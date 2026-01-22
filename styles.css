@@ -150,6 +150,53 @@ body {
     color: var(--text-secondary);
 }
 
+.refresh-btn {
+    padding: 0.5rem 1rem;
+    background: var(--bees-yellow);
+    color: var(--bees-black);
+    border: 1px solid var(--bees-yellow);
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Barlow', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.refresh-btn:hover {
+    background: var(--bees-yellow-dark);
+    border-color: var(--bees-yellow-dark);
+    transform: translateY(-1px);
+}
+
+.refresh-btn:active {
+    transform: translateY(0);
+}
+
+.refresh-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.refresh-icon {
+    font-size: 1.25rem;
+    line-height: 1;
+    transition: transform 0.6s;
+}
+
+.refresh-btn.refreshing .refresh-icon {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
 .logout-btn {
     padding: 0.5rem 1rem;
     background: transparent;
