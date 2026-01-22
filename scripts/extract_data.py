@@ -235,6 +235,9 @@ def calculate_channel_metrics(df, country=None):
             "cx_tlp": {"gmv_usd": 0, "orders": 0, "gmv_percent": 0, "orders_percent": 0}
         }
 
+    # Create explicit copy to avoid SettingWithCopyWarning
+    df = df.copy()
+
     # Convert numeric columns
     df["order_gmv"] = pd.to_numeric(df["order_gmv"], errors='coerce')
     usd_rate = CURRENCY_RATES.get(country, 1) if country else 1
@@ -291,6 +294,9 @@ def calculate_daily_metrics(df, country=None):
     """
     if df.empty:
         return []
+
+    # Create explicit copy to avoid SettingWithCopyWarning
+    df = df.copy()
 
     # Convert placement_date to date (handle mixed ISO8601 formats)
     df["date"] = pd.to_datetime(df["placement_date"], format='mixed', utc=True).dt.date
