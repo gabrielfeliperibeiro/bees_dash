@@ -43,19 +43,25 @@ async function fetchJSON(url) {
     // If useDirectGitHub is enabled, fetch from GitHub raw instead of Pages
     // This updates in ~30 seconds vs 5-15 minutes for Pages deployment
     let fetchUrl = url;
+    const isDirectGitHub = CONFIG.useDirectGitHub && url.startsWith('data/');
 
-    if (CONFIG.useDirectGitHub && url.startsWith('data/')) {
+    if (isDirectGitHub) {
         fetchUrl = `${CONFIG.githubRaw}/${url}`;
         console.log(`[DIRECT GITHUB] Fetching from: ${fetchUrl}`);
     }
 
-    const response = await fetch(fetchUrl + '?t=' + Date.now(), {
-        cache: 'no-store',
-        headers: {
-            'Cache-Control': 'no-cache, no-store, must-revalidate',
-            'Pragma': 'no-cache'
-        }
-    });
+    // Use simpler fetch options for raw.githubusercontent.com to avoid CORS preflight
+    const fetchOptions = isDirectGitHub
+        ? { cache: 'no-store' }  // Simple request, no custom headers
+        : {
+            cache: 'no-store',
+            headers: {
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache'
+            }
+          };
+
+    const response = await fetch(fetchUrl + '?t=' + Date.now(), fetchOptions);
 
     if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
