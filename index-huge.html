@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Dashboard - Real-Time</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-page">
+    <script>
+        // Authentication check
+        const authenticated = sessionStorage.getItem('authenticated');
+        if (!authenticated || authenticated !== 'true') {
+            window.location.href = 'login.html';
+        }
+    </script>
+    <div class="container-fullscreen">
+        <!-- Header -->
+        <header class="header-minimal">
+            <div class="header-content-minimal">
+                <h1 class="logo-minimal">BEES</h1>
+                <div class="header-info-minimal">
+                    <div class="status-indicator" id="statusIndicator">
+                        <span class="status-dot"></span>
+                        <span class="status-text">Live</span>
+                    </div>
+                    <div class="last-updated" id="lastUpdated">Loading...</div>
+                    <button class="nav-btn" onclick="window.location.href='charts.html'">
+                        Charts →
+                    </button>
+                    <button class="refresh-btn" id="refreshBtn" onclick="refreshData()">
+                        <span class="refresh-icon">↻</span>
+                    </button>
+                    <button class="logout-btn" id="logoutBtn" onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content - HUGE Metrics -->
+        <main class="main-content-fullscreen">
+            <!-- Philippines Dashboard -->
+            <section class="country-dashboard-huge" id="ph-dashboard">
+                <h2 class="country-title-huge">
+                    <span class="country-flag-huge">🇵🇭</span>
+                    Philippines
+                </h2>
+
+                <!-- Hero Metrics - HUGE -->
+                <div class="metrics-grid-huge hero-metrics-huge">
+                    <div class="metric-card-huge">
+                        <div class="metric-label-huge">GMV (USD)</div>
+                        <div class="metric-value-huge" id="ph-gmv">-</div>
+                        <div class="metric-change-huge" id="ph-gmv-change">-</div>
+                    </div>
+                    <div class="metric-card-huge">
+                        <div class="metric-label-huge">Orders</div>
+                        <div class="metric-value-huge" id="ph-orders">-</div>
+                        <div class="metric-change-huge" id="ph-orders-change">-</div>
+                    </div>
+                    <div class="metric-card-huge">
+                        <div class="metric-label-huge">AOV (USD)</div>
+                        <div class="metric-value-huge" id="ph-aov">-</div>
+                        <div class="metric-change-huge" id="ph-aov-change">-</div>
+                    </div>
+                </div>
+
+                <!-- Secondary Metrics - HUGE -->
+                <div class="metrics-grid-huge secondary-metrics-huge">
+                    <div class="metric-card-huge">
+                        <div class="metric-label-huge">Buyers</div>
+                        <div class="metric-value-huge" id="ph-buyers">-</div>
+                        <div class="metric-change-huge" id="ph-buyers-change">-</div>
+                    </div>
+                    <div class="metric-card-huge">
+                        <div class="metric-label-huge">Frequency</div>
+                        <div class="metric-value-huge" id="ph-frequency">-</div>
+                        <div class="metric-change-huge" id="ph-frequency-change">-</div>
+                    </div>
+                    <div class="metric-card-huge">
+                        <div class="metric-label-huge">GMV/POCs</div>
+                        <div class="metric-value-huge" id="ph-gmv-poc">-</div>
+                        <div class="metric-change-huge" id="ph-gmv-poc-change">-</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Vietnam Dashboard -->
+            <section class="country-dashboard-huge" id="vn-dashboard">
+                <h2 class="country-title-huge">
+                    <span class="country-flag-huge">🇻🇳</span>
+                    Vietnam
+                </h2>
+
+                <!-- Hero Metrics - HUGE -->
+                <div class="metrics-grid-huge hero-metrics-huge">
+                    <div class="metric-card-huge">
+                        <div class="metric-label-huge">GMV (USD)</div>
+                        <div class="metric-value-huge" id="vn-gmv">-</div>
+                        <div class="metric-change-huge" id="vn-gmv-change">-</div>
+                    </div>
+                    <div class="metric-card-huge">
+                        <div class="metric-label-huge">Orders</div>
+                        <div class="metric-value-huge" id="vn-orders">-</div>
+                        <div class="metric-change-huge" id="vn-orders-change">-</div>
+                    </div>
+                    <div class="metric-card-huge">
+                        <div class="metric-label-huge">AOV (USD)</div>
+                        <div class="metric-value-huge" id="vn-aov">-</div>
+                        <div class="metric-change-huge" id="vn-aov-change">-</div>
+                    </div>
+                </div>
+
+                <!-- Secondary Metrics - HUGE -->
+                <div class="metrics-grid-huge secondary-metrics-huge">
+                    <div class="metric-card-huge">
+                        <div class="metric-label-huge">Buyers</div>
+                        <div class="metric-value-huge" id="vn-buyers">-</div>
+                        <div class="metric-change-huge" id="vn-buyers-change">-</div>
+                    </div>
+                    <div class="metric-card-huge">
+                        <div class="metric-label-huge">Frequency</div>
+                        <div class="metric-value-huge" id="vn-frequency">-</div>
+                        <div class="metric-change-huge" id="vn-frequency-change">-</div>
+                    </div>
+                    <div class="metric-card-huge">
+                        <div class="metric-label-huge">GMV/POCs</div>
+                        <div class="metric-value-huge" id="vn-gmv-poc">-</div>
+                        <div class="metric-change-huge" id="vn-gmv-poc-change">-</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

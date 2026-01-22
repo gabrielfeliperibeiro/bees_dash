@@ -172,10 +172,12 @@ function createChart(country, data) {
                     labels: {
                         color: '#FFFFFF',
                         font: {
-                            size: 14,
+                            size: 18,
                             weight: 'bold'
                         },
-                        padding: 15
+                        padding: 20,
+                        usePointStyle: true,
+                        pointStyle: 'circle'
                     }
                 },
                 tooltip: {
@@ -210,7 +212,7 @@ function createChart(country, data) {
                     ticks: {
                         color: 'rgba(255, 255, 255, 0.7)',
                         font: {
-                            size: 12,
+                            size: 16,
                             weight: '600'
                         }
                     },
@@ -225,7 +227,7 @@ function createChart(country, data) {
                     ticks: {
                         color: '#F5E003',
                         font: {
-                            size: 12,
+                            size: 16,
                             weight: 'bold'
                         },
                         callback: function(value) {
@@ -241,7 +243,7 @@ function createChart(country, data) {
                         text: 'GMV (USD)',
                         color: '#F5E003',
                         font: {
-                            size: 14,
+                            size: 18,
                             weight: 'bold'
                         }
                     }
@@ -252,7 +254,7 @@ function createChart(country, data) {
                     ticks: {
                         color: '#10B981',
                         font: {
-                            size: 12,
+                            size: 16,
                             weight: 'bold'
                         }
                     },
@@ -264,7 +266,7 @@ function createChart(country, data) {
                         text: 'Orders',
                         color: '#10B981',
                         font: {
-                            size: 14,
+                            size: 18,
                             weight: 'bold'
                         }
                     }

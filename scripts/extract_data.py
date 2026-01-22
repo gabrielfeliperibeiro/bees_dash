@@ -437,39 +437,13 @@ def main():
         for country in COUNTRIES:
             logger.info(f"Processing {country}...")
 
-            # Get current time in country's timezone for same-time-last-week comparison
-            country_tz = TIMEZONES.get(country)
-            current_time = datetime.now(country_tz)
-            current_time_str = current_time.strftime('%Y-%m-%d %H:%M:%S')
-
-            # Calculate same time last week in local timezone
-            last_week_time = current_time - timedelta(days=7)
-            last_week_time_str = last_week_time.strftime('%Y-%m-%d %H:%M:%S')
-
-            logger.info(f"{country} - Current time: {current_time_str} ({country_tz})")
-            logger.info(f"{country} - Last week cutoff: {last_week_time_str} ({country_tz})")
-
             # Query all data needed (last 15 days)
             df_all = query_orders(connection, country, history_start, today)
 
-            # Query last week full day data
+            # Query last week full day data (no time filtering - compare full days)
             df_last_week = query_orders(connection, country, same_day_last_week, same_day_last_week)
 
-            # Filter last week data by time in Python (more reliable than SQL timezone handling)
-            if not df_last_week.empty:
-                # Convert placement_date to pandas datetime (handle various ISO8601 formats)
-                df_last_week['placement_datetime'] = pd.to_datetime(df_last_week['placement_date'], format='ISO8601', utc=True)
-                # Convert from UTC to local timezone
-                df_last_week['placement_datetime_local'] = df_last_week['placement_datetime'].dt.tz_convert(country_tz)
-                # Filter to only orders before the cutoff time
-                df_last_week_cutoff = df_last_week[df_last_week['placement_datetime_local'] <= last_week_time].copy()
-                logger.info(f"{country} - Filtered {len(df_last_week)} orders to {len(df_last_week_cutoff)} orders before {last_week_time_str}")
-                # Debug: log sample timestamps for verification
-                if len(df_last_week_cutoff) > 0:
-                    sample = df_last_week_cutoff.iloc[0]['placement_datetime_local']
-                    logger.info(f"{country} - Sample filtered timestamp: {sample}")
-            else:
-                df_last_week_cutoff = df_last_week
+            logger.info(f"{country} - Retrieved {len(df_last_week)} orders for last week ({same_day_last_week})")
 
             if df_all.empty:
                 logger.warning(f"No data for {country}, creating empty output...")
@@ -495,7 +469,7 @@ def main():
 
             # Calculate metrics
             metrics_today = calculate_metrics(df_today, country)
-            metrics_last_week = calculate_metrics(df_last_week_cutoff, country)  # Use time-filtered data
+            metrics_last_week = calculate_metrics(df_last_week, country)  # Compare full days
             metrics_mtd = calculate_metrics(df_mtd, country)
 
             # Calculate daily history
