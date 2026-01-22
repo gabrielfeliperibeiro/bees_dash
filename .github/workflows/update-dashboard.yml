@@ -54,7 +54,7 @@ jobs:
 
       - name: Commit and push data
         run: |
-          git add data/*.json
+          git add -A data/
 
           # Only commit if there are changes
           if git diff --staged --quiet; then
