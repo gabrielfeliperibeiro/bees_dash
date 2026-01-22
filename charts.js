@@ -70,7 +70,7 @@ async function loadDashboardData() {
             return true;
         } catch (manifestError) {
             // Fallback to regular files if manifest doesn't exist
-            console.log('[DATA] Manifest not found, using regular files');
+            console.warn('[DATA] Manifest load failed, using regular files:', manifestError.message);
 
             const [phData, vnData] = await Promise.all([
                 fetchJSON(CONFIG.dataFiles.ph),
