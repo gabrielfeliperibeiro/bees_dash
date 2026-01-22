@@ -103,7 +103,7 @@ function createGMVChart(country, data) {
         state.charts[country].gmv.destroy();
     }
 
-    const history = data.daily_history.slice().reverse();
+    const history = data.daily_history.slice(); // Oldest to newest (left to right)
     const dates = history.map(d => {
         const date = new Date(d.date);
         return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -192,7 +192,7 @@ function createOrdersChart(country, data) {
         state.charts[country].orders.destroy();
     }
 
-    const history = data.daily_history.slice().reverse();
+    const history = data.daily_history.slice(); // Oldest to newest (left to right)
     const dates = history.map(d => {
         const date = new Date(d.date);
         return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });

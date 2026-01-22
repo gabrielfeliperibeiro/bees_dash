@@ -126,8 +126,8 @@ function createChart(country, data) {
         state.charts[country].destroy();
     }
 
-    // Prepare data from daily_history
-    const history = data.daily_history.slice().reverse(); // Oldest to newest
+    // Prepare data from daily_history (already in chronological order)
+    const history = data.daily_history.slice(); // Oldest to newest (left to right)
     const dates = history.map(d => {
         const date = new Date(d.date);
         return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
