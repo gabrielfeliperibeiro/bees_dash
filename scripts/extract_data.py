@@ -408,7 +408,7 @@ def generate_json_output(country, metrics_today, metrics_last_week, metrics_mtd,
 
 def save_json_file(data, country):
     """
-    Save data to JSON file.
+    Save data to JSON file with versioning.
 
     Args:
         data: Data dict to save
@@ -416,15 +416,27 @@ def save_json_file(data, country):
     """
     Path(DATA_DIR).mkdir(exist_ok=True)
 
-    filename = f"{DATA_DIR}/{country.lower()}.json"
+    # Save versioned file with timestamp
+    timestamp = int(datetime.now(timezone.utc).timestamp())
+    versioned_filename = f"{DATA_DIR}/{country.lower()}-{timestamp}.json"
+
+    # Also save to regular filename for backward compatibility
+    regular_filename = f"{DATA_DIR}/{country.lower()}.json"
 
     try:
-        with open(filename, "w") as f:
+        # Save versioned file
+        with open(versioned_filename, "w") as f:
             json.dump(data, f, indent=2)
+        logger.info(f"Saved versioned data to {versioned_filename}")
 
-        logger.info(f"Saved data to {filename}")
+        # Save regular file
+        with open(regular_filename, "w") as f:
+            json.dump(data, f, indent=2)
+        logger.info(f"Saved data to {regular_filename}")
+
+        return versioned_filename
     except Exception as e:
-        logger.error(f"Failed to save {filename}: {e}")
+        logger.error(f"Failed to save data: {e}")
         raise
 
 
@@ -441,6 +453,9 @@ def main():
         same_day_last_week = get_same_day_last_week()
         mtd_start = get_mtd_start()
         history_start = today - timedelta(days=15)
+
+        # Track versioned filenames for manifest
+        manifest = {}
 
         for country in COUNTRIES:
             logger.info(f"Processing {country}...")
@@ -478,7 +493,8 @@ def main():
                     empty_metrics,
                     empty_metrics,
                 )
-                save_json_file(data, country)
+                versioned_file = save_json_file(data, country)
+                manifest[country.lower()] = versioned_file.split('/')[-1]
                 continue
 
             # Filter for different time periods (handle mixed ISO8601 formats)
@@ -515,10 +531,21 @@ def main():
                 channel_metrics_today,
                 channel_metrics_mtd,
             )
-            save_json_file(data, country)
+            versioned_file = save_json_file(data, country)
+            manifest[country.lower()] = versioned_file.split('/')[-1]
 
             logger.info(f"{country} - Today GMV: {metrics_today['total_gmv']}, Orders: {metrics_today['orders']}")
             logger.info(f"{country} - Last week (same time) GMV: {metrics_last_week['total_gmv']}, Orders: {metrics_last_week['orders']}")
+
+        # Save manifest with versioned filenames
+        manifest_file = f"{DATA_DIR}/data-manifest.json"
+        manifest_data = {
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "files": manifest
+        }
+        with open(manifest_file, "w") as f:
+            json.dump(manifest_data, f, indent=2)
+        logger.info(f"Saved manifest to {manifest_file}")
 
         connection.close()
         logger.info("Data extraction completed successfully")

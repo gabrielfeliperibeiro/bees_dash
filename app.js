@@ -55,25 +55,53 @@ async function loadDashboardData() {
     try {
         console.log('[DATA] Loading dashboard data...');
 
-        // Fetch both countries in parallel
-        const [phData, vnData] = await Promise.all([
-            fetchJSON(CONFIG.dataFiles.ph),
-            fetchJSON(CONFIG.dataFiles.vn)
-        ]);
+        // First, try to load from manifest (versioned files)
+        try {
+            const manifest = await fetchJSON('data/data-manifest.json');
+            console.log('[DATA] Using versioned files from manifest:', manifest);
 
-        // Update state
-        state.data.ph = phData;
-        state.data.vn = vnData;
-        state.lastFetch = Date.now();
+            // Fetch versioned files
+            const [phData, vnData] = await Promise.all([
+                fetchJSON(`data/${manifest.files.ph}`),
+                fetchJSON(`data/${manifest.files.vn}`)
+            ]);
 
-        console.log('[DATA] Data loaded successfully');
-        console.log('[DATA] PH:', phData.today);
-        console.log('[DATA] VN:', vnData.today);
+            // Update state
+            state.data.ph = phData;
+            state.data.vn = vnData;
+            state.lastFetch = Date.now();
 
-        // Update UI
-        updateUI();
+            console.log('[DATA] Data loaded successfully (versioned)');
+            console.log('[DATA] PH:', phData.today);
+            console.log('[DATA] VN:', vnData.today);
 
-        return true;
+            // Update UI
+            updateUI();
+
+            return true;
+        } catch (manifestError) {
+            // Fallback to regular files if manifest doesn't exist
+            console.log('[DATA] Manifest not found, using regular files');
+
+            const [phData, vnData] = await Promise.all([
+                fetchJSON(CONFIG.dataFiles.ph),
+                fetchJSON(CONFIG.dataFiles.vn)
+            ]);
+
+            // Update state
+            state.data.ph = phData;
+            state.data.vn = vnData;
+            state.lastFetch = Date.now();
+
+            console.log('[DATA] Data loaded successfully');
+            console.log('[DATA] PH:', phData.today);
+            console.log('[DATA] VN:', vnData.today);
+
+            // Update UI
+            updateUI();
+
+            return true;
+        }
     } catch (error) {
         console.error('[ERROR] Failed to load data:', error);
         return false;

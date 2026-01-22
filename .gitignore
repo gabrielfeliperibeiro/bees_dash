@@ -27,3 +27,6 @@ logs/*.log
 # OS
 .DS_Store
 Thumbs.db
+
+# Versioned data files (keep only manifest and regular files)
+data/*-[0-9]*.json
