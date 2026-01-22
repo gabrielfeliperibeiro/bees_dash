@@ -84,6 +84,31 @@ def query_orders(connection, country, start_date, end_date):
         pandas DataFrame with order data
     """
     query = f"""
+WITH orders_live_tracking AS (
+    SELECT
+        'PH' AS country,
+        placementDate AS placement_date,
+        orderNumber AS order_number,
+        total AS order_gmv,
+        total/56.017 AS order_gmv_usd,
+        beesAccountId AS account_id,
+        vendorAccountId AS vendor_account_id,
+        status AS order_status,
+        channel
+    FROM ptn_am.silver.daily_orders_consolidated
+    UNION ALL 
+    SELECT
+        'VN' AS country,
+        placementDate AS placement_date,
+        orderNumber AS order_number,
+        total AS order_gmv,
+        total/26416 AS order_gmv_usd,
+        beesAccountId AS account_id,
+        vendorAccountId AS vendor_account_id,
+        status AS order_status,
+        channel
+    FROM ptn_am.silver.vn_daily_orders_consolidated
+)
     SELECT
         country,
         placement_date,
@@ -94,10 +119,10 @@ def query_orders(connection, country, start_date, end_date):
         vendor_account_id,
         order_status,
         channel
-    FROM wh_am.sandbox.orders_live_tracking
+    FROM orders_live_tracking
     WHERE country = '{country}'
-    AND TO_DATE(DATE_TRUNC('DAY', placement_date)) >= '{start_date}'
-    AND TO_DATE(DATE_TRUNC('DAY', placement_date)) <= '{end_date}'
+    AND TO_DATE(DATE_TRUNC('DAY', placement_date + INTERVAL 8 HOUR)) >= '{start_date}'
+    AND TO_DATE(DATE_TRUNC('DAY', placement_date + INTERVAL 8 HOUR)) <= '{end_date}'
     """
 
     logger.info(f"Querying orders for {country} from {start_date} to {end_date}")
