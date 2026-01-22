@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Charts & Analytics - BEES Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <script>
+        // Authentication check
+        const authenticated = sessionStorage.getItem('authenticated');
+        if (!authenticated || authenticated !== 'true') {
+            window.location.href = 'login.html';
+        }
+    </script>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="logo">BEES Charts & Analytics</h1>
+                <div class="header-info">
+                    <div class="timezone-info" id="timezoneInfo">
+                        🕐 Hong Kong Time
+                    </div>
+                    <div class="status-indicator" id="statusIndicator">
+                        <span class="status-dot"></span>
+                        <span class="status-text">Live</span>
+                    </div>
+                    <div class="last-updated" id="lastUpdated">
+                        Loading...
+                    </div>
+                    <button class="nav-btn" onclick="window.location.href='index.html'">
+                        ← Dashboard
+                    </button>
+                    <button class="refresh-btn" id="refreshBtn" onclick="refreshData()">
+                        <span class="refresh-icon">↻</span>
+                        <span class="refresh-text">Refresh</span>
+                    </button>
+                    <button class="logout-btn" id="logoutBtn" onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Philippines Charts -->
+            <section class="country-dashboard" id="ph-dashboard">
+                <h2 class="country-title">
+                    <span class="country-flag">🇵🇭</span>
+                    Philippines
+                </h2>
+
+                <!-- Channel Breakdown -->
+                <div class="channel-breakdown-section">
+                    <h3 class="section-title">Channel Distribution (MTD)</h3>
+                    <div class="channel-metrics">
+                        <div class="channel-item">
+                            <div class="channel-header">
+                                <span class="channel-name">Customer</span>
+                                <span class="channel-value" id="ph-channel-customer-value">-</span>
+                            </div>
+                            <div class="channel-bar-container">
+                                <div class="channel-bar customer-bar" id="ph-channel-customer-bar" style="width: 0%"></div>
+                                <span class="channel-percent" id="ph-channel-customer-percent">0%</span>
+                            </div>
+                            <div class="channel-details">
+                                <span id="ph-channel-customer-gmv">$0</span> GMV • <span id="ph-channel-customer-orders">0</span> Orders
+                            </div>
+                        </div>
+                        <div class="channel-item">
+                            <div class="channel-header">
+                                <span class="channel-name">CX_TLP</span>
+                                <span class="channel-value" id="ph-channel-cx-tlp-value">-</span>
+                            </div>
+                            <div class="channel-bar-container">
+                                <div class="channel-bar cx-tlp-bar" id="ph-channel-cx-tlp-bar" style="width: 0%"></div>
+                                <span class="channel-percent" id="ph-channel-cx-tlp-percent">0%</span>
+                            </div>
+                            <div class="channel-details">
+                                <span id="ph-channel-cx-tlp-gmv">$0</span> GMV • <span id="ph-channel-cx-tlp-orders">0</span> Orders
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="charts-section">
+                    <div class="chart-container">
+                        <h3 class="section-title">GMV Trend (USD - 15 Days)</h3>
+                        <canvas id="ph-gmv-chart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3 class="section-title">Orders Trend (15 Days)</h3>
+                        <canvas id="ph-orders-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Comparison Table -->
+                <div class="comparison-section">
+                    <h3 class="section-title">Performance Comparison</h3>
+                    <table class="comparison-table" id="ph-comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Metric</th>
+                                <th>Today</th>
+                                <th>Last Week</th>
+                                <th>Diff</th>
+                                <th>Change %</th>
+                                <th>MTD</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Vietnam Charts -->
+            <section class="country-dashboard" id="vn-dashboard">
+                <h2 class="country-title">
+                    <span class="country-flag">🇻🇳</span>
+                    Vietnam
+                </h2>
+
+                <!-- Channel Breakdown -->
+                <div class="channel-breakdown-section">
+                    <h3 class="section-title">Channel Distribution (MTD)</h3>
+                    <div class="channel-metrics">
+                        <div class="channel-item">
+                            <div class="channel-header">
+                                <span class="channel-name">Customer</span>
+                                <span class="channel-value" id="vn-channel-customer-value">-</span>
+                            </div>
+                            <div class="channel-bar-container">
+                                <div class="channel-bar customer-bar" id="vn-channel-customer-bar" style="width: 0%"></div>
+                                <span class="channel-percent" id="vn-channel-customer-percent">0%</span>
+                            </div>
+                            <div class="channel-details">
+                                <span id="vn-channel-customer-gmv">$0</span> GMV • <span id="vn-channel-customer-orders">0</span> Orders
+                            </div>
+                        </div>
+                        <div class="channel-item">
+                            <div class="channel-header">
+                                <span class="channel-name">CX_TLP</span>
+                                <span class="channel-value" id="vn-channel-cx-tlp-value">-</span>
+                            </div>
+                            <div class="channel-bar-container">
+                                <div class="channel-bar cx-tlp-bar" id="vn-channel-cx-tlp-bar" style="width: 0%"></div>
+                                <span class="channel-percent" id="vn-channel-cx-tlp-percent">0%</span>
+                            </div>
+                            <div class="channel-details">
+                                <span id="vn-channel-cx-tlp-gmv">$0</span> GMV • <span id="vn-channel-cx-tlp-orders">0</span> Orders
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="charts-section">
+                    <div class="chart-container">
+                        <h3 class="section-title">GMV Trend (USD - 15 Days)</h3>
+                        <canvas id="vn-gmv-chart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3 class="section-title">Orders Trend (15 Days)</h3>
+                        <canvas id="vn-orders-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Comparison Table -->
+                <div class="comparison-section">
+                    <h3 class="section-title">Performance Comparison</h3>
+                    <table class="comparison-table" id="vn-comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Metric</th>
+                                <th>Today</th>
+                                <th>Last Week</th>
+                                <th>Diff</th>
+                                <th>Change %</th>
+                                <th>MTD</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

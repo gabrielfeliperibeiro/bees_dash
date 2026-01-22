@@ -83,7 +83,8 @@ def query_orders(connection, country, start_date, end_date):
     Returns:
         pandas DataFrame with order data
     """
-    # Build query based on country to avoid scanning unnecessary data
+    # Build query based on country for production tables
+    # Use QUALIFY to deduplicate append-only table data
     if country == 'PH':
         query = f"""
         SELECT
@@ -99,6 +100,7 @@ def query_orders(connection, country, start_date, end_date):
         FROM ptn_am.silver.daily_orders_consolidated
         WHERE TO_DATE(DATE_TRUNC('DAY', placementDate + INTERVAL 8 HOUR)) >= '{start_date}'
         AND TO_DATE(DATE_TRUNC('DAY', placementDate + INTERVAL 8 HOUR)) <= '{end_date}'
+        QUALIFY ROW_NUMBER() OVER(PARTITION BY orderNumber ORDER BY load_timestamp_utc DESC) = 1
         """
     else:  # VN
         query = f"""
@@ -115,6 +117,7 @@ def query_orders(connection, country, start_date, end_date):
         FROM ptn_am.silver.vn_daily_orders_consolidated
         WHERE TO_DATE(DATE_TRUNC('DAY', placementDate + INTERVAL 8 HOUR)) >= '{start_date}'
         AND TO_DATE(DATE_TRUNC('DAY', placementDate + INTERVAL 8 HOUR)) <= '{end_date}'
+        QUALIFY ROW_NUMBER() OVER(PARTITION BY orderNumber ORDER BY load_timestamp_utc DESC) = 1
         """
 
     logger.info(f"Querying orders for {country} from {start_date} to {end_date}")
@@ -335,7 +338,7 @@ def calculate_moving_average(daily_metrics, window):
     }
 
 
-def generate_json_output(country, metrics_today, metrics_last_week, metrics_mtd, daily_metrics, ma_7d, ma_30d, channel_metrics_today=None, channel_metrics_mtd=None):
+def generate_json_output(country, metrics_today, metrics_last_week, metrics_mtd, daily_metrics, ma_7d, ma_15d, channel_metrics_today=None, channel_metrics_mtd=None):
     """
     Generate JSON output structure for a country.
 
@@ -346,7 +349,7 @@ def generate_json_output(country, metrics_today, metrics_last_week, metrics_mtd,
         metrics_mtd: Month-to-date metrics dict
         daily_metrics: List of daily metrics dicts
         ma_7d: 7-day moving average dict
-        ma_30d: 30-day moving average dict
+        ma_15d: 15-day moving average dict
         channel_metrics_today: Today's channel breakdown dict
         channel_metrics_mtd: MTD channel breakdown dict
 
@@ -375,7 +378,7 @@ def generate_json_output(country, metrics_today, metrics_last_week, metrics_mtd,
         "daily_history": daily_metrics,
         "moving_averages": {
             "ma_7d": ma_7d,
-            "ma_30d": ma_30d
+            "ma_15d": ma_15d
         }
     }
 
@@ -422,12 +425,12 @@ def main():
         today = get_today()
         same_day_last_week = get_same_day_last_week()
         mtd_start = get_mtd_start()
-        history_start = today - timedelta(days=60)
+        history_start = today - timedelta(days=15)
 
         for country in COUNTRIES:
             logger.info(f"Processing {country}...")
 
-            # Query all data needed (last 60 days)
+            # Query all data needed (last 15 days)
             df_all = query_orders(connection, country, history_start, today)
 
             if df_all.empty:
@@ -463,7 +466,7 @@ def main():
 
             # Calculate moving averages
             ma_7d = calculate_moving_average(daily_metrics, 7)
-            ma_30d = calculate_moving_average(daily_metrics, 30)
+            ma_15d = calculate_moving_average(daily_metrics, 15)
 
             # Calculate channel metrics
             channel_metrics_today = calculate_channel_metrics(df_today, country)
@@ -477,7 +480,7 @@ def main():
                 metrics_mtd,
                 daily_metrics,
                 ma_7d,
-                ma_30d,
+                ma_15d,
                 channel_metrics_today,
                 channel_metrics_mtd,
             )

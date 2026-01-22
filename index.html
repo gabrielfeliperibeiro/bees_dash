@@ -8,9 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
-<body>
+<body class="dashboard-page">
     <script>
         // Authentication check
         const authenticated = sessionStorage.getItem('authenticated');
@@ -18,264 +17,119 @@
             window.location.href = 'login.html';
         }
     </script>
-    <div class="container">
+    <div class="container-fullscreen">
         <!-- Header -->
-        <header class="header">
-            <div class="header-content">
-                <h1 class="logo">BEES Sales Dashboard</h1>
-                <div class="header-info">
-                    <div class="timezone-info" id="timezoneInfo">
-                        🕐 Hong Kong Time
-                    </div>
+        <header class="header-minimal">
+            <div class="header-content-minimal">
+                <h1 class="logo-minimal">BEES</h1>
+                <div class="header-info-minimal">
                     <div class="status-indicator" id="statusIndicator">
                         <span class="status-dot"></span>
                         <span class="status-text">Live</span>
                     </div>
-                    <div class="last-updated" id="lastUpdated">
-                        Loading...
-                    </div>
+                    <div class="last-updated" id="lastUpdated">Loading...</div>
+                    <button class="nav-btn" onclick="window.location.href='charts.html'">
+                        Charts →
+                    </button>
                     <button class="refresh-btn" id="refreshBtn" onclick="refreshData()">
                         <span class="refresh-icon">↻</span>
-                        <span class="refresh-text">Refresh</span>
                     </button>
                     <button class="logout-btn" id="logoutBtn" onclick="logout()">Logout</button>
                 </div>
             </div>
         </header>
 
-        <!-- Main Content -->
-        <main class="main-content">
+        <!-- Main Content - HUGE Metrics -->
+        <main class="main-content-fullscreen">
             <!-- Philippines Dashboard -->
-            <section class="country-dashboard" id="ph-dashboard">
-                <h2 class="country-title">
-                    <span class="country-flag">🇵🇭</span>
+            <section class="country-dashboard-huge" id="ph-dashboard">
+                <h2 class="country-title-huge">
+                    <span class="country-flag-huge">🇵🇭</span>
                     Philippines
                 </h2>
 
-                <!-- Hero Metrics -->
-                <div class="metrics-grid hero-metrics">
-                    <div class="metric-card">
-                        <div class="metric-label">Total GMV (USD)</div>
-                        <div class="metric-value" id="ph-gmv">-</div>
-                        <div class="metric-change" id="ph-gmv-change">-</div>
-                        <div class="metric-comparison" id="ph-gmv-comparison">-</div>
+                <!-- Hero Metrics - HUGE -->
+                <div class="metrics-grid-huge hero-metrics-huge">
+                    <div class="metric-card-huge">
+                        <div class="metric-label-huge">GMV (USD)</div>
+                        <div class="metric-value-huge" id="ph-gmv">-</div>
+                        <div class="metric-change-huge" id="ph-gmv-change">-</div>
                     </div>
-                    <div class="metric-card">
-                        <div class="metric-label">Orders</div>
-                        <div class="metric-value" id="ph-orders">-</div>
-                        <div class="metric-change" id="ph-orders-change">-</div>
-                        <div class="metric-comparison" id="ph-orders-comparison">-</div>
+                    <div class="metric-card-huge">
+                        <div class="metric-label-huge">Orders</div>
+                        <div class="metric-value-huge" id="ph-orders">-</div>
+                        <div class="metric-change-huge" id="ph-orders-change">-</div>
                     </div>
-                    <div class="metric-card">
-                        <div class="metric-label">AOV (USD)</div>
-                        <div class="metric-value" id="ph-aov">-</div>
-                        <div class="metric-change" id="ph-aov-change">-</div>
-                        <div class="metric-comparison" id="ph-aov-comparison">-</div>
+                    <div class="metric-card-huge">
+                        <div class="metric-label-huge">AOV (USD)</div>
+                        <div class="metric-value-huge" id="ph-aov">-</div>
+                        <div class="metric-change-huge" id="ph-aov-change">-</div>
                     </div>
                 </div>
 
-                <!-- Secondary Metrics -->
-                <div class="metrics-grid secondary-metrics">
-                    <div class="metric-card">
-                        <div class="metric-label">Buyers</div>
-                        <div class="metric-value" id="ph-buyers">-</div>
-                        <div class="metric-change" id="ph-buyers-change">-</div>
-                        <div class="metric-comparison" id="ph-buyers-comparison">-</div>
+                <!-- Secondary Metrics - HUGE -->
+                <div class="metrics-grid-huge secondary-metrics-huge">
+                    <div class="metric-card-huge">
+                        <div class="metric-label-huge">Buyers</div>
+                        <div class="metric-value-huge" id="ph-buyers">-</div>
+                        <div class="metric-change-huge" id="ph-buyers-change">-</div>
                     </div>
-                    <div class="metric-card">
-                        <div class="metric-label">Frequency</div>
-                        <div class="metric-value" id="ph-frequency">-</div>
-                        <div class="metric-change" id="ph-frequency-change">-</div>
-                        <div class="metric-comparison" id="ph-frequency-comparison">-</div>
+                    <div class="metric-card-huge">
+                        <div class="metric-label-huge">Frequency</div>
+                        <div class="metric-value-huge" id="ph-frequency">-</div>
+                        <div class="metric-change-huge" id="ph-frequency-change">-</div>
                     </div>
-                    <div class="metric-card">
-                        <div class="metric-label">GMV/POCs (USD)</div>
-                        <div class="metric-value" id="ph-gmv-poc">-</div>
-                        <div class="metric-change" id="ph-gmv-poc-change">-</div>
-                        <div class="metric-comparison" id="ph-gmv-poc-comparison">-</div>
+                    <div class="metric-card-huge">
+                        <div class="metric-label-huge">GMV/POCs</div>
+                        <div class="metric-value-huge" id="ph-gmv-poc">-</div>
+                        <div class="metric-change-huge" id="ph-gmv-poc-change">-</div>
                     </div>
-                </div>
-
-                <!-- Channel Breakdown -->
-                <div class="channel-breakdown-section">
-                    <h3 class="section-title">Channel Distribution (MTD)</h3>
-                    <div class="channel-metrics">
-                        <div class="channel-item">
-                            <div class="channel-header">
-                                <span class="channel-name">Customer</span>
-                                <span class="channel-value" id="ph-channel-customer-value">-</span>
-                            </div>
-                            <div class="channel-bar-container">
-                                <div class="channel-bar customer-bar" id="ph-channel-customer-bar" style="width: 0%"></div>
-                                <span class="channel-percent" id="ph-channel-customer-percent">0%</span>
-                            </div>
-                            <div class="channel-details">
-                                <span id="ph-channel-customer-gmv">$0</span> GMV • <span id="ph-channel-customer-orders">0</span> Orders
-                            </div>
-                        </div>
-                        <div class="channel-item">
-                            <div class="channel-header">
-                                <span class="channel-name">CX_TLP</span>
-                                <span class="channel-value" id="ph-channel-cx-tlp-value">-</span>
-                            </div>
-                            <div class="channel-bar-container">
-                                <div class="channel-bar cx-tlp-bar" id="ph-channel-cx-tlp-bar" style="width: 0%"></div>
-                                <span class="channel-percent" id="ph-channel-cx-tlp-percent">0%</span>
-                            </div>
-                            <div class="channel-details">
-                                <span id="ph-channel-cx-tlp-gmv">$0</span> GMV • <span id="ph-channel-cx-tlp-orders">0</span> Orders
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Charts -->
-                <div class="charts-section">
-                    <div class="chart-container">
-                        <h3 class="section-title">GMV Trend (USD - 30 Days)</h3>
-                        <canvas id="ph-gmv-chart"></canvas>
-                    </div>
-                    <div class="chart-container">
-                        <h3 class="section-title">Orders Trend (30 Days)</h3>
-                        <canvas id="ph-orders-chart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Comparison Table -->
-                <div class="comparison-section">
-                    <h3 class="section-title">Performance Comparison</h3>
-                    <table class="comparison-table" id="ph-comparison-table">
-                        <thead>
-                            <tr>
-                                <th>Metric</th>
-                                <th>Today</th>
-                                <th>Last Week</th>
-                                <th>Diff</th>
-                                <th>Change %</th>
-                                <th>MTD</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Populated by JS -->
-                        </tbody>
-                    </table>
                 </div>
             </section>
 
             <!-- Vietnam Dashboard -->
-            <section class="country-dashboard" id="vn-dashboard">
-                <h2 class="country-title">
-                    <span class="country-flag">🇻🇳</span>
+            <section class="country-dashboard-huge" id="vn-dashboard">
+                <h2 class="country-title-huge">
+                    <span class="country-flag-huge">🇻🇳</span>
                     Vietnam
                 </h2>
 
-                <!-- Hero Metrics -->
-                <div class="metrics-grid hero-metrics">
-                    <div class="metric-card">
-                        <div class="metric-label">Total GMV (USD)</div>
-                        <div class="metric-value" id="vn-gmv">-</div>
-                        <div class="metric-change" id="vn-gmv-change">-</div>
-                        <div class="metric-comparison" id="vn-gmv-comparison">-</div>
+                <!-- Hero Metrics - HUGE -->
+                <div class="metrics-grid-huge hero-metrics-huge">
+                    <div class="metric-card-huge">
+                        <div class="metric-label-huge">GMV (USD)</div>
+                        <div class="metric-value-huge" id="vn-gmv">-</div>
+                        <div class="metric-change-huge" id="vn-gmv-change">-</div>
                     </div>
-                    <div class="metric-card">
-                        <div class="metric-label">Orders</div>
-                        <div class="metric-value" id="vn-orders">-</div>
-                        <div class="metric-change" id="vn-orders-change">-</div>
-                        <div class="metric-comparison" id="vn-orders-comparison">-</div>
+                    <div class="metric-card-huge">
+                        <div class="metric-label-huge">Orders</div>
+                        <div class="metric-value-huge" id="vn-orders">-</div>
+                        <div class="metric-change-huge" id="vn-orders-change">-</div>
                     </div>
-                    <div class="metric-card">
-                        <div class="metric-label">AOV (USD)</div>
-                        <div class="metric-value" id="vn-aov">-</div>
-                        <div class="metric-change" id="vn-aov-change">-</div>
-                        <div class="metric-comparison" id="vn-aov-comparison">-</div>
+                    <div class="metric-card-huge">
+                        <div class="metric-label-huge">AOV (USD)</div>
+                        <div class="metric-value-huge" id="vn-aov">-</div>
+                        <div class="metric-change-huge" id="vn-aov-change">-</div>
                     </div>
                 </div>
 
-                <!-- Secondary Metrics -->
-                <div class="metrics-grid secondary-metrics">
-                    <div class="metric-card">
-                        <div class="metric-label">Buyers</div>
-                        <div class="metric-value" id="vn-buyers">-</div>
-                        <div class="metric-change" id="vn-buyers-change">-</div>
-                        <div class="metric-comparison" id="vn-buyers-comparison">-</div>
+                <!-- Secondary Metrics - HUGE -->
+                <div class="metrics-grid-huge secondary-metrics-huge">
+                    <div class="metric-card-huge">
+                        <div class="metric-label-huge">Buyers</div>
+                        <div class="metric-value-huge" id="vn-buyers">-</div>
+                        <div class="metric-change-huge" id="vn-buyers-change">-</div>
                     </div>
-                    <div class="metric-card">
-                        <div class="metric-label">Frequency</div>
-                        <div class="metric-value" id="vn-frequency">-</div>
-                        <div class="metric-change" id="vn-frequency-change">-</div>
-                        <div class="metric-comparison" id="vn-frequency-comparison">-</div>
+                    <div class="metric-card-huge">
+                        <div class="metric-label-huge">Frequency</div>
+                        <div class="metric-value-huge" id="vn-frequency">-</div>
+                        <div class="metric-change-huge" id="vn-frequency-change">-</div>
                     </div>
-                    <div class="metric-card">
-                        <div class="metric-label">GMV/POCs (USD)</div>
-                        <div class="metric-value" id="vn-gmv-poc">-</div>
-                        <div class="metric-change" id="vn-gmv-poc-change">-</div>
-                        <div class="metric-comparison" id="vn-gmv-poc-comparison">-</div>
+                    <div class="metric-card-huge">
+                        <div class="metric-label-huge">GMV/POCs</div>
+                        <div class="metric-value-huge" id="vn-gmv-poc">-</div>
+                        <div class="metric-change-huge" id="vn-gmv-poc-change">-</div>
                     </div>
-                </div>
-
-                <!-- Channel Breakdown -->
-                <div class="channel-breakdown-section">
-                    <h3 class="section-title">Channel Distribution (MTD)</h3>
-                    <div class="channel-metrics">
-                        <div class="channel-item">
-                            <div class="channel-header">
-                                <span class="channel-name">Customer</span>
-                                <span class="channel-value" id="vn-channel-customer-value">-</span>
-                            </div>
-                            <div class="channel-bar-container">
-                                <div class="channel-bar customer-bar" id="vn-channel-customer-bar" style="width: 0%"></div>
-                                <span class="channel-percent" id="vn-channel-customer-percent">0%</span>
-                            </div>
-                            <div class="channel-details">
-                                <span id="vn-channel-customer-gmv">$0</span> GMV • <span id="vn-channel-customer-orders">0</span> Orders
-                            </div>
-                        </div>
-                        <div class="channel-item">
-                            <div class="channel-header">
-                                <span class="channel-name">CX_TLP</span>
-                                <span class="channel-value" id="vn-channel-cx-tlp-value">-</span>
-                            </div>
-                            <div class="channel-bar-container">
-                                <div class="channel-bar cx-tlp-bar" id="vn-channel-cx-tlp-bar" style="width: 0%"></div>
-                                <span class="channel-percent" id="vn-channel-cx-tlp-percent">0%</span>
-                            </div>
-                            <div class="channel-details">
-                                <span id="vn-channel-cx-tlp-gmv">$0</span> GMV • <span id="vn-channel-cx-tlp-orders">0</span> Orders
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Charts -->
-                <div class="charts-section">
-                    <div class="chart-container">
-                        <h3 class="section-title">GMV Trend (USD - 30 Days)</h3>
-                        <canvas id="vn-gmv-chart"></canvas>
-                    </div>
-                    <div class="chart-container">
-                        <h3 class="section-title">Orders Trend (30 Days)</h3>
-                        <canvas id="vn-orders-chart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Comparison Table -->
-                <div class="comparison-section">
-                    <h3 class="section-title">Performance Comparison</h3>
-                    <table class="comparison-table" id="vn-comparison-table">
-                        <thead>
-                            <tr>
-                                <th>Metric</th>
-                                <th>Today</th>
-                                <th>Last Week</th>
-                                <th>Diff</th>
-                                <th>Change %</th>
-                                <th>MTD</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Populated by JS -->
-                        </tbody>
-                    </table>
                 </div>
             </section>
         </main>
