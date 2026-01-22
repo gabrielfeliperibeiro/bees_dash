@@ -85,13 +85,16 @@ def query_orders(connection, country, start_date, end_date, end_time=None):
     Returns:
         pandas DataFrame with order data
     """
-    # Timezone offset for each country
+    # Timezone offset and timezone name for each country
     tz_offset = 8 if country == 'PH' else 7  # PH: UTC+8, VN: UTC+7
+    tz_name = 'Asia/Manila' if country == 'PH' else 'Asia/Ho_Chi_Minh'
 
-    # Build time filter if end_time provided (end_time is expected to be in UTC)
+    # Build time filter if end_time provided
+    # Use explicit timezone conversion in SQL to ensure correct comparison
     time_filter = ""
     if end_time:
-        time_filter = f"AND placementDate <= '{end_time}'"
+        # Convert UTC placementDate to local timezone and compare
+        time_filter = f"AND CAST(from_utc_timestamp(placementDate, '{tz_name}') AS TIMESTAMP) <= CAST('{end_time}' AS TIMESTAMP)"
 
     # Build query based on country for production tables
     # Use QUALIFY to deduplicate append-only table data
@@ -451,25 +454,20 @@ def main():
             current_time_str = current_time.strftime('%Y-%m-%d %H:%M:%S')
 
             # Calculate same time last week in local timezone
-            last_week_time_local = current_time - timedelta(days=7)
-            last_week_time_local_str = last_week_time_local.strftime('%Y-%m-%d %H:%M:%S')
-
-            # Convert to UTC for SQL query (placementDate is stored in UTC)
-            last_week_time_utc = last_week_time_local.astimezone(ZoneInfo("UTC"))
-            last_week_time_utc_str = last_week_time_utc.strftime('%Y-%m-%d %H:%M:%S')
+            last_week_time = current_time - timedelta(days=7)
+            last_week_time_str = last_week_time.strftime('%Y-%m-%d %H:%M:%S')
 
             logger.info(f"{country} - Current time: {current_time_str} ({country_tz})")
-            logger.info(f"{country} - Last week cutoff (local): {last_week_time_local_str} ({country_tz})")
-            logger.info(f"{country} - Last week cutoff (UTC): {last_week_time_utc_str}")
+            logger.info(f"{country} - Last week cutoff: {last_week_time_str} ({country_tz})")
 
             # Query all data needed (last 15 days) - no time filter
             df_all = query_orders(connection, country, history_start, today)
 
             # Query last week data with time cutoff (up to same time as now)
-            # Use UTC time since placementDate is stored in UTC
+            # Pass local time - SQL query will handle timezone conversion
             df_last_week_cutoff = query_orders(
                 connection, country, same_day_last_week, same_day_last_week,
-                end_time=last_week_time_utc_str
+                end_time=last_week_time_str
             )
 
             if df_all.empty:
