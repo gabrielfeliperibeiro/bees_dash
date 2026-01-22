@@ -1,23 +1,13 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BEES Analytics Dashboard | AB InBev Digital Commerce</title>
-    <meta name="description" content="Real-time B2B analytics for BEES marketplace">
-
-    <!-- Preconnect to fonts -->
+    <title>BEES Dashboard - Real-Time Analytics</title>
+    <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <!-- Typography -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-
-    <!-- Styles -->
-    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
 <body>
     <script>
@@ -28,390 +18,122 @@
         }
     </script>
 
-    <div class="app-container">
-        <!-- Sidebar Navigation -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="logo-container">
-                    <svg class="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Full Screen Container -->
+    <div class="dashboard-container">
+        <!-- Minimal Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <svg class="logo-icon" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2"/>
+                        <path d="M2 17L12 22L22 17M2 12L12 17L22 12" stroke="currentColor" stroke-width="2"/>
                     </svg>
                     <span class="logo-text">BEES</span>
                 </div>
-                <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                        <path d="M3 10H17M3 5H17M3 15H17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
-                </button>
-            </div>
-
-            <nav class="sidebar-nav">
-                <a href="#" class="nav-item active" data-section="dashboard">
-                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none">
-                        <rect x="3" y="3" width="7" height="7" stroke="currentColor" stroke-width="2"/>
-                        <rect x="14" y="3" width="7" height="7" stroke="currentColor" stroke-width="2"/>
-                        <rect x="14" y="14" width="7" height="7" stroke="currentColor" stroke-width="2"/>
-                        <rect x="3" y="14" width="7" height="7" stroke="currentColor" stroke-width="2"/>
-                    </svg>
-                    <span class="nav-label">Dashboard</span>
-                </a>
-                <a href="#" class="nav-item" data-section="orders">
-                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none">
-                        <path d="M9 11H15M9 15H12M3 7H21M5 21H19C20.1046 21 21 20.1046 21 19V9C21 7.89543 20.1046 7 19 7H5C3.89543 7 3 7.89543 3 9V19C3 20.1046 3.89543 21 5 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
-                    <span class="nav-label">Orders</span>
-                </a>
-                <a href="#" class="nav-item" data-section="analytics">
-                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none">
-                        <path d="M3 3V21H21M7 16L12 11L16 15L21 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    <span class="nav-label">Analytics</span>
-                </a>
-                <a href="#" class="nav-item" data-section="retailers">
-                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none">
-                        <path d="M17 21V19C17 17.9391 16.5786 16.9217 15.8284 16.1716C15.0783 15.4214 14.0609 15 13 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21M23 21V19C22.9993 18.1137 22.7044 17.2528 22.1614 16.5523C21.6184 15.8519 20.8581 15.3516 20 15.13M16 3.13C16.8604 3.3503 17.623 3.8507 18.1676 4.55231C18.7122 5.25392 19.0078 6.11683 19.0078 7.005C19.0078 7.89317 18.7122 8.75608 18.1676 9.45769C17.623 10.1593 16.8604 10.6597 16 10.88M13 7C13 9.20914 11.2091 11 9 11C6.79086 11 5 9.20914 5 7C5 4.79086 6.79086 3 9 3C11.2091 3 13 4.79086 13 7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    <span class="nav-label">Retailers</span>
-                </a>
-                <a href="#" class="nav-item" data-section="payments">
-                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none">
-                        <rect x="2" y="5" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/>
-                        <path d="M2 10H22" stroke="currentColor" stroke-width="2"/>
-                    </svg>
-                    <span class="nav-label">Payments</span>
-                </a>
-                <a href="#" class="nav-item" data-section="settings">
-                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none">
-                        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
-                        <path d="M12 1V3M12 21V23M4.22 4.22L5.64 5.64M18.36 18.36L19.78 19.78M1 12H3M21 12H23M4.22 19.78L5.64 18.36M18.36 5.64L19.78 4.22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
-                    <span class="nav-label">Settings</span>
-                </a>
-            </nav>
-
-            <div class="sidebar-footer">
-                <div class="user-profile">
-                    <div class="user-avatar">
-                        <span>AB</span>
-                    </div>
-                    <div class="user-info">
-                        <div class="user-name">Analytics Team</div>
-                        <div class="user-role">Admin</div>
-                    </div>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Main Content Area -->
-        <div class="main-wrapper">
-            <!-- Header Bar -->
-            <header class="header-bar">
-                <div class="header-left">
-                    <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Open menu">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                            <path d="M3 12H21M3 6H21M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                        </svg>
-                    </button>
-                    <div class="breadcrumb">
-                        <span class="breadcrumb-item">Dashboard</span>
-                        <span class="breadcrumb-separator">/</span>
-                        <span class="breadcrumb-item active">Overview</span>
-                    </div>
-                </div>
-
-                <div class="header-right">
-                    <button class="header-action search-btn" aria-label="Search">
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                            <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="2"/>
-                            <path d="M14 14L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                        </svg>
-                        <span class="search-hint">⌘K</span>
-                    </button>
-
-                    <button class="header-action refresh-btn" id="refreshBtn" aria-label="Refresh data">
-                        <svg class="refresh-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                            <path d="M1 4V10H7M19 16V10H13M18.5 7C17.5 4.5 15 2.5 12 2.5C7.5 2.5 3.5 6.5 3.5 11M1.5 13C2.5 15.5 5 17.5 8 17.5C12.5 17.5 16.5 13.5 16.5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </button>
-
-                    <button class="header-action notification-btn" aria-label="Notifications">
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                            <path d="M10 2C7 2 5 4 5 7V11L3 13V14H17V13L15 11V7C15 4 13 2 10 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M8.5 18C8.5 19 9.5 19 10 19C10.5 19 11.5 19 11.5 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        <span class="notification-badge">3</span>
-                    </button>
-
-                    <button class="header-action theme-toggle" id="themeToggle" aria-label="Toggle theme">
-                        <svg class="theme-icon-light" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                            <circle cx="10" cy="10" r="4" stroke="currentColor" stroke-width="2"/>
-                            <path d="M10 2V4M10 16V18M4 10H2M18 10H16M5.5 5.5L4 4M16 16L14.5 14.5M14.5 5.5L16 4M4 16L5.5 14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                        </svg>
-                        <svg class="theme-icon-dark" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                            <path d="M17 10.5C16 14.5 12.5 17 8.5 17C5 17 2 14 2 10.5C2 6.5 4.5 3 8.5 3C9 3 9.5 3 10 3.5C8 5 7 7 7 9.5C7 12.5 9.5 15 12.5 15C14 15 15.5 14.5 16.5 13.5C16.8 14.5 17 15 17 15.5V10.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </button>
-
-                    <div class="user-menu">
-                        <button class="user-menu-toggle" aria-label="User menu">
-                            <div class="user-avatar-small">AB</div>
-                        </button>
-                        <div class="user-dropdown">
-                            <button class="dropdown-item" id="logoutBtn">
-                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                    <path d="M6 14H3C2.44772 14 2 13.5523 2 13V3C2 2.44772 2.44772 2 3 2H6M11 11L14 8M14 8L11 5M14 8H6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                                Logout
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </header>
-
-            <!-- Dashboard Content -->
-            <main class="dashboard-content">
-                <!-- Status Bar -->
-                <div class="status-bar">
-                    <div class="status-indicator" id="statusIndicator">
+                <div class="header-actions">
+                    <div class="status" id="statusIndicator">
                         <span class="status-dot"></span>
                         <span class="status-text">Live</span>
                     </div>
-                    <div class="last-updated" id="lastUpdated">Updating...</div>
+                    <div class="last-update" id="lastUpdated">Loading...</div>
+                    <button class="btn-icon" id="refreshBtn" onclick="refreshData()" title="Refresh data">
+                        <svg class="refresh-icon" viewBox="0 0 24 24" fill="none">
+                            <path d="M1 4V10H7M23 20V14H17M20.49 9C19.66 6.61 17.61 4.67 15.09 3.82C10.47 2.23 5.4 4.67 3.81 9.29M3.51 15C4.34 17.39 6.39 19.33 8.91 20.18C13.53 21.77 18.6 19.33 20.19 14.71" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <button class="btn-nav" onclick="window.location.href='charts.html'">Charts →</button>
+                    <button class="btn-logout" id="logoutBtn" onclick="logout()">Logout</button>
                 </div>
+            </div>
+        </header>
 
-                <!-- KPI Cards Grid -->
-                <div class="kpi-grid">
-                    <!-- Philippines GMV -->
-                    <div class="kpi-card">
-                        <div class="kpi-header">
-                            <div class="kpi-icon" style="background: linear-gradient(135deg, rgba(245, 224, 3, 0.1) 0%, rgba(247, 149, 29, 0.1) 100%);">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#F5E003" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M2 17L12 22L22 17M2 12L12 17L22 12" stroke="#F5E003" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </div>
-                            <div class="kpi-title">
-                                <span class="kpi-label">PH GMV</span>
-                                <span class="country-flag">🇵🇭</span>
-                            </div>
-                        </div>
-                        <div class="kpi-value" id="ph-gmv">$0</div>
-                        <div class="kpi-trend" id="ph-gmv-trend">
-                            <span class="trend-indicator">↑</span>
-                            <span class="trend-text">vs last week</span>
-                        </div>
+        <!-- Main Dashboard Content -->
+        <main class="main-content">
+            <!-- Philippines Section -->
+            <section class="country-section">
+                <h2 class="country-title">
+                    <span class="flag">🇵🇭</span>
+                    <span>Philippines</span>
+                </h2>
+                <div class="metrics-row">
+                    <div class="metric-card">
+                        <div class="metric-label">GMV (USD)</div>
+                        <div class="metric-value" id="ph-gmv">$0</div>
+                        <div class="metric-change" id="ph-gmv-change">-</div>
                     </div>
-
-                    <!-- Philippines Orders -->
-                    <div class="kpi-card">
-                        <div class="kpi-header">
-                            <div class="kpi-icon" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                    <path d="M9 11H15M9 15H12M3 7H21M5 21H19C20.1046 21 21 20.1046 21 19V9C21 7.89543 20.1046 7 19 7H5C3.89543 7 3 7.89543 3 9V19C3 20.1046 3.89543 21 5 21Z" stroke="#3B82F6" stroke-width="2" stroke-linecap="round"/>
-                                </svg>
-                            </div>
-                            <div class="kpi-title">
-                                <span class="kpi-label">PH Orders</span>
-                                <span class="country-flag">🇵🇭</span>
-                            </div>
-                        </div>
-                        <div class="kpi-value" id="ph-orders">0</div>
-                        <div class="kpi-trend" id="ph-orders-trend">
-                            <span class="trend-indicator">↑</span>
-                            <span class="trend-text">vs last week</span>
-                        </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Orders</div>
+                        <div class="metric-value" id="ph-orders">0</div>
+                        <div class="metric-change" id="ph-orders-change">-</div>
                     </div>
-
-                    <!-- Vietnam GMV -->
-                    <div class="kpi-card">
-                        <div class="kpi-header">
-                            <div class="kpi-icon" style="background: linear-gradient(135deg, rgba(245, 224, 3, 0.1) 0%, rgba(247, 149, 29, 0.1) 100%);">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#F5E003" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M2 17L12 22L22 17M2 12L12 17L22 12" stroke="#F5E003" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </div>
-                            <div class="kpi-title">
-                                <span class="kpi-label">VN GMV</span>
-                                <span class="country-flag">🇻🇳</span>
-                            </div>
-                        </div>
-                        <div class="kpi-value" id="vn-gmv">$0</div>
-                        <div class="kpi-trend" id="vn-gmv-trend">
-                            <span class="trend-indicator">↑</span>
-                            <span class="trend-text">vs last week</span>
-                        </div>
-                    </div>
-
-                    <!-- Vietnam Orders -->
-                    <div class="kpi-card">
-                        <div class="kpi-header">
-                            <div class="kpi-icon" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                    <path d="M9 11H15M9 15H12M3 7H21M5 21H19C20.1046 21 21 20.1046 21 19V9C21 7.89543 20.1046 7 19 7H5C3.89543 7 3 7.89543 3 9V19C3 20.1046 3.89543 21 5 21Z" stroke="#3B82F6" stroke-width="2" stroke-linecap="round"/>
-                                </svg>
-                            </div>
-                            <div class="kpi-title">
-                                <span class="kpi-label">VN Orders</span>
-                                <span class="country-flag">🇻🇳</span>
-                            </div>
-                        </div>
-                        <div class="kpi-value" id="vn-orders">0</div>
-                        <div class="kpi-trend" id="vn-orders-trend">
-                            <span class="trend-indicator">↑</span>
-                            <span class="trend-text">vs last week</span>
-                        </div>
+                    <div class="metric-card">
+                        <div class="metric-label">AOV (USD)</div>
+                        <div class="metric-value" id="ph-aov">$0</div>
+                        <div class="metric-change" id="ph-aov-change">-</div>
                     </div>
                 </div>
-
-                <!-- Charts Section -->
-                <div class="charts-section">
-                    <div class="chart-container">
-                        <div class="chart-header">
-                            <h3 class="chart-title">Revenue Trend</h3>
-                            <div class="time-range-selector">
-                                <button class="time-btn" data-range="7">7D</button>
-                                <button class="time-btn active" data-range="15">15D</button>
-                                <button class="time-btn" data-range="30">30D</button>
-                            </div>
-                        </div>
-                        <div class="chart-body">
-                            <canvas id="revenueChart"></canvas>
-                        </div>
+                <div class="metrics-row">
+                    <div class="metric-card">
+                        <div class="metric-label">Buyers</div>
+                        <div class="metric-value" id="ph-buyers">0</div>
+                        <div class="metric-change" id="ph-buyers-change">-</div>
                     </div>
-
-                    <div class="chart-container">
-                        <div class="chart-header">
-                            <h3 class="chart-title">Orders Trend</h3>
-                            <div class="time-range-selector">
-                                <button class="time-btn" data-range="7">7D</button>
-                                <button class="time-btn active" data-range="15">15D</button>
-                                <button class="time-btn" data-range="30">30D</button>
-                            </div>
-                        </div>
-                        <div class="chart-body">
-                            <canvas id="ordersChart"></canvas>
-                        </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Frequency</div>
+                        <div class="metric-value" id="ph-frequency">0.00</div>
+                        <div class="metric-change" id="ph-frequency-change">-</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">GMV/POCs</div>
+                        <div class="metric-value" id="ph-gmv-poc">$0</div>
+                        <div class="metric-change" id="ph-gmv-poc-change">-</div>
                     </div>
                 </div>
+            </section>
 
-                <!-- Bottom Grid -->
-                <div class="bottom-grid">
-                    <!-- Data Table -->
-                    <div class="data-table-container">
-                        <div class="table-header">
-                            <h3 class="table-title">Performance Metrics</h3>
-                            <button class="export-btn">
-                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                    <path d="M14 10V12.6667C14 13.0203 13.8595 13.3594 13.6095 13.6095C13.3594 13.8595 13.0203 14 12.6667 14H3.33333C2.97971 14 2.64057 13.8595 2.39052 13.6095C2.14048 13.3594 2 13.0203 2 12.6667V10M11.3333 5.33333L8 2M8 2L4.66667 5.33333M8 2V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                                Export
-                            </button>
-                        </div>
-                        <div class="table-wrapper">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Country</th>
-                                        <th>GMV (USD)</th>
-                                        <th>Orders</th>
-                                        <th>AOV (USD)</th>
-                                        <th>Buyers</th>
-                                        <th>Frequency</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="dataTableBody">
-                                    <tr class="skeleton-row">
-                                        <td><div class="skeleton"></div></td>
-                                        <td><div class="skeleton"></div></td>
-                                        <td><div class="skeleton"></div></td>
-                                        <td><div class="skeleton"></div></td>
-                                        <td><div class="skeleton"></div></td>
-                                        <td><div class="skeleton"></div></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+            <!-- Vietnam Section -->
+            <section class="country-section">
+                <h2 class="country-title">
+                    <span class="flag">🇻🇳</span>
+                    <span>Vietnam</span>
+                </h2>
+                <div class="metrics-row">
+                    <div class="metric-card">
+                        <div class="metric-label">GMV (USD)</div>
+                        <div class="metric-value" id="vn-gmv">$0</div>
+                        <div class="metric-change" id="vn-gmv-change">-</div>
                     </div>
-
-                    <!-- Activity Feed -->
-                    <div class="activity-feed">
-                        <h3 class="feed-title">Recent Activity</h3>
-                        <div class="activity-list">
-                            <div class="activity-item">
-                                <div class="activity-icon success">
-                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                        <path d="M13.3333 4L6 11.3333L2.66667 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                </div>
-                                <div class="activity-content">
-                                    <div class="activity-text">Data updated successfully</div>
-                                    <div class="activity-time" id="activityTime1">Just now</div>
-                                </div>
-                            </div>
-                            <div class="activity-item">
-                                <div class="activity-icon info">
-                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                        <path d="M8 14C11.3137 14 14 11.3137 14 8C14 4.68629 11.3137 2 8 2C4.68629 2 2 4.68629 2 8C2 11.3137 4.68629 14 8 14Z" stroke="currentColor" stroke-width="1.5"/>
-                                        <path d="M8 8V11M8 5H8.00667" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                    </svg>
-                                </div>
-                                <div class="activity-content">
-                                    <div class="activity-text">PH market showing +78% growth</div>
-                                    <div class="activity-time">5 mins ago</div>
-                                </div>
-                            </div>
-                            <div class="activity-item">
-                                <div class="activity-icon warning">
-                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                        <path d="M8 5.33333V8M8 10.6667H8.00667M14 8C14 11.3137 11.3137 14 8 14C4.68629 14 2 11.3137 2 8C2 4.68629 4.68629 2 8 2C11.3137 2 14 4.68629 14 8Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                    </svg>
-                                </div>
-                                <div class="activity-content">
-                                    <div class="activity-text">Low order volume in VN today</div>
-                                    <div class="activity-time">12 mins ago</div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Orders</div>
+                        <div class="metric-value" id="vn-orders">0</div>
+                        <div class="metric-change" id="vn-orders-change">-</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">AOV (USD)</div>
+                        <div class="metric-value" id="vn-aov">$0</div>
+                        <div class="metric-change" id="vn-aov-change">-</div>
                     </div>
                 </div>
-            </main>
-        </div>
+                <div class="metrics-row">
+                    <div class="metric-card">
+                        <div class="metric-label">Buyers</div>
+                        <div class="metric-value" id="vn-buyers">0</div>
+                        <div class="metric-change" id="vn-buyers-change">-</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Frequency</div>
+                        <div class="metric-value" id="vn-frequency">0.00</div>
+                        <div class="metric-change" id="vn-frequency-change">-</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">GMV/POCs</div>
+                        <div class="metric-value" id="vn-gmv-poc">$0</div>
+                        <div class="metric-change" id="vn-gmv-poc-change">-</div>
+                    </div>
+                </div>
+            </section>
+        </main>
     </div>
-
-    <!-- Mobile Bottom Navigation -->
-    <nav class="mobile-nav">
-        <a href="#" class="mobile-nav-item active">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <rect x="3" y="3" width="7" height="7" stroke="currentColor" stroke-width="2"/>
-                <rect x="14" y="3" width="7" height="7" stroke="currentColor" stroke-width="2"/>
-                <rect x="14" y="14" width="7" height="7" stroke="currentColor" stroke-width="2"/>
-                <rect x="3" y="14" width="7" height="7" stroke="currentColor" stroke-width="2"/>
-            </svg>
-            <span>Home</span>
-        </a>
-        <a href="#" class="mobile-nav-item">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M3 3V21H21M7 16L12 11L16 15L21 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <span>Charts</span>
-        </a>
-        <a href="#" class="mobile-nav-item">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M9 11H15M9 15H12M3 7H21M5 21H19C20.1046 21 21 20.1046 21 19V9C21 7.89543 20.1046 7 19 7H5C3.89543 7 3 7.89543 3 9V19C3 20.1046 3.89543 21 5 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-            <span>Orders</span>
-        </a>
-        <a href="#" class="mobile-nav-item">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
-                <path d="M12 1V3M12 21V23M4.22 4.22L5.64 5.64M18.36 18.36L19.78 19.78M1 12H3M21 12H23M4.22 19.78L5.64 18.36M18.36 5.64L19.78 4.22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-            <span>More</span>
-        </a>
-    </nav>
 
     <script src="app.js"></script>
 </body>
