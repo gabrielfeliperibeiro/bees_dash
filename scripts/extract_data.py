@@ -71,7 +71,7 @@ def connect_to_databricks(max_retries=3, retry_delay_seconds=[0, 10, 20]):
     return None
 
 
-def query_orders(connection, country, start_date, end_date):
+def query_orders(connection, country, start_date, end_date, hour_limit=None):
     """
     Query orders from Databricks for a specific country and date range.
 
@@ -80,12 +80,18 @@ def query_orders(connection, country, start_date, end_date):
         country: Country code (PH or VN)
         start_date: Start date (inclusive)
         end_date: End date (inclusive)
+        hour_limit: Optional hour limit (0-23) for same-time comparisons
 
     Returns:
-        pandas DataFrame with order data (placement_date is in UTC)
+        pandas DataFrame with order data
     """
     # Timezone offset for each country
     tz_offset = 8 if country == 'PH' else 7  # PH: UTC+8, VN: UTC+7
+
+    # Build hour filter if provided
+    hour_filter = ""
+    if hour_limit is not None:
+        hour_filter = f"AND HOUR(createAt + INTERVAL {tz_offset} HOUR) <= {hour_limit}"
 
     # Build query based on country for production tables
     # Use QUALIFY to deduplicate append-only table data
@@ -94,7 +100,7 @@ def query_orders(connection, country, start_date, end_date):
         query = f"""
         SELECT
             'PH' AS country,
-            placementDate AS placement_date,
+            createAt AS placement_date,
             orderNumber AS order_number,
             total AS order_gmv,
             total/56.017 AS order_gmv_usd,
@@ -103,16 +109,17 @@ def query_orders(connection, country, start_date, end_date):
             status AS order_status,
             channel
         FROM ptn_am.silver.daily_orders_consolidated
-        WHERE TO_DATE(DATE_TRUNC('DAY', placementDate + INTERVAL {tz_offset} HOUR)) >= '{start_date}'
-        AND TO_DATE(DATE_TRUNC('DAY', placementDate + INTERVAL {tz_offset} HOUR)) <= '{end_date}'
+        WHERE TO_DATE(DATE_TRUNC('DAY', createAt + INTERVAL {tz_offset} HOUR)) >= '{start_date}'
+        AND TO_DATE(DATE_TRUNC('DAY', createAt + INTERVAL {tz_offset} HOUR)) <= '{end_date}'
         AND channel != 'SALESMAN'
-        QUALIFY ROW_NUMBER() OVER(PARTITION BY orderNumber ORDER BY load_timestamp_utc DESC) = 1
+        {hour_filter}
+        QUALIFY ROW_NUMBER() OVER(PARTITION BY orderNumber ORDER BY createAt DESC) = 1
         """
     else:  # VN
         query = f"""
         SELECT
             'VN' AS country,
-            placementDate AS placement_date,
+            createAt AS placement_date,
             orderNumber AS order_number,
             total AS order_gmv,
             total/26416 AS order_gmv_usd,
@@ -121,10 +128,11 @@ def query_orders(connection, country, start_date, end_date):
             status AS order_status,
             channel
         FROM ptn_am.silver.vn_daily_orders_consolidated
-        WHERE TO_DATE(DATE_TRUNC('DAY', placementDate + INTERVAL {tz_offset} HOUR)) >= '{start_date}'
-        AND TO_DATE(DATE_TRUNC('DAY', placementDate + INTERVAL {tz_offset} HOUR)) <= '{end_date}'
+        WHERE TO_DATE(DATE_TRUNC('DAY', createAt + INTERVAL {tz_offset} HOUR)) >= '{start_date}'
+        AND TO_DATE(DATE_TRUNC('DAY', createAt + INTERVAL {tz_offset} HOUR)) <= '{end_date}'
         AND channel != 'SALESMAN'
-        QUALIFY ROW_NUMBER() OVER(PARTITION BY orderNumber ORDER BY load_timestamp_utc DESC) = 1
+        {hour_filter}
+        QUALIFY ROW_NUMBER() OVER(PARTITION BY orderNumber ORDER BY createAt DESC) = 1
         """
 
     logger.info(f"Querying orders for {country} from {start_date} to {end_date}")
@@ -437,13 +445,25 @@ def main():
         for country in COUNTRIES:
             logger.info(f"Processing {country}...")
 
-            # Query all data needed (last 15 days)
+            # Get current hour in country's timezone for same-time comparison
+            country_tz = TIMEZONES.get(country)
+            current_time = datetime.now(country_tz)
+            current_hour = current_time.hour
+
+            logger.info(f"{country} - Current time: {current_time.strftime('%Y-%m-%d %H:%M:%S')} ({country_tz})")
+            logger.info(f"{country} - Using hour limit: {current_hour} for same-time comparison")
+
+            # Query all data needed (last 15 days) - no hour filter
             df_all = query_orders(connection, country, history_start, today)
 
-            # Query last week full day data (no time filtering - compare full days)
-            df_last_week = query_orders(connection, country, same_day_last_week, same_day_last_week)
+            # Query today's data with hour limit (up to current hour)
+            df_today_limited = query_orders(connection, country, today, today, hour_limit=current_hour)
 
-            logger.info(f"{country} - Retrieved {len(df_last_week)} orders for last week ({same_day_last_week})")
+            # Query last week data with same hour limit
+            df_last_week = query_orders(connection, country, same_day_last_week, same_day_last_week, hour_limit=current_hour)
+
+            logger.info(f"{country} - Today (up to {current_hour}:00): {len(df_today_limited)} orders")
+            logger.info(f"{country} - Last week (up to {current_hour}:00): {len(df_last_week)} orders")
 
             if df_all.empty:
                 logger.warning(f"No data for {country}, creating empty output...")
@@ -464,12 +484,12 @@ def main():
             # Filter for different time periods (handle mixed ISO8601 formats)
             df_all["date"] = pd.to_datetime(df_all["placement_date"], format='mixed', utc=True).dt.date
 
-            df_today = df_all[df_all["date"] == today]
+            df_today_full = df_all[df_all["date"] == today]
             df_mtd = df_all[df_all["date"] >= mtd_start]
 
-            # Calculate metrics
-            metrics_today = calculate_metrics(df_today, country)
-            metrics_last_week = calculate_metrics(df_last_week, country)  # Compare full days
+            # Calculate metrics using hour-limited data for fair comparison
+            metrics_today = calculate_metrics(df_today_limited, country)
+            metrics_last_week = calculate_metrics(df_last_week, country)
             metrics_mtd = calculate_metrics(df_mtd, country)
 
             # Calculate daily history
@@ -479,8 +499,8 @@ def main():
             ma_7d = calculate_moving_average(daily_metrics, 7)
             ma_15d = calculate_moving_average(daily_metrics, 15)
 
-            # Calculate channel metrics
-            channel_metrics_today = calculate_channel_metrics(df_today, country)
+            # Calculate channel metrics using full day data
+            channel_metrics_today = calculate_channel_metrics(df_today_full, country)
             channel_metrics_mtd = calculate_channel_metrics(df_mtd, country)
 
             # Generate and save JSON

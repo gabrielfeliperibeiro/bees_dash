@@ -172,12 +172,14 @@ function createChart(country, data) {
                     labels: {
                         color: '#FFFFFF',
                         font: {
-                            size: 18,
+                            size: 20,
                             weight: 'bold'
                         },
-                        padding: 20,
+                        padding: 25,
                         usePointStyle: true,
-                        pointStyle: 'circle'
+                        pointStyle: 'circle',
+                        boxWidth: 15,
+                        boxHeight: 15
                     }
                 },
                 tooltip: {
@@ -212,7 +214,7 @@ function createChart(country, data) {
                     ticks: {
                         color: 'rgba(255, 255, 255, 0.7)',
                         font: {
-                            size: 16,
+                            size: 18,
                             weight: '600'
                         }
                     },
@@ -227,7 +229,7 @@ function createChart(country, data) {
                     ticks: {
                         color: '#F5E003',
                         font: {
-                            size: 16,
+                            size: 18,
                             weight: 'bold'
                         },
                         callback: function(value) {
@@ -243,7 +245,7 @@ function createChart(country, data) {
                         text: 'GMV (USD)',
                         color: '#F5E003',
                         font: {
-                            size: 18,
+                            size: 20,
                             weight: 'bold'
                         }
                     }
@@ -254,7 +256,7 @@ function createChart(country, data) {
                     ticks: {
                         color: '#10B981',
                         font: {
-                            size: 16,
+                            size: 18,
                             weight: 'bold'
                         }
                     },
@@ -266,7 +268,7 @@ function createChart(country, data) {
                         text: 'Orders',
                         color: '#10B981',
                         font: {
-                            size: 18,
+                            size: 20,
                             weight: 'bold'
                         }
                     }
@@ -378,12 +380,26 @@ function formatValue(value, isCurrency, decimals = 0) {
         return isCurrency ? '$0' : '0';
     }
 
-    const formatted = value.toLocaleString('en-US', {
+    // For large numbers, use K/M abbreviations to prevent overflow
+    let displayValue = value;
+    let suffix = '';
+
+    if (isCurrency && value >= 1000000) {
+        displayValue = value / 1000000;
+        suffix = 'M';
+        decimals = Math.max(decimals, 1);
+    } else if (isCurrency && value >= 10000) {
+        displayValue = value / 1000;
+        suffix = 'K';
+        decimals = Math.max(decimals, 0);
+    }
+
+    const formatted = displayValue.toLocaleString('en-US', {
         minimumFractionDigits: decimals,
         maximumFractionDigits: decimals
     });
 
-    return isCurrency ? `$${formatted}` : formatted;
+    return isCurrency ? `$${formatted}${suffix}` : formatted;
 }
 
 /* ============================================================================
