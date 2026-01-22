@@ -440,6 +440,52 @@ def save_json_file(data, country):
         raise
 
 
+def cleanup_old_versions(keep_versions=5):
+    """
+    Clean up old versioned data files, keeping only the most recent versions.
+
+    Args:
+        keep_versions: Number of recent versions to keep (default: 5)
+    """
+    logger.info(f"Cleaning up old versioned files (keeping {keep_versions} versions)...")
+
+    for country in COUNTRIES:
+        country_lower = country.lower()
+        pattern = f"{DATA_DIR}/{country_lower}-*.json"
+
+        # Find all versioned files for this country
+        versioned_files = []
+        for filepath in Path(DATA_DIR).glob(f"{country_lower}-*.json"):
+            # Extract timestamp from filename (e.g., ph-1769057744.json -> 1769057744)
+            filename = filepath.name
+            try:
+                timestamp_str = filename.replace(f"{country_lower}-", "").replace(".json", "")
+                timestamp = int(timestamp_str)
+                versioned_files.append((timestamp, filepath))
+            except ValueError:
+                # Skip files that don't match the versioned pattern
+                continue
+
+        # Sort by timestamp (newest first)
+        versioned_files.sort(reverse=True, key=lambda x: x[0])
+
+        # Keep only the most recent versions
+        files_to_delete = versioned_files[keep_versions:]
+
+        # Delete old versions
+        for timestamp, filepath in files_to_delete:
+            try:
+                filepath.unlink()
+                logger.info(f"Deleted old version: {filepath.name}")
+            except Exception as e:
+                logger.warning(f"Failed to delete {filepath.name}: {e}")
+
+        if files_to_delete:
+            logger.info(f"{country} - Deleted {len(files_to_delete)} old version(s)")
+        else:
+            logger.info(f"{country} - No old versions to delete")
+
+
 def main():
     """Main execution function."""
     logger.info("Starting data extraction...")
@@ -511,6 +557,29 @@ def main():
             # Calculate daily history
             daily_metrics = calculate_daily_metrics(df_all, country)
 
+            # Replace today's entry with hour-limited data to match the boxes
+            today_str = today.strftime('%Y-%m-%d')
+            today_daily_metric = {
+                "total_gmv": metrics_today["total_gmv"],
+                "total_gmv_usd": metrics_today["total_gmv_usd"],
+                "orders": metrics_today["orders"],
+                "unique_buyers": metrics_today["unique_buyers"],
+                "unique_vendors": metrics_today["unique_vendors"],
+                "aov": metrics_today["aov"],
+                "aov_usd": metrics_today["aov_usd"],
+                "frequency": metrics_today["frequency"],
+                "gmv_per_poc": metrics_today["gmv_per_poc"],
+                "gmv_per_poc_usd": metrics_today["gmv_per_poc_usd"],
+                "date": today_str
+            }
+
+            # Find and replace today's entry in daily_metrics
+            for i, metric in enumerate(daily_metrics):
+                if metric["date"] == today_str:
+                    daily_metrics[i] = today_daily_metric
+                    logger.info(f"{country} - Updated today's chart data to match hour-limited boxes ({metrics_today['orders']} orders)")
+                    break
+
             # Calculate moving averages
             ma_7d = calculate_moving_average(daily_metrics, 7)
             ma_15d = calculate_moving_average(daily_metrics, 15)
@@ -546,6 +615,9 @@ def main():
         with open(manifest_file, "w") as f:
             json.dump(manifest_data, f, indent=2)
         logger.info(f"Saved manifest to {manifest_file}")
+
+        # Clean up old versioned files
+        cleanup_old_versions(keep_versions=5)
 
         connection.close()
         logger.info("Data extraction completed successfully")
