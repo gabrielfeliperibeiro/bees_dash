@@ -24,7 +24,11 @@ const state = {
     },
     lastFetch: null,
     refreshTimer: null,
-    statusTimer: null
+    statusTimer: null,
+    charts: {
+        ph: null,
+        vn: null
+    }
 };
 
 /* ============================================================================
@@ -77,6 +81,202 @@ async function loadDashboardData() {
 }
 
 /* ============================================================================
+   CHART CREATION - Huge visualizations with moving averages
+   ============================================================================ */
+
+function createChart(country, data) {
+    const canvasId = `${country}-chart`;
+    const canvas = document.getElementById(canvasId);
+
+    if (!canvas || !data || !data.daily_history) {
+        console.warn(`[CHART] Cannot create chart for ${country}`);
+        return;
+    }
+
+    // Destroy existing chart if it exists
+    if (state.charts[country]) {
+        state.charts[country].destroy();
+    }
+
+    // Prepare data from daily_history
+    const history = data.daily_history.slice().reverse(); // Oldest to newest
+    const dates = history.map(d => {
+        const date = new Date(d.date);
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    });
+    const gmvData = history.map(d => d.total_gmv_usd);
+    const ordersData = history.map(d => d.orders);
+
+    // Get moving averages (constant lines)
+    const ma7gmv = data.moving_averages?.ma_7d?.gmv || 0;
+    const ma15gmv = data.moving_averages?.ma_15d?.gmv || 0;
+
+    // Create chart
+    const ctx = canvas.getContext('2d');
+    state.charts[country] = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: dates,
+            datasets: [
+                {
+                    label: 'GMV (USD)',
+                    data: gmvData,
+                    borderColor: '#F5E003',
+                    backgroundColor: 'rgba(245, 224, 3, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true,
+                    yAxisID: 'y-gmv'
+                },
+                {
+                    label: 'Orders',
+                    data: ordersData,
+                    borderColor: '#10B981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true,
+                    yAxisID: 'y-orders'
+                },
+                {
+                    label: '7-Day MA (GMV)',
+                    data: Array(dates.length).fill(ma7gmv),
+                    borderColor: 'rgba(245, 224, 3, 0.5)',
+                    borderWidth: 2,
+                    borderDash: [5, 5],
+                    pointRadius: 0,
+                    yAxisID: 'y-gmv'
+                },
+                {
+                    label: '15-Day MA (GMV)',
+                    data: Array(dates.length).fill(ma15gmv),
+                    borderColor: 'rgba(245, 224, 3, 0.3)',
+                    borderWidth: 2,
+                    borderDash: [10, 5],
+                    pointRadius: 0,
+                    yAxisID: 'y-gmv'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        color: '#FFFFFF',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        padding: 15
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                    titleColor: '#F5E003',
+                    bodyColor: '#FFFFFF',
+                    borderColor: '#F5E003',
+                    borderWidth: 1,
+                    padding: 12,
+                    displayColors: true,
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (label.includes('GMV') || label.includes('MA')) {
+                                label += '$' + context.parsed.y.toLocaleString('en-US', {
+                                    minimumFractionDigits: 0,
+                                    maximumFractionDigits: 0
+                                });
+                            } else {
+                                label += context.parsed.y.toLocaleString('en-US');
+                            }
+                            return label;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        font: {
+                            size: 12,
+                            weight: '600'
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)',
+                        drawBorder: false
+                    }
+                },
+                'y-gmv': {
+                    type: 'linear',
+                    position: 'left',
+                    ticks: {
+                        color: '#F5E003',
+                        font: {
+                            size: 12,
+                            weight: 'bold'
+                        },
+                        callback: function(value) {
+                            return '$' + (value / 1000).toFixed(0) + 'K';
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(245, 224, 3, 0.1)',
+                        drawBorder: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'GMV (USD)',
+                        color: '#F5E003',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
+                    }
+                },
+                'y-orders': {
+                    type: 'linear',
+                    position: 'right',
+                    ticks: {
+                        color: '#10B981',
+                        font: {
+                            size: 12,
+                            weight: 'bold'
+                        }
+                    },
+                    grid: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Orders',
+                        color: '#10B981',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    console.log(`[CHART] Created chart for ${country.toUpperCase()}`);
+}
+
+/* ============================================================================
    UI UPDATE - Simple, direct DOM manipulation
    ============================================================================ */
 
@@ -86,6 +286,10 @@ function updateUI() {
     updateCountry('ph', state.data.ph);
     updateCountry('vn', state.data.vn);
     updateStatusIndicator();
+
+    // Update charts
+    createChart('ph', state.data.ph);
+    createChart('vn', state.data.vn);
 
     console.log('[UI] UI updated successfully');
 }

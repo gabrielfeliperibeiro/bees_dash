@@ -285,6 +285,25 @@ body {
 }
 
 /* ===================================================================
+   CHARTS SECTION - Huge visualizations below metrics
+   =================================================================== */
+
+.charts-section {
+    width: 100%;
+    margin-top: clamp(16px, 2vh, 32px);
+    padding: clamp(16px, 2vw, 48px);
+    background: linear-gradient(135deg, rgba(245, 224, 3, 0.08) 0%, rgba(245, 224, 3, 0.02) 100%);
+    border: 2px solid rgba(245, 224, 3, 0.2);
+    border-radius: clamp(12px, 1.5vw, 24px);
+    min-height: clamp(300px, 40vh, 600px);
+}
+
+.charts-section canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* ===================================================================
    RESPONSIVE BREAKPOINTS - Fully Adaptive
    =================================================================== */
 
