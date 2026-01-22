@@ -285,6 +285,244 @@ body {
 }
 
 /* ===================================================================
+   CHARTS PAGE - Dedicated analytics page
+   =================================================================== */
+
+.charts-page {
+    background: var(--bees-black);
+}
+
+.charts-page .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: clamp(16px, 2vw, 32px);
+}
+
+.charts-page .header {
+    margin-bottom: clamp(24px, 3vh, 48px);
+}
+
+.charts-page .header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: clamp(16px, 2vw, 32px);
+}
+
+.charts-page .logo {
+    font-size: var(--font-title);
+    font-weight: 900;
+    color: var(--bees-gold);
+    margin: 0;
+}
+
+.charts-page .header-info {
+    display: flex;
+    align-items: center;
+    gap: clamp(12px, 1.5vw, 24px);
+    flex-wrap: wrap;
+}
+
+.charts-page .timezone-info {
+    font-size: var(--font-header);
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 600;
+}
+
+.charts-page .nav-btn,
+.charts-page .refresh-btn,
+.charts-page .logout-btn {
+    padding: clamp(8px, 1vw, 12px) clamp(16px, 2vw, 24px);
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(245, 224, 3, 0.3);
+    border-radius: clamp(8px, 1vw, 12px);
+    color: var(--bees-gold);
+    font-size: var(--font-header);
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.charts-page .nav-btn:hover,
+.charts-page .refresh-btn:hover,
+.charts-page .logout-btn:hover {
+    background: var(--bees-gold);
+    color: var(--bees-black);
+    border-color: var(--bees-gold);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(245, 224, 3, 0.4);
+}
+
+.charts-page .refresh-icon {
+    font-size: 1.2em;
+}
+
+.charts-page .refresh-btn.refreshing .refresh-icon {
+    display: inline-block;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.charts-page .country-dashboard {
+    margin-bottom: clamp(48px, 6vh, 96px);
+    padding: clamp(24px, 3vw, 48px);
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(10, 10, 10, 0.95) 100%);
+    border: 3px solid var(--bees-gold);
+    border-radius: clamp(16px, 2vw, 32px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.charts-page .section-title {
+    font-size: clamp(1.2rem, 2vw, 1.8rem);
+    font-weight: 800;
+    color: var(--bees-gold);
+    margin-bottom: clamp(16px, 2vh, 24px);
+}
+
+.charts-page .channel-breakdown-section {
+    margin-bottom: clamp(32px, 4vh, 48px);
+}
+
+.charts-page .channel-metrics {
+    display: grid;
+    gap: clamp(16px, 2vw, 24px);
+}
+
+.charts-page .channel-item {
+    padding: clamp(16px, 2vw, 24px);
+    background: rgba(245, 224, 3, 0.05);
+    border: 2px solid rgba(245, 224, 3, 0.2);
+    border-radius: clamp(8px, 1vw, 12px);
+}
+
+.charts-page .channel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.charts-page .channel-name {
+    font-size: clamp(1rem, 1.5vw, 1.4rem);
+    font-weight: 700;
+    color: #FFFFFF;
+}
+
+.charts-page .channel-value {
+    font-size: clamp(1.2rem, 1.8vw, 1.6rem);
+    font-weight: 900;
+    color: var(--bees-gold);
+}
+
+.charts-page .channel-bar-container {
+    position: relative;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    margin-bottom: 12px;
+    overflow: hidden;
+}
+
+.charts-page .channel-bar {
+    height: 100%;
+    transition: width 0.6s ease;
+    border-radius: 8px;
+    position: relative;
+}
+
+.charts-page .customer-bar {
+    background: linear-gradient(90deg, #10B981, #059669);
+}
+
+.charts-page .cx-tlp-bar {
+    background: linear-gradient(90deg, #F59E0B, #D97706);
+}
+
+.charts-page .channel-percent {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #FFFFFF;
+}
+
+.charts-page .channel-details {
+    font-size: clamp(0.9rem, 1.2vw, 1.1rem);
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 600;
+}
+
+.charts-page .charts-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(24px, 3vw, 48px);
+    margin-bottom: clamp(32px, 4vh, 48px);
+}
+
+.charts-page .chart-container {
+    padding: clamp(16px, 2vw, 24px);
+    background: rgba(245, 224, 3, 0.05);
+    border: 2px solid rgba(245, 224, 3, 0.2);
+    border-radius: clamp(8px, 1vw, 12px);
+    min-height: 300px;
+}
+
+.charts-page .chart-container canvas {
+    width: 100% !important;
+    height: 250px !important;
+}
+
+.charts-page .comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: clamp(0.9rem, 1.2vw, 1.1rem);
+}
+
+.charts-page .comparison-table thead {
+    background: rgba(245, 224, 3, 0.1);
+}
+
+.charts-page .comparison-table th {
+    padding: clamp(12px, 1.5vw, 16px);
+    text-align: left;
+    font-weight: 800;
+    color: var(--bees-gold);
+    border-bottom: 2px solid var(--bees-gold);
+}
+
+.charts-page .comparison-table td {
+    padding: clamp(10px, 1.2vw, 14px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: #FFFFFF;
+    font-weight: 600;
+}
+
+.charts-page .comparison-table tr:hover {
+    background: rgba(245, 224, 3, 0.05);
+}
+
+.charts-page .comparison-table .positive {
+    color: var(--success);
+}
+
+.charts-page .comparison-table .negative {
+    color: var(--danger);
+}
+
+@media (max-width: 1023px) {
+    .charts-page .charts-section {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ===================================================================
    CHARTS SECTION - Huge visualizations below metrics
    =================================================================== */
 
