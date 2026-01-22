@@ -94,6 +94,7 @@ def query_orders(connection, country, start_date, end_date, end_time=None):
 
     # Build query based on country for production tables
     # Use QUALIFY to deduplicate append-only table data
+    # Exclude SALESMAN channel from analysis
     if country == 'PH':
         query = f"""
         SELECT
@@ -109,6 +110,7 @@ def query_orders(connection, country, start_date, end_date, end_time=None):
         FROM ptn_am.silver.daily_orders_consolidated
         WHERE TO_DATE(DATE_TRUNC('DAY', placementDate + INTERVAL {tz_offset} HOUR)) >= '{start_date}'
         AND TO_DATE(DATE_TRUNC('DAY', placementDate + INTERVAL {tz_offset} HOUR)) <= '{end_date}'
+        AND channel != 'SALESMAN'
         {time_filter}
         QUALIFY ROW_NUMBER() OVER(PARTITION BY orderNumber ORDER BY load_timestamp_utc DESC) = 1
         """
@@ -127,6 +129,7 @@ def query_orders(connection, country, start_date, end_date, end_time=None):
         FROM ptn_am.silver.vn_daily_orders_consolidated
         WHERE TO_DATE(DATE_TRUNC('DAY', placementDate + INTERVAL {tz_offset} HOUR)) >= '{start_date}'
         AND TO_DATE(DATE_TRUNC('DAY', placementDate + INTERVAL {tz_offset} HOUR)) <= '{end_date}'
+        AND channel != 'SALESMAN'
         {time_filter}
         QUALIFY ROW_NUMBER() OVER(PARTITION BY orderNumber ORDER BY load_timestamp_utc DESC) = 1
         """
