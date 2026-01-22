@@ -457,8 +457,10 @@ def main():
 
             # Filter last week data by time in Python (more reliable than SQL timezone handling)
             if not df_last_week.empty:
-                # Convert placement_date (UTC) to local timezone
-                df_last_week['placement_datetime_local'] = pd.to_datetime(df_last_week['placement_date']).dt.tz_localize('UTC').dt.tz_convert(country_tz)
+                # Convert placement_date to pandas datetime
+                df_last_week['placement_datetime'] = pd.to_datetime(df_last_week['placement_date'], utc=True)
+                # Convert from UTC to local timezone
+                df_last_week['placement_datetime_local'] = df_last_week['placement_datetime'].dt.tz_convert(country_tz)
                 # Filter to only orders before the cutoff time
                 df_last_week_cutoff = df_last_week[df_last_week['placement_datetime_local'] <= last_week_time].copy()
                 logger.info(f"{country} - Filtered {len(df_last_week)} orders to {len(df_last_week_cutoff)} orders before {last_week_time_str}")
