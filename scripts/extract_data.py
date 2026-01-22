@@ -111,7 +111,7 @@ def query_orders(connection, country, start_date, end_date, hour_limit=None):
         FROM ptn_am.silver.daily_orders_consolidated
         WHERE TO_DATE(DATE_TRUNC('DAY', createAt + INTERVAL {tz_offset} HOUR)) >= '{start_date}'
         AND TO_DATE(DATE_TRUNC('DAY', createAt + INTERVAL {tz_offset} HOUR)) <= '{end_date}'
-        AND channel != 'SALESMAN'
+        AND channel NOT IN ('SALESMAN')
         {hour_filter}
         QUALIFY ROW_NUMBER() OVER(PARTITION BY orderNumber ORDER BY createAt DESC) = 1
         """
@@ -130,7 +130,7 @@ def query_orders(connection, country, start_date, end_date, hour_limit=None):
         FROM ptn_am.silver.vn_daily_orders_consolidated
         WHERE TO_DATE(DATE_TRUNC('DAY', createAt + INTERVAL {tz_offset} HOUR)) >= '{start_date}'
         AND TO_DATE(DATE_TRUNC('DAY', createAt + INTERVAL {tz_offset} HOUR)) <= '{end_date}'
-        AND channel != 'SALESMAN'
+        AND channel NOT IN ('SALESMAN', 'NON-BEES')
         {hour_filter}
         QUALIFY ROW_NUMBER() OVER(PARTITION BY orderNumber ORDER BY createAt DESC) = 1
         """
