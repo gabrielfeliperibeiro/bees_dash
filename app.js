@@ -5,6 +5,10 @@
 
 // Configuration
 const CONFIG = {
+    // BYPASS GitHub Pages deployment delay by fetching directly from GitHub repo
+    // Updates in ~30 seconds instead of 5-15 minutes
+    useDirectGitHub: true,
+    githubRaw: 'https://raw.githubusercontent.com/gabrielfeliperibeiro/bees_dash/main',
     dataFiles: {
         ph: 'data/ph.json',
         vn: 'data/vn.json'
@@ -36,7 +40,16 @@ const state = {
    ============================================================================ */
 
 async function fetchJSON(url) {
-    const response = await fetch(url + '?t=' + Date.now(), {
+    // If useDirectGitHub is enabled, fetch from GitHub raw instead of Pages
+    // This updates in ~30 seconds vs 5-15 minutes for Pages deployment
+    let fetchUrl = url;
+
+    if (CONFIG.useDirectGitHub && url.startsWith('data/')) {
+        fetchUrl = `${CONFIG.githubRaw}/${url}`;
+        console.log(`[DIRECT GITHUB] Fetching from: ${fetchUrl}`);
+    }
+
+    const response = await fetch(fetchUrl + '?t=' + Date.now(), {
         cache: 'no-store',
         headers: {
             'Cache-Control': 'no-cache, no-store, must-revalidate',
