@@ -71,7 +71,7 @@ def connect_to_databricks(max_retries=3, retry_delay_seconds=[0, 10, 20]):
     return None
 
 
-def query_orders(connection, country, start_date, end_date, end_time=None):
+def query_orders(connection, country, start_date, end_date):
     """
     Query orders from Databricks for a specific country and date range.
 
@@ -80,21 +80,12 @@ def query_orders(connection, country, start_date, end_date, end_time=None):
         country: Country code (PH or VN)
         start_date: Start date (inclusive)
         end_date: End date (inclusive)
-        end_time: Optional end time (for same-time-last-week comparisons)
 
     Returns:
-        pandas DataFrame with order data
+        pandas DataFrame with order data (placement_date is in UTC)
     """
-    # Timezone offset and timezone name for each country
+    # Timezone offset for each country
     tz_offset = 8 if country == 'PH' else 7  # PH: UTC+8, VN: UTC+7
-    tz_name = 'Asia/Manila' if country == 'PH' else 'Asia/Ho_Chi_Minh'
-
-    # Build time filter if end_time provided
-    # Use explicit timezone conversion in SQL to ensure correct comparison
-    time_filter = ""
-    if end_time:
-        # Convert UTC placementDate to local timezone and compare
-        time_filter = f"AND CAST(from_utc_timestamp(placementDate, '{tz_name}') AS TIMESTAMP) <= CAST('{end_time}' AS TIMESTAMP)"
 
     # Build query based on country for production tables
     # Use QUALIFY to deduplicate append-only table data
@@ -115,7 +106,6 @@ def query_orders(connection, country, start_date, end_date, end_time=None):
         WHERE TO_DATE(DATE_TRUNC('DAY', placementDate + INTERVAL {tz_offset} HOUR)) >= '{start_date}'
         AND TO_DATE(DATE_TRUNC('DAY', placementDate + INTERVAL {tz_offset} HOUR)) <= '{end_date}'
         AND channel != 'SALESMAN'
-        {time_filter}
         QUALIFY ROW_NUMBER() OVER(PARTITION BY orderNumber ORDER BY load_timestamp_utc DESC) = 1
         """
     else:  # VN
@@ -134,7 +124,6 @@ def query_orders(connection, country, start_date, end_date, end_time=None):
         WHERE TO_DATE(DATE_TRUNC('DAY', placementDate + INTERVAL {tz_offset} HOUR)) >= '{start_date}'
         AND TO_DATE(DATE_TRUNC('DAY', placementDate + INTERVAL {tz_offset} HOUR)) <= '{end_date}'
         AND channel != 'SALESMAN'
-        {time_filter}
         QUALIFY ROW_NUMBER() OVER(PARTITION BY orderNumber ORDER BY load_timestamp_utc DESC) = 1
         """
 
@@ -460,15 +449,21 @@ def main():
             logger.info(f"{country} - Current time: {current_time_str} ({country_tz})")
             logger.info(f"{country} - Last week cutoff: {last_week_time_str} ({country_tz})")
 
-            # Query all data needed (last 15 days) - no time filter
+            # Query all data needed (last 15 days)
             df_all = query_orders(connection, country, history_start, today)
 
-            # Query last week data with time cutoff (up to same time as now)
-            # Pass local time - SQL query will handle timezone conversion
-            df_last_week_cutoff = query_orders(
-                connection, country, same_day_last_week, same_day_last_week,
-                end_time=last_week_time_str
-            )
+            # Query last week full day data
+            df_last_week = query_orders(connection, country, same_day_last_week, same_day_last_week)
+
+            # Filter last week data by time in Python (more reliable than SQL timezone handling)
+            if not df_last_week.empty:
+                # Convert placement_date (UTC) to local timezone
+                df_last_week['placement_datetime_local'] = pd.to_datetime(df_last_week['placement_date']).dt.tz_localize('UTC').dt.tz_convert(country_tz)
+                # Filter to only orders before the cutoff time
+                df_last_week_cutoff = df_last_week[df_last_week['placement_datetime_local'] <= last_week_time].copy()
+                logger.info(f"{country} - Filtered {len(df_last_week)} orders to {len(df_last_week_cutoff)} orders before {last_week_time_str}")
+            else:
+                df_last_week_cutoff = df_last_week
 
             if df_all.empty:
                 logger.warning(f"No data for {country}, creating empty output...")
