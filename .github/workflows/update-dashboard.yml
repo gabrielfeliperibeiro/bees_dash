@@ -2,8 +2,9 @@ name: Update Dashboard Data
 
 on:
   schedule:
-    # Run every 5 minutes
-    - cron: '*/5 * * * *'
+    # Run once per hour at minute 1 (00:01, 01:01, 02:01, etc.)
+    # Avoids heavy congestion at top of hour (XX:00)
+    - cron: '1 * * * *'
 
   # Allow manual trigger
   workflow_dispatch:
