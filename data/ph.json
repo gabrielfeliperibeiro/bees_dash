@@ -1,44 +1,44 @@
 {
-  "last_updated": "2026-01-24T06:50:59.348763Z",
+  "last_updated": "2026-01-24T07:02:32.612987Z",
   "today": {
     "date": "2026-01-24",
-    "total_gmv": 3513608.5,
-    "total_gmv_usd": 62723.97,
-    "orders": 4601,
-    "unique_buyers": 4518,
-    "unique_vendors": 4518,
-    "aov": 763.66,
-    "aov_usd": 13.63,
+    "total_gmv": 3972756.88,
+    "total_gmv_usd": 70920.56,
+    "orders": 5109,
+    "unique_buyers": 5016,
+    "unique_vendors": 5016,
+    "aov": 777.6,
+    "aov_usd": 13.88,
     "frequency": 1.02,
-    "gmv_per_poc": 777.69,
-    "gmv_per_poc_usd": 13.88
+    "gmv_per_poc": 792.02,
+    "gmv_per_poc_usd": 14.14
   },
   "same_day_last_week": {
     "date": "2026-01-17",
-    "total_gmv": 3868840.98,
-    "total_gmv_usd": 69065.48,
-    "orders": 4493,
-    "unique_buyers": 4395,
-    "unique_vendors": 4395,
-    "aov": 861.08,
-    "aov_usd": 15.37,
+    "total_gmv": 4016885.89,
+    "total_gmv_usd": 71708.34,
+    "orders": 4608,
+    "unique_buyers": 4507,
+    "unique_vendors": 4507,
+    "aov": 871.72,
+    "aov_usd": 15.56,
     "frequency": 1.02,
-    "gmv_per_poc": 880.28,
-    "gmv_per_poc_usd": 15.71
+    "gmv_per_poc": 891.25,
+    "gmv_per_poc_usd": 15.91
   },
   "mtd": {
     "start_date": "2026-01-01",
     "end_date": "2026-01-24",
-    "total_gmv": 86330238.08,
-    "total_gmv_usd": 1541143.55,
-    "orders": 83809,
-    "unique_buyers": 68478,
-    "unique_vendors": 68478,
-    "aov": 1030.08,
-    "aov_usd": 18.39,
+    "total_gmv": 86789386.46,
+    "total_gmv_usd": 1549340.14,
+    "orders": 84317,
+    "unique_buyers": 68869,
+    "unique_vendors": 68869,
+    "aov": 1029.32,
+    "aov_usd": 18.38,
     "frequency": 1.22,
-    "gmv_per_poc": 1260.7,
-    "gmv_per_poc_usd": 22.51
+    "gmv_per_poc": 1260.21,
+    "gmv_per_poc_usd": 22.5
   },
   "daily_history": [
     {
@@ -250,61 +250,61 @@
       "date": "2026-01-23"
     },
     {
-      "total_gmv": 3513608.5,
-      "total_gmv_usd": 62723.97,
-      "orders": 4601,
-      "unique_buyers": 4518,
-      "unique_vendors": 4518,
-      "aov": 763.66,
-      "aov_usd": 13.63,
+      "total_gmv": 3972756.88,
+      "total_gmv_usd": 70920.56,
+      "orders": 5109,
+      "unique_buyers": 5016,
+      "unique_vendors": 5016,
+      "aov": 777.6,
+      "aov_usd": 13.88,
       "frequency": 1.02,
-      "gmv_per_poc": 777.69,
-      "gmv_per_poc_usd": 13.88,
+      "gmv_per_poc": 792.02,
+      "gmv_per_poc_usd": 14.14,
       "date": "2026-01-24"
     }
   ],
   "moving_averages": {
     "ma_7d": {
-      "gmv": 97714.31,
-      "orders": 5455.43,
-      "aov": 20.51,
-      "unique_buyers": 5329.43,
+      "gmv": 98885.25,
+      "orders": 5528.0,
+      "aov": 20.55,
+      "unique_buyers": 5400.57,
       "frequency": 1.03,
-      "gmv_per_poc": 21.08
+      "gmv_per_poc": 21.12
     },
     "ma_15d": {
-      "gmv": 96167.74,
-      "orders": 5240.93,
-      "aov": 21.51,
-      "unique_buyers": 5113.47,
+      "gmv": 96714.18,
+      "orders": 5274.8,
+      "aov": 21.53,
+      "unique_buyers": 5146.67,
       "frequency": 1.03,
-      "gmv_per_poc": 22.11
+      "gmv_per_poc": 22.13
     }
   },
   "channel_breakdown_today": {
     "customer": {
-      "gmv_usd": 28285.58,
-      "orders": 1576,
-      "gmv_percent": 49.2,
-      "orders_percent": 35.8
+      "gmv_usd": 33029.65,
+      "orders": 1773,
+      "gmv_percent": 50.3,
+      "orders_percent": 36.1
     },
     "cx_tlp": {
-      "gmv_usd": 29216.3,
-      "orders": 2824,
-      "gmv_percent": 50.8,
-      "orders_percent": 64.2
+      "gmv_usd": 32668.82,
+      "orders": 3135,
+      "gmv_percent": 49.7,
+      "orders_percent": 63.9
     }
   },
   "channel_breakdown_mtd": {
     "customer": {
-      "gmv_usd": 1034441.16,
-      "orders": 40415,
+      "gmv_usd": 1039185.22,
+      "orders": 40612,
       "gmv_percent": 67.1,
       "orders_percent": 48.2
     },
     "cx_tlp": {
-      "gmv_usd": 506702.39,
-      "orders": 43394,
+      "gmv_usd": 510154.91,
+      "orders": 43705,
       "gmv_percent": 32.9,
       "orders_percent": 51.8
     }
