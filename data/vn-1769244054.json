@@ -1,44 +1,44 @@
 {
-  "last_updated": "2026-01-24T06:51:06.211503Z",
+  "last_updated": "2026-01-24T08:40:54.865018Z",
   "today": {
     "date": "2026-01-24",
-    "total_gmv": 30411736.43,
-    "total_gmv_usd": 1151.26,
-    "orders": 26,
-    "unique_buyers": 26,
-    "unique_vendors": 26,
-    "aov": 1169682.17,
-    "aov_usd": 44.28,
-    "frequency": 1.0,
-    "gmv_per_poc": 1169682.17,
-    "gmv_per_poc_usd": 44.28
+    "total_gmv": 43755058.97,
+    "total_gmv_usd": 1656.38,
+    "orders": 34,
+    "unique_buyers": 33,
+    "unique_vendors": 33,
+    "aov": 1286913.5,
+    "aov_usd": 48.72,
+    "frequency": 1.03,
+    "gmv_per_poc": 1325910.88,
+    "gmv_per_poc_usd": 50.19
   },
   "same_day_last_week": {
     "date": "2026-01-17",
-    "total_gmv": 98106293.32,
-    "total_gmv_usd": 3713.9,
-    "orders": 30,
-    "unique_buyers": 30,
-    "unique_vendors": 30,
-    "aov": 3270209.78,
-    "aov_usd": 123.8,
+    "total_gmv": 132045789.78,
+    "total_gmv_usd": 4998.7,
+    "orders": 40,
+    "unique_buyers": 40,
+    "unique_vendors": 40,
+    "aov": 3301144.74,
+    "aov_usd": 124.97,
     "frequency": 1.0,
-    "gmv_per_poc": 3270209.78,
-    "gmv_per_poc_usd": 123.8
+    "gmv_per_poc": 3301144.74,
+    "gmv_per_poc_usd": 124.97
   },
   "mtd": {
     "start_date": "2026-01-01",
     "end_date": "2026-01-24",
-    "total_gmv": 2251467698.11,
-    "total_gmv_usd": 85231.21,
-    "orders": 636,
-    "unique_buyers": 522,
-    "unique_vendors": 522,
-    "aov": 3540043.55,
-    "aov_usd": 134.01,
+    "total_gmv": 2264811020.65,
+    "total_gmv_usd": 85736.33,
+    "orders": 644,
+    "unique_buyers": 528,
+    "unique_vendors": 528,
+    "aov": 3516787.3,
+    "aov_usd": 133.13,
     "frequency": 1.22,
-    "gmv_per_poc": 4313156.51,
-    "gmv_per_poc_usd": 163.28
+    "gmv_per_poc": 4289414.81,
+    "gmv_per_poc_usd": 162.38
   },
   "daily_history": [
     {
@@ -224,63 +224,63 @@
       "date": "2026-01-23"
     },
     {
-      "total_gmv": 30411736.43,
-      "total_gmv_usd": 1151.26,
-      "orders": 26,
-      "unique_buyers": 26,
-      "unique_vendors": 26,
-      "aov": 1169682.17,
-      "aov_usd": 44.28,
-      "frequency": 1.0,
-      "gmv_per_poc": 1169682.17,
-      "gmv_per_poc_usd": 44.28,
+      "total_gmv": 43755058.97,
+      "total_gmv_usd": 1656.38,
+      "orders": 34,
+      "unique_buyers": 33,
+      "unique_vendors": 33,
+      "aov": 1286913.5,
+      "aov_usd": 48.72,
+      "frequency": 1.03,
+      "gmv_per_poc": 1325910.88,
+      "gmv_per_poc_usd": 50.19,
       "date": "2026-01-24"
     }
   ],
   "moving_averages": {
     "ma_7d": {
-      "gmv": 5210.21,
-      "orders": 31.43,
-      "aov": 142.2,
-      "unique_buyers": 30.71,
+      "gmv": 5282.37,
+      "orders": 32.57,
+      "aov": 142.83,
+      "unique_buyers": 31.71,
       "frequency": 1.02,
-      "gmv_per_poc": 144.24
+      "gmv_per_poc": 145.08
     },
     "ma_15d": {
-      "gmv": 5683.39,
-      "orders": 42.47,
-      "aov": 125.34,
-      "unique_buyers": 41.07,
+      "gmv": 5717.07,
+      "orders": 43.0,
+      "aov": 125.64,
+      "unique_buyers": 41.53,
       "frequency": 1.03,
-      "gmv_per_poc": 128.25
+      "gmv_per_poc": 128.65
     }
   },
   "channel_breakdown_today": {
     "customer": {
-      "gmv_usd": 1024.94,
-      "orders": 21,
-      "gmv_percent": 90.6,
-      "orders_percent": 84.0
+      "gmv_usd": 1530.07,
+      "orders": 29,
+      "gmv_percent": 93.5,
+      "orders_percent": 87.9
     },
     "cx_tlp": {
       "gmv_usd": 106.64,
       "orders": 4,
-      "gmv_percent": 9.4,
-      "orders_percent": 16.0
+      "gmv_percent": 6.5,
+      "orders_percent": 12.1
     }
   },
   "channel_breakdown_mtd": {
     "customer": {
-      "gmv_usd": 83946.84,
-      "orders": 584,
+      "gmv_usd": 84451.96,
+      "orders": 592,
       "gmv_percent": 98.5,
-      "orders_percent": 91.8
+      "orders_percent": 91.9
     },
     "cx_tlp": {
       "gmv_usd": 1284.37,
       "orders": 52,
       "gmv_percent": 1.5,
-      "orders_percent": 8.2
+      "orders_percent": 8.1
     }
   }
 }
