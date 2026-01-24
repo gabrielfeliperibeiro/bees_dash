@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-01-24T23:00:36.898369Z",
+  "last_updated": "2026-01-24T23:29:24.669172Z",
   "today": {
     "date": "2026-01-25",
     "total_gmv": 40404.31,
@@ -15,16 +15,16 @@
   },
   "same_day_last_week": {
     "date": "2026-01-18",
-    "total_gmv": 66897.33,
-    "total_gmv_usd": 1194.23,
-    "orders": 36,
-    "unique_buyers": 30,
-    "unique_vendors": 30,
-    "aov": 1858.26,
-    "aov_usd": 33.17,
-    "frequency": 1.2,
-    "gmv_per_poc": 2229.91,
-    "gmv_per_poc_usd": 39.81
+    "total_gmv": 126517.07,
+    "total_gmv_usd": 2258.55,
+    "orders": 59,
+    "unique_buyers": 52,
+    "unique_vendors": 52,
+    "aov": 2144.36,
+    "aov_usd": 38.28,
+    "frequency": 1.13,
+    "gmv_per_poc": 2433.02,
+    "gmv_per_poc_usd": 43.43
   },
   "mtd": {
     "start_date": "2026-01-01",
