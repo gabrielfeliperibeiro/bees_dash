@@ -1,44 +1,44 @@
 {
-  "last_updated": "2026-01-26T01:26:17.908230Z",
+  "last_updated": "2026-01-26T04:43:49.480368Z",
   "today": {
     "date": "2026-01-26",
-    "total_gmv": 0,
-    "total_gmv_usd": 0,
-    "orders": 0,
-    "unique_buyers": 0,
-    "unique_vendors": 0,
-    "aov": 0,
-    "aov_usd": 0,
-    "frequency": 0,
-    "gmv_per_poc": 0,
-    "gmv_per_poc_usd": 0
+    "total_gmv": 2546149.94,
+    "total_gmv_usd": 96.39,
+    "orders": 4,
+    "unique_buyers": 4,
+    "unique_vendors": 4,
+    "aov": 636537.48,
+    "aov_usd": 24.1,
+    "frequency": 1.0,
+    "gmv_per_poc": 636537.48,
+    "gmv_per_poc_usd": 24.1
   },
   "same_day_last_week": {
     "date": "2026-01-19",
-    "total_gmv": 0,
-    "total_gmv_usd": 0,
-    "orders": 0,
-    "unique_buyers": 0,
-    "unique_vendors": 0,
-    "aov": 0,
-    "aov_usd": 0,
-    "frequency": 0,
-    "gmv_per_poc": 0,
-    "gmv_per_poc_usd": 0
+    "total_gmv": 29543414.48,
+    "total_gmv_usd": 1118.39,
+    "orders": 12,
+    "unique_buyers": 12,
+    "unique_vendors": 12,
+    "aov": 2461951.21,
+    "aov_usd": 93.2,
+    "frequency": 1.0,
+    "gmv_per_poc": 2461951.21,
+    "gmv_per_poc_usd": 93.2
   },
   "mtd": {
     "start_date": "2026-01-01",
     "end_date": "2026-01-26",
-    "total_gmv": 2156674046.5,
-    "total_gmv_usd": 81642.72,
-    "orders": 600,
-    "unique_buyers": 501,
-    "unique_vendors": 501,
-    "aov": 3594456.74,
-    "aov_usd": 136.07,
+    "total_gmv": 2159243596.44,
+    "total_gmv_usd": 81739.99,
+    "orders": 604,
+    "unique_buyers": 503,
+    "unique_vendors": 503,
+    "aov": 3574906.62,
+    "aov_usd": 135.33,
     "frequency": 1.2,
-    "gmv_per_poc": 4304738.62,
-    "gmv_per_poc_usd": 162.96
+    "gmv_per_poc": 4292730.81,
+    "gmv_per_poc_usd": 162.5
   },
   "daily_history": [
     {
@@ -211,63 +211,76 @@
       "date": "2026-01-24"
     },
     {
-      "total_gmv": 2471608.91,
-      "total_gmv_usd": 93.56,
+      "total_gmv": 2495008.91,
+      "total_gmv_usd": 94.45,
       "orders": 4,
       "unique_buyers": 4,
       "unique_vendors": 4,
-      "aov": 617902.23,
-      "aov_usd": 23.39,
+      "aov": 623752.23,
+      "aov_usd": 23.61,
       "frequency": 1.0,
-      "gmv_per_poc": 617902.23,
-      "gmv_per_poc_usd": 23.39,
+      "gmv_per_poc": 623752.23,
+      "gmv_per_poc_usd": 23.61,
       "date": "2026-01-25"
+    },
+    {
+      "total_gmv": 2546149.94,
+      "total_gmv_usd": 96.39,
+      "orders": 4,
+      "unique_buyers": 4,
+      "unique_vendors": 4,
+      "aov": 636537.48,
+      "aov_usd": 24.1,
+      "frequency": 1.0,
+      "gmv_per_poc": 636537.48,
+      "gmv_per_poc_usd": 24.1,
+      "date": "2026-01-26"
     }
   ],
   "moving_averages": {
     "ma_7d": {
-      "gmv": 5204.36,
-      "orders": 32.43,
-      "aov": 124.07,
-      "unique_buyers": 31.57,
-      "frequency": 1.02,
-      "gmv_per_poc": 126.34
+      "gmv": 4260.46,
+      "orders": 25.71,
+      "aov": 108.77,
+      "unique_buyers": 25.43,
+      "frequency": 1.01,
+      "gmv_per_poc": 109.43
     },
     "ma_15d": {
-      "gmv": 5831.62,
-      "orders": 42.86,
-      "aov": 124.2,
-      "unique_buyers": 41.36,
+      "gmv": 5449.33,
+      "orders": 40.27,
+      "aov": 117.54,
+      "unique_buyers": 38.87,
       "frequency": 1.03,
-      "gmv_per_poc": 127.21
+      "gmv_per_poc": 120.35
     }
   },
   "channel_breakdown_today": {
     "customer": {
-      "gmv_usd": 0,
-      "orders": 0,
-      "gmv_percent": 0,
-      "orders_percent": 0
+      "gmv_usd": 46.0,
+      "orders": 2,
+      "gmv_percent": 47.7,
+      "orders_percent": 50.0
     },
     "cx_tlp": {
-      "gmv_usd": 0,
-      "orders": 0,
-      "gmv_percent": 0,
-      "orders_percent": 0
+      "gmv_usd": 50.39,
+      "orders": 2,
+      "gmv_percent": 52.3,
+      "orders_percent": 50.0
     }
   },
   "channel_breakdown_mtd": {
     "customer": {
-      "gmv_usd": 80534.44,
-      "orders": 555,
+      "gmv_usd": 80581.32,
+      "orders": 557,
       "gmv_percent": 98.6,
-      "orders_percent": 92.5
+      "orders_percent": 92.2
     },
     "cx_tlp": {
-      "gmv_usd": 1108.28,
-      "orders": 45,
+      "gmv_usd": 1158.67,
+      "orders": 47,
       "gmv_percent": 1.4,
-      "orders_percent": 7.5
+      "orders_percent": 7.8
     }
   }
 }
