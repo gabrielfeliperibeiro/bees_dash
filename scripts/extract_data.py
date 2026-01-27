@@ -74,7 +74,12 @@ def connect_to_databricks(max_retries=3, retry_delay_seconds=[0, 10, 20]):
 
 def query_orders(connection, country, start_date, end_date, hour_limit=None):
     """
-    Query orders from Databricks for a specific country and date range.
+    Query orders from Databricks GOLD layer for a specific country and date range.
+
+    Uses wh_am.gold.fact_orders as source of truth with proper filters:
+    - BEES channels only (B2B_APP, B2B_WEB, B2B_FORCE, CX_TLP)
+    - Excludes test vendors (BEE%, DUM%)
+    - Excludes cancelled/denied orders
 
     Args:
         connection: Databricks connection
@@ -92,51 +97,35 @@ def query_orders(connection, country, start_date, end_date, hour_limit=None):
     # Build hour filter if provided
     hour_filter = ""
     if hour_limit is not None:
-        hour_filter = f"AND HOUR(createAt + INTERVAL {tz_offset} HOUR) <= {hour_limit}"
+        hour_filter = f"AND HOUR(placement_date + INTERVAL {tz_offset} HOUR) <= {hour_limit}"
 
-    # Build query based on country for production tables
-    # Use QUALIFY to deduplicate append-only table data
-    # Exclude SALESMAN channel from analysis
-    if country == 'PH':
-        query = f"""
-        SELECT
-            'PH' AS country,
-            createAt AS placement_date,
-            orderNumber AS order_number,
-            total AS order_gmv,
-            total/56.017 AS order_gmv_usd,
-            beesAccountId AS account_id,
-            vendorAccountId AS vendor_account_id,
-            status AS order_status,
-            channel
-        FROM ptn_am.silver.daily_orders_consolidated
-        WHERE TO_DATE(DATE_TRUNC('DAY', createAt + INTERVAL {tz_offset} HOUR)) >= '{start_date}'
-        AND TO_DATE(DATE_TRUNC('DAY', createAt + INTERVAL {tz_offset} HOUR)) <= '{end_date}'
-        AND channel NOT IN ('SALESMAN')
-        {hour_filter}
-        QUALIFY ROW_NUMBER() OVER(PARTITION BY orderNumber ORDER BY createAt DESC) = 1
-        """
-    else:  # VN
-        query = f"""
-        SELECT
-            'VN' AS country,
-            createAt AS placement_date,
-            orderNumber AS order_number,
-            total AS order_gmv,
-            total/26416 AS order_gmv_usd,
-            beesAccountId AS account_id,
-            vendorAccountId AS vendor_account_id,
-            status AS order_status,
-            channel
-        FROM ptn_am.silver.vn_daily_orders_consolidated
-        WHERE TO_DATE(DATE_TRUNC('DAY', createAt + INTERVAL {tz_offset} HOUR)) >= '{start_date}'
-        AND TO_DATE(DATE_TRUNC('DAY', createAt + INTERVAL {tz_offset} HOUR)) <= '{end_date}'
-        AND channel NOT IN ('SALESMAN', 'NON-BEES')
-        {hour_filter}
-        QUALIFY ROW_NUMBER() OVER(PARTITION BY orderNumber ORDER BY createAt DESC) = 1
-        """
+    # Currency conversion rates
+    usd_rate = CURRENCY_RATES.get(country, 1)
 
-    logger.info(f"Querying orders for {country} from {start_date} to {end_date}")
+    # Build query using GOLD layer fact_orders table
+    query = f"""
+    SELECT
+        '{country}' AS country,
+        placement_date,
+        order_number,
+        gmv AS order_gmv,
+        gmv/{usd_rate} AS order_gmv_usd,
+        buyer_account_id AS account_id,
+        vendor_account_id,
+        current_status AS order_status,
+        first_channel AS channel
+    FROM wh_am.gold.fact_orders
+    WHERE country = '{country}'
+    AND TO_DATE(DATE_TRUNC('DAY', placement_date + INTERVAL {tz_offset} HOUR)) >= '{start_date}'
+    AND TO_DATE(DATE_TRUNC('DAY', placement_date + INTERVAL {tz_offset} HOUR)) <= '{end_date}'
+    AND first_channel IN ('B2B_APP', 'B2B_WEB', 'B2B_FORCE', 'CX_TLP')
+    AND vendor_account_id NOT LIKE '%BEE%'
+    AND vendor_account_id NOT LIKE '%DUM%'
+    AND current_status NOT IN ('DENIED', 'CANCELLED', 'PENDING CANCELLATION')
+    {hour_filter}
+    """
+
+    logger.info(f"Querying orders for {country} from {start_date} to {end_date} (GOLD layer)")
 
     try:
         cursor = connection.cursor()
@@ -223,6 +212,9 @@ def calculate_channel_metrics(df, country=None):
     """
     Calculate channel breakdown metrics (Customer vs CX_TLP).
 
+    Customer channels: B2B_APP, B2B_WEB, B2B_FORCE
+    CX_TLP channel: CX_TLP
+
     Args:
         df: pandas DataFrame with order data including channel column
         country: Country code (PH or VN) for USD conversion
@@ -248,8 +240,8 @@ def calculate_channel_metrics(df, country=None):
     total_gmv_usd = total_gmv / usd_rate
     total_orders = df["order_number"].nunique()
 
-    # Customer channel (not CX_TLP)
-    df_customer = df[df["channel"] != "CX_TLP"]
+    # Customer channels (B2B_APP, B2B_WEB, B2B_FORCE - not CX_TLP)
+    df_customer = df[df["channel"].isin(["B2B_APP", "B2B_WEB", "B2B_FORCE"])]
     customer_gmv = df_customer["order_gmv"].sum()
     customer_gmv_usd = customer_gmv / usd_rate
     customer_orders = df_customer["order_number"].nunique()
