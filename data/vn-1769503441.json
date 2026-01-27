@@ -1,44 +1,44 @@
 {
-  "last_updated": "2026-01-27T04:13:35.290912Z",
+  "last_updated": "2026-01-27T08:44:01.707144Z",
   "today": {
     "date": "2026-01-27",
-    "total_gmv": 1932448.75,
-    "total_gmv_usd": 73.15,
-    "orders": 3,
-    "unique_buyers": 3,
-    "unique_vendors": 3,
-    "aov": 644149.58,
-    "aov_usd": 24.38,
+    "total_gmv": 42644198.15,
+    "total_gmv_usd": 1614.33,
+    "orders": 27,
+    "unique_buyers": 27,
+    "unique_vendors": 27,
+    "aov": 1579414.75,
+    "aov_usd": 59.79,
     "frequency": 1.0,
-    "gmv_per_poc": 644149.58,
-    "gmv_per_poc_usd": 24.38
+    "gmv_per_poc": 1579414.75,
+    "gmv_per_poc_usd": 59.79
   },
   "same_day_last_week": {
     "date": "2026-01-20",
-    "total_gmv": 192155638.63,
-    "total_gmv_usd": 7274.21,
-    "orders": 21,
-    "unique_buyers": 21,
-    "unique_vendors": 21,
-    "aov": 9150268.51,
-    "aov_usd": 346.39,
+    "total_gmv": 511291493.22,
+    "total_gmv_usd": 19355.37,
+    "orders": 48,
+    "unique_buyers": 48,
+    "unique_vendors": 48,
+    "aov": 10651906.11,
+    "aov_usd": 403.24,
     "frequency": 1.0,
-    "gmv_per_poc": 9150268.51,
-    "gmv_per_poc_usd": 346.39
+    "gmv_per_poc": 10651906.11,
+    "gmv_per_poc_usd": 403.24
   },
   "mtd": {
     "start_date": "2026-01-01",
     "end_date": "2026-01-27",
-    "total_gmv": 2190802196.48,
-    "total_gmv_usd": 82934.67,
-    "orders": 625,
-    "unique_buyers": 518,
-    "unique_vendors": 518,
-    "aov": 3505283.51,
-    "aov_usd": 132.7,
+    "total_gmv": 2231513945.88,
+    "total_gmv_usd": 84475.85,
+    "orders": 649,
+    "unique_buyers": 536,
+    "unique_vendors": 536,
+    "aov": 3438388.21,
+    "aov_usd": 130.16,
     "frequency": 1.21,
-    "gmv_per_poc": 4229347.87,
-    "gmv_per_poc_usd": 160.11
+    "gmv_per_poc": 4163272.29,
+    "gmv_per_poc_usd": 157.6
   },
   "daily_history": [
     {
@@ -237,63 +237,63 @@
       "date": "2026-01-26"
     },
     {
-      "total_gmv": 1932448.75,
-      "total_gmv_usd": 73.15,
-      "orders": 3,
-      "unique_buyers": 3,
-      "unique_vendors": 3,
-      "aov": 644149.58,
-      "aov_usd": 24.38,
+      "total_gmv": 42644198.15,
+      "total_gmv_usd": 1614.33,
+      "orders": 27,
+      "unique_buyers": 27,
+      "unique_vendors": 27,
+      "aov": 1579414.75,
+      "aov_usd": 59.79,
       "frequency": 1.0,
-      "gmv_per_poc": 644149.58,
-      "gmv_per_poc_usd": 24.38,
+      "gmv_per_poc": 1579414.75,
+      "gmv_per_poc_usd": 59.79,
       "date": "2026-01-27"
     }
   ],
   "moving_averages": {
     "ma_7d": {
-      "gmv": 1577.23,
-      "orders": 21.57,
-      "aov": 59.64,
-      "unique_buyers": 21.14,
+      "gmv": 1797.4,
+      "orders": 25.0,
+      "aov": 64.7,
+      "unique_buyers": 24.57,
       "frequency": 1.02,
-      "gmv_per_poc": 60.68
+      "gmv_per_poc": 65.74
     },
     "ma_15d": {
-      "gmv": 5209.43,
-      "orders": 37.2,
-      "aov": 116.48,
-      "unique_buyers": 36.13,
+      "gmv": 5312.18,
+      "orders": 38.8,
+      "aov": 118.84,
+      "unique_buyers": 37.73,
       "frequency": 1.02,
-      "gmv_per_poc": 119.0
+      "gmv_per_poc": 121.36
     }
   },
   "channel_breakdown_today": {
     "customer": {
-      "gmv_usd": 73.15,
-      "orders": 3,
-      "gmv_percent": 100.0,
-      "orders_percent": 100.0
+      "gmv_usd": 1518.56,
+      "orders": 23,
+      "gmv_percent": 94.1,
+      "orders_percent": 85.2
     },
     "cx_tlp": {
-      "gmv_usd": 0.0,
-      "orders": 0,
-      "gmv_percent": 0.0,
-      "orders_percent": 0.0
+      "gmv_usd": 95.77,
+      "orders": 4,
+      "gmv_percent": 5.9,
+      "orders_percent": 14.8
     }
   },
   "channel_breakdown_mtd": {
     "customer": {
-      "gmv_usd": 81725.43,
-      "orders": 576,
+      "gmv_usd": 83170.84,
+      "orders": 596,
       "gmv_percent": 98.5,
-      "orders_percent": 92.2
+      "orders_percent": 91.8
     },
     "cx_tlp": {
-      "gmv_usd": 1209.24,
-      "orders": 49,
+      "gmv_usd": 1305.01,
+      "orders": 53,
       "gmv_percent": 1.5,
-      "orders_percent": 7.8
+      "orders_percent": 8.2
     }
   }
 }
