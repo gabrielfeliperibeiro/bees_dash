@@ -685,19 +685,17 @@ def main():
             df_today_full = df_all[df_all["date"] == today]
 
             # Merge GOLD (D-1) + Silver (today) for complete MTD
-            # Use hour-limited today data to match daily comparison timing
+            # Use full today data (not hour-limited) for MTD calculation
             if not df_mtd_gold.empty:
                 # Ensure consistent column types before merging
                 df_mtd_gold["date"] = pd.to_datetime(df_mtd_gold["placement_date"], format='mixed', utc=True).dt.date
-                df_today_limited_copy = df_today_limited.copy()
-                df_today_limited_copy["date"] = pd.to_datetime(df_today_limited_copy["placement_date"], format='mixed', utc=True).dt.date
 
-                # Combine GOLD + today's silver
-                df_mtd = pd.concat([df_mtd_gold, df_today_limited_copy], ignore_index=True)
+                # Combine GOLD + today's full silver data
+                df_mtd = pd.concat([df_mtd_gold, df_today_full], ignore_index=True)
 
                 # Deduplicate on order_number to avoid double counting
                 df_mtd = df_mtd.drop_duplicates(subset=['order_number'], keep='first')
-                logger.info(f"{country} - Combined MTD after deduplication: {len(df_mtd)} orders")
+                logger.info(f"{country} - Combined MTD (GOLD + today) after deduplication: {len(df_mtd)} orders")
             else:
                 # Fallback to silver only if no GOLD data
                 df_mtd = df_all[df_all["date"] >= mtd_start]
@@ -707,6 +705,8 @@ def main():
             metrics_last_week = calculate_metrics(df_last_week, country)
             metrics_mtd = calculate_metrics(df_mtd, country)
             metrics_mtd_last_month = calculate_metrics(df_mtd_last_month, country)
+
+            logger.info(f"{country} - MTD GMV: ${metrics_mtd['total_gmv_usd']:,.2f}, Orders: {metrics_mtd['orders']:,}")
 
             # Calculate daily history
             daily_metrics = calculate_daily_metrics(df_all, country)
