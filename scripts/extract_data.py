@@ -74,12 +74,7 @@ def connect_to_databricks(max_retries=3, retry_delay_seconds=[0, 10, 20]):
 
 def query_orders(connection, country, start_date, end_date, hour_limit=None):
     """
-    Query orders from Databricks GOLD layer for a specific country and date range.
-
-    Uses wh_am.gold.fact_orders as source of truth with proper filters:
-    - BEES channels only (B2B_APP, B2B_WEB, B2B_FORCE, CX_TLP)
-    - Excludes test vendors (BEE%, DUM%)
-    - Excludes cancelled/denied orders
+    Query orders from Databricks silver layer for a specific country and date range.
 
     Args:
         connection: Databricks connection
@@ -97,35 +92,51 @@ def query_orders(connection, country, start_date, end_date, hour_limit=None):
     # Build hour filter if provided
     hour_filter = ""
     if hour_limit is not None:
-        hour_filter = f"AND HOUR(placement_date + INTERVAL {tz_offset} HOUR) <= {hour_limit}"
+        hour_filter = f"AND HOUR(createAt + INTERVAL {tz_offset} HOUR) <= {hour_limit}"
 
-    # Currency conversion rates
-    usd_rate = CURRENCY_RATES.get(country, 1)
+    # Build query based on country for silver tables
+    # Use QUALIFY to deduplicate append-only table data
+    # Exclude SALESMAN channel from analysis
+    if country == 'PH':
+        query = f"""
+        SELECT
+            'PH' AS country,
+            createAt AS placement_date,
+            orderNumber AS order_number,
+            total AS order_gmv,
+            total/56.017 AS order_gmv_usd,
+            beesAccountId AS account_id,
+            vendorAccountId AS vendor_account_id,
+            status AS order_status,
+            channel
+        FROM ptn_am.silver.daily_orders_consolidated
+        WHERE TO_DATE(DATE_TRUNC('DAY', createAt + INTERVAL {tz_offset} HOUR)) >= '{start_date}'
+        AND TO_DATE(DATE_TRUNC('DAY', createAt + INTERVAL {tz_offset} HOUR)) <= '{end_date}'
+        AND channel NOT IN ('SALESMAN')
+        {hour_filter}
+        QUALIFY ROW_NUMBER() OVER(PARTITION BY orderNumber ORDER BY createAt DESC) = 1
+        """
+    else:  # VN
+        query = f"""
+        SELECT
+            'VN' AS country,
+            createAt AS placement_date,
+            orderNumber AS order_number,
+            total AS order_gmv,
+            total/26416 AS order_gmv_usd,
+            beesAccountId AS account_id,
+            vendorAccountId AS vendor_account_id,
+            status AS order_status,
+            channel
+        FROM ptn_am.silver.vn_daily_orders_consolidated
+        WHERE TO_DATE(DATE_TRUNC('DAY', createAt + INTERVAL {tz_offset} HOUR)) >= '{start_date}'
+        AND TO_DATE(DATE_TRUNC('DAY', createAt + INTERVAL {tz_offset} HOUR)) <= '{end_date}'
+        AND channel NOT IN ('SALESMAN', 'NON-BEES')
+        {hour_filter}
+        QUALIFY ROW_NUMBER() OVER(PARTITION BY orderNumber ORDER BY createAt DESC) = 1
+        """
 
-    # Build query using GOLD layer fact_orders table
-    query = f"""
-    SELECT
-        '{country}' AS country,
-        placement_date,
-        order_number,
-        current_total AS order_gmv,
-        current_total/{usd_rate} AS order_gmv_usd,
-        account_id,
-        vendor_account_id,
-        current_status AS order_status,
-        first_channel AS channel
-    FROM wh_am.gold.fact_orders
-    WHERE country = '{country}'
-    AND TO_DATE(DATE_TRUNC('DAY', placement_date + INTERVAL {tz_offset} HOUR)) >= '{start_date}'
-    AND TO_DATE(DATE_TRUNC('DAY', placement_date + INTERVAL {tz_offset} HOUR)) <= '{end_date}'
-    AND first_channel IN ('B2B_APP', 'B2B_WEB', 'B2B_FORCE', 'CX_TLP')
-    AND vendor_account_id NOT LIKE '%BEE%'
-    AND vendor_account_id NOT LIKE '%DUM%'
-    AND current_status NOT IN ('DENIED', 'CANCELLED', 'PENDING CANCELLATION')
-    {hour_filter}
-    """
-
-    logger.info(f"Querying orders for {country} from {start_date} to {end_date} (GOLD layer)")
+    logger.info(f"Querying orders for {country} from {start_date} to {end_date}")
 
     try:
         cursor = connection.cursor()
@@ -212,20 +223,20 @@ def calculate_channel_metrics(df, country=None):
     """
     Calculate channel breakdown metrics (Customer vs CX_TLP).
 
-    Customer channels: B2B_APP, B2B_WEB, B2B_FORCE
-    CX_TLP channel: CX_TLP
+    Customer channels: B2B_APP, B2B_WEB, B2B_FORCE (not CX_TLP)
+    Grow channel: CX_TLP
 
     Args:
         df: pandas DataFrame with order data including channel column
         country: Country code (PH or VN) for USD conversion
 
     Returns:
-        dict with channel breakdown metrics
+        dict with channel breakdown metrics including buyer counts
     """
     if df.empty or 'channel' not in df.columns:
         return {
-            "customer": {"gmv_usd": 0, "orders": 0, "gmv_percent": 0, "orders_percent": 0},
-            "cx_tlp": {"gmv_usd": 0, "orders": 0, "gmv_percent": 0, "orders_percent": 0}
+            "customer": {"gmv_usd": 0, "orders": 0, "buyers": 0, "gmv_percent": 0, "orders_percent": 0, "buyers_percent": 0},
+            "cx_tlp": {"gmv_usd": 0, "orders": 0, "buyers": 0, "gmv_percent": 0, "orders_percent": 0, "buyers_percent": 0}
         }
 
     # Create explicit copy to avoid SettingWithCopyWarning
@@ -239,37 +250,47 @@ def calculate_channel_metrics(df, country=None):
     total_gmv = df["order_gmv"].sum()
     total_gmv_usd = total_gmv / usd_rate
     total_orders = df["order_number"].nunique()
+    total_buyers = df["account_id"].nunique()
 
     # Customer channels (B2B_APP, B2B_WEB, B2B_FORCE - not CX_TLP)
-    df_customer = df[df["channel"].isin(["B2B_APP", "B2B_WEB", "B2B_FORCE"])]
+    df_customer = df[df["channel"] != "CX_TLP"]
     customer_gmv = df_customer["order_gmv"].sum()
     customer_gmv_usd = customer_gmv / usd_rate
     customer_orders = df_customer["order_number"].nunique()
+    customer_buyers = df_customer["account_id"].nunique()
 
-    # CX_TLP channel
+    # CX_TLP channel (Grow)
     df_cx_tlp = df[df["channel"] == "CX_TLP"]
     cx_tlp_gmv = df_cx_tlp["order_gmv"].sum()
     cx_tlp_gmv_usd = cx_tlp_gmv / usd_rate
     cx_tlp_orders = df_cx_tlp["order_number"].nunique()
+    cx_tlp_buyers = df_cx_tlp["account_id"].nunique()
 
     # Calculate percentages
     customer_gmv_pct = (customer_gmv_usd / total_gmv_usd * 100) if total_gmv_usd > 0 else 0
     customer_orders_pct = (customer_orders / total_orders * 100) if total_orders > 0 else 0
+    customer_buyers_pct = (customer_buyers / total_buyers * 100) if total_buyers > 0 else 0
+
     cx_tlp_gmv_pct = (cx_tlp_gmv_usd / total_gmv_usd * 100) if total_gmv_usd > 0 else 0
     cx_tlp_orders_pct = (cx_tlp_orders / total_orders * 100) if total_orders > 0 else 0
+    cx_tlp_buyers_pct = (cx_tlp_buyers / total_buyers * 100) if total_buyers > 0 else 0
 
     return {
         "customer": {
             "gmv_usd": round(customer_gmv_usd, 2),
             "orders": customer_orders,
+            "buyers": customer_buyers,
             "gmv_percent": round(customer_gmv_pct, 1),
-            "orders_percent": round(customer_orders_pct, 1)
+            "orders_percent": round(customer_orders_pct, 1),
+            "buyers_percent": round(customer_buyers_pct, 1)
         },
         "cx_tlp": {
             "gmv_usd": round(cx_tlp_gmv_usd, 2),
             "orders": cx_tlp_orders,
+            "buyers": cx_tlp_buyers,
             "gmv_percent": round(cx_tlp_gmv_pct, 1),
-            "orders_percent": round(cx_tlp_orders_pct, 1)
+            "orders_percent": round(cx_tlp_orders_pct, 1),
+            "buyers_percent": round(cx_tlp_buyers_pct, 1)
         }
     }
 

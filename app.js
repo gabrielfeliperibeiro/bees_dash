@@ -338,6 +338,8 @@ function updateUI() {
     updateCountry('vn', state.data.vn);
     updateCountryMTD('ph', state.data.ph);
     updateCountryMTD('vn', state.data.vn);
+    updateChannelSplit('ph', state.data.ph);
+    updateChannelSplit('vn', state.data.vn);
     updateStatusIndicator();
 
     console.log('[UI] UI updated successfully');
@@ -437,6 +439,40 @@ function updateCountryMTD(country, data) {
         mtd.gmv_per_poc_usd,
         mtdLastMonth.gmv_per_poc_usd,
         true);
+}
+
+function updateChannelSplit(country, data) {
+    if (!data || !data.channel_breakdown_today || !data.channel_breakdown_mtd) {
+        console.warn(`[UI] No channel breakdown data for ${country}`);
+        return;
+    }
+
+    const dailyBreakdown = data.channel_breakdown_today;
+    const mtdBreakdown = data.channel_breakdown_mtd;
+
+    console.log(`[UI] Updating ${country.toUpperCase()} channel split:`, {daily: dailyBreakdown, mtd: mtdBreakdown});
+
+    // Update daily channel split
+    const dailyGrowEl = document.getElementById(`${country}-daily-grow-buyers`);
+    const dailyCustomerEl = document.getElementById(`${country}-daily-customer-buyers`);
+
+    if (dailyGrowEl && dailyBreakdown.cx_tlp) {
+        dailyGrowEl.textContent = `${dailyBreakdown.cx_tlp.buyers_percent || 0}%`;
+    }
+    if (dailyCustomerEl && dailyBreakdown.customer) {
+        dailyCustomerEl.textContent = `${dailyBreakdown.customer.buyers_percent || 0}%`;
+    }
+
+    // Update MTD channel split
+    const mtdGrowEl = document.getElementById(`${country}-mtd-grow-buyers`);
+    const mtdCustomerEl = document.getElementById(`${country}-mtd-customer-buyers`);
+
+    if (mtdGrowEl && mtdBreakdown.cx_tlp) {
+        mtdGrowEl.textContent = `${mtdBreakdown.cx_tlp.buyers_percent || 0}%`;
+    }
+    if (mtdCustomerEl && mtdBreakdown.customer) {
+        mtdCustomerEl.textContent = `${mtdBreakdown.customer.buyers_percent || 0}%`;
+    }
 }
 
 function updateMetricSimple(country, metricName, value, isCurrency, decimals = 0) {

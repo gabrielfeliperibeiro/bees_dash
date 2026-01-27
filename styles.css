@@ -305,6 +305,36 @@ body.loaded {
     opacity: 0.9;
 }
 
+.metric-card.channel-split {
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, rgba(245, 224, 3, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+}
+
+.metric-value-split {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(12px, 2vw, 32px);
+    font-size: var(--font-value);
+    font-weight: 900;
+}
+
+.channel-label-grow {
+    color: var(--bees-gold);
+    font-size: clamp(1.5rem, 4vw, 6rem);
+}
+
+.channel-label-customer {
+    color: var(--success);
+    font-size: clamp(1.5rem, 4vw, 6rem);
+}
+
+.channel-separator {
+    color: rgba(255, 255, 255, 0.3);
+    font-size: clamp(2rem, 5vw, 8rem);
+    font-weight: 300;
+}
+
 /* ===================================================================
    METRIC CARDS - Huge & Adaptive
    =================================================================== */
