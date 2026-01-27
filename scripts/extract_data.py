@@ -110,7 +110,7 @@ def query_orders(connection, country, start_date, end_date, hour_limit=None):
         order_number,
         current_total AS order_gmv,
         current_total/{usd_rate} AS order_gmv_usd,
-        buyer_account_id AS account_id,
+        account_id,
         vendor_account_id,
         current_status AS order_status,
         first_channel AS channel
