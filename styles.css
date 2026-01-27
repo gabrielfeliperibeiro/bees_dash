@@ -36,6 +36,25 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
+/* Custom scrollbar for overflow sections */
+.country-section::-webkit-scrollbar {
+    width: 6px;
+}
+
+.country-section::-webkit-scrollbar-track {
+    background: rgba(245, 224, 3, 0.1);
+    border-radius: 3px;
+}
+
+.country-section::-webkit-scrollbar-thumb {
+    background: rgba(245, 224, 3, 0.5);
+    border-radius: 3px;
+}
+
+.country-section::-webkit-scrollbar-thumb:hover {
+    background: var(--bees-gold);
+}
+
 body.loaded {
     animation: fadeIn 0.5s ease-out;
 }
@@ -305,6 +324,29 @@ body.loaded {
     opacity: 0.9;
 }
 
+/* MTD title responsive adjustments */
+@media (max-width: 1599px) {
+    .mtd-section-title {
+        font-size: clamp(1.2rem, 2.5vw, 3rem);
+        margin: clamp(10px, 1.5vh, 20px) 0 clamp(6px, 0.8vh, 12px) 0;
+    }
+
+    .mtd-section-title small {
+        font-size: 0.55em !important;
+    }
+}
+
+@media (max-width: 1365px) {
+    .mtd-section-title {
+        font-size: clamp(1rem, 2vw, 2.5rem);
+        margin: clamp(8px, 1.2vh, 16px) 0 clamp(4px, 0.6vh, 10px) 0;
+    }
+
+    .country-title small {
+        font-size: 0.6em !important;
+    }
+}
+
 .metric-card.channel-split {
     grid-column: 1 / -1;
     background: linear-gradient(135deg, rgba(245, 224, 3, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
@@ -333,6 +375,37 @@ body.loaded {
     color: rgba(255, 255, 255, 0.3);
     font-size: clamp(2rem, 5vw, 8rem);
     font-weight: 300;
+}
+
+/* Channel split responsive adjustments */
+@media (max-width: 1599px) {
+    .metric-value-split {
+        gap: clamp(8px, 1.5vw, 20px);
+    }
+
+    .channel-label-grow,
+    .channel-label-customer {
+        font-size: clamp(1.2rem, 3vw, 4rem);
+    }
+
+    .channel-separator {
+        font-size: clamp(1.5rem, 3.5vw, 5rem);
+    }
+}
+
+@media (max-width: 1365px) {
+    .metric-card.channel-split .metric-label {
+        font-size: 0.9rem;
+    }
+
+    .channel-label-grow,
+    .channel-label-customer {
+        font-size: clamp(1rem, 2.5vw, 3rem);
+    }
+
+    .channel-separator {
+        font-size: clamp(1.2rem, 3vw, 4rem);
+    }
 }
 
 /* ===================================================================
@@ -938,28 +1011,124 @@ body.loaded {
     }
 }
 
-/* Laptop/Smaller TV (1366px - 1919px) */
-@media (min-width: 1366px) and (max-width: 1919px) {
+/* Large Laptop (1600px - 1919px) */
+@media (min-width: 1600px) and (max-width: 1919px) {
     :root {
-        --font-label: 1.5rem;
-        --font-value: 7rem;
-        --font-change: 2.2rem;
-        --font-title: 3.5rem;
-        --font-header: 1.2rem;
-    }
-}
-
-/* Tablet Landscape (1024px - 1365px) */
-@media (max-width: 1365px) {
-    .main-content {
-        grid-template-columns: 1fr;
-    }
-
-    :root {
-        --font-label: 1.3rem;
+        --font-label: 1.4rem;
         --font-value: 6rem;
         --font-change: 2rem;
         --font-title: 3rem;
+        --font-header: 1.1rem;
+    }
+
+    .dashboard-container {
+        padding: clamp(12px, 1.5vh, 20px);
+        gap: clamp(12px, 1.5vh, 20px);
+    }
+
+    .country-section {
+        padding: clamp(16px, 2vh, 32px);
+        gap: clamp(10px, 1.2vh, 24px);
+    }
+
+    .header {
+        padding: clamp(12px, 1.2vh, 20px) clamp(16px, 1.5vw, 32px);
+    }
+}
+
+/* Standard Laptop (1366px - 1599px) */
+@media (min-width: 1366px) and (max-width: 1599px) {
+    :root {
+        --font-label: 1.1rem;
+        --font-value: 4.5rem;
+        --font-change: 1.6rem;
+        --font-title: 2.5rem;
+        --font-header: 1rem;
+    }
+
+    .dashboard-container {
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .country-section {
+        padding: 16px;
+        gap: 8px;
+    }
+
+    .header {
+        padding: 10px 16px;
+    }
+
+    .header-actions {
+        gap: 12px;
+    }
+
+    .main-content {
+        gap: 12px;
+    }
+
+    .metrics-row {
+        gap: 10px;
+    }
+
+    .metric-card {
+        padding: clamp(12px, 1.5vh, 20px);
+    }
+
+    .status,
+    .last-update {
+        font-size: 0.9rem;
+        padding: 6px 12px;
+    }
+
+    .btn-nav,
+    .btn-logout {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+    }
+}
+
+/* Small Laptop (1024px - 1365px) */
+@media (min-width: 1024px) and (max-width: 1365px) {
+    .main-content {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    :root {
+        --font-label: 1rem;
+        --font-value: 4rem;
+        --font-change: 1.4rem;
+        --font-title: 2.2rem;
+    }
+
+    .dashboard-container {
+        padding: 8px;
+        gap: 8px;
+    }
+
+    .country-section {
+        padding: 14px;
+        gap: 8px;
+    }
+
+    .header {
+        padding: 8px 14px;
+    }
+
+    .metrics-row {
+        gap: 8px;
+    }
+
+    .metric-card {
+        padding: clamp(10px, 1.2vh, 16px);
+    }
+
+    /* Reduce height of country sections to fit screen */
+    .country-section {
+        max-height: 48vh;
+        overflow-y: auto;
     }
 }
 
