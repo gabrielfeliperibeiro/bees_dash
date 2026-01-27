@@ -403,6 +403,8 @@ function updateCountryMTD(country, data) {
 
     console.log(`[UI] Updating ${country.toUpperCase()} MTD:`, mtd);
     console.log(`[UI] ${country.toUpperCase()} MTD Last Month:`, mtdLastMonth);
+    console.log(`[UI] ${country.toUpperCase()} Has mtd_last_month?`, !!data.mtd_last_month);
+    console.log(`[UI] ${country.toUpperCase()} Last Month Orders:`, mtdLastMonth.orders);
 
     // Update MTD metrics with change indicators vs last month
     updateMetric(country, 'mtd-gmv',
