@@ -399,16 +399,42 @@ function updateCountryMTD(country, data) {
     }
 
     const mtd = data.mtd;
+    const mtdLastMonth = data.mtd_last_month || {};
 
     console.log(`[UI] Updating ${country.toUpperCase()} MTD:`, mtd);
+    console.log(`[UI] ${country.toUpperCase()} MTD Last Month:`, mtdLastMonth);
 
-    // Update MTD metrics (no change indicators for MTD)
-    updateMetricSimple(country, 'mtd-gmv', mtd.total_gmv_usd, true);
-    updateMetricSimple(country, 'mtd-orders', mtd.orders, false);
-    updateMetricSimple(country, 'mtd-aov', mtd.aov_usd, true);
-    updateMetricSimple(country, 'mtd-buyers', mtd.unique_buyers, false);
-    updateMetricSimple(country, 'mtd-frequency', mtd.frequency, false, 2);
-    updateMetricSimple(country, 'mtd-gmv-poc', mtd.gmv_per_poc_usd, true);
+    // Update MTD metrics with change indicators vs last month
+    updateMetric(country, 'mtd-gmv',
+        mtd.total_gmv_usd,
+        mtdLastMonth.total_gmv_usd,
+        true);
+
+    updateMetric(country, 'mtd-orders',
+        mtd.orders,
+        mtdLastMonth.orders,
+        false);
+
+    updateMetric(country, 'mtd-aov',
+        mtd.aov_usd,
+        mtdLastMonth.aov_usd,
+        true);
+
+    updateMetric(country, 'mtd-buyers',
+        mtd.unique_buyers,
+        mtdLastMonth.unique_buyers,
+        false);
+
+    updateMetric(country, 'mtd-frequency',
+        mtd.frequency,
+        mtdLastMonth.frequency,
+        false,
+        2);
+
+    updateMetric(country, 'mtd-gmv-poc',
+        mtd.gmv_per_poc_usd,
+        mtdLastMonth.gmv_per_poc_usd,
+        true);
 }
 
 function updateMetricSimple(country, metricName, value, isCurrency, decimals = 0) {

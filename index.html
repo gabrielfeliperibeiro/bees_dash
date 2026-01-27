@@ -7,7 +7,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>BEES Dashboard - Real-Time Analytics</title>
-    <link rel="stylesheet" href="styles.css?v=2.0">
+    <link rel="stylesheet" href="styles.css?v=2.1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -94,33 +94,39 @@
                     </div>
                 </div>
                 <!-- MTD Section -->
-                <h3 class="mtd-section-title">Month-to-Date</h3>
+                <h3 class="mtd-section-title">Month-to-Date <small style="color: rgba(255,255,255,0.5); font-size: 0.6em; font-weight: 400; margin-left: 8px;">vs last month same period</small></h3>
                 <div class="metrics-row">
                     <div class="metric-card">
                         <div class="metric-label">GMV (USD)</div>
                         <div class="metric-value" id="ph-mtd-gmv">$0</div>
+                        <div class="metric-change" id="ph-mtd-gmv-change">-</div>
                     </div>
                     <div class="metric-card">
                         <div class="metric-label">Orders</div>
                         <div class="metric-value" id="ph-mtd-orders">0</div>
+                        <div class="metric-change" id="ph-mtd-orders-change">-</div>
                     </div>
                     <div class="metric-card">
                         <div class="metric-label">AOV (USD)</div>
                         <div class="metric-value" id="ph-mtd-aov">$0</div>
+                        <div class="metric-change" id="ph-mtd-aov-change">-</div>
                     </div>
                 </div>
                 <div class="metrics-row">
                     <div class="metric-card">
                         <div class="metric-label">Buyers</div>
                         <div class="metric-value" id="ph-mtd-buyers">0</div>
+                        <div class="metric-change" id="ph-mtd-buyers-change">-</div>
                     </div>
                     <div class="metric-card">
                         <div class="metric-label">Frequency</div>
                         <div class="metric-value" id="ph-mtd-frequency">0.00</div>
+                        <div class="metric-change" id="ph-mtd-frequency-change">-</div>
                     </div>
                     <div class="metric-card">
                         <div class="metric-label">GMV/POCs</div>
                         <div class="metric-value" id="ph-mtd-gmv-poc">$0</div>
+                        <div class="metric-change" id="ph-mtd-gmv-poc-change">-</div>
                     </div>
                 </div>
             </section>
@@ -167,39 +173,45 @@
                     </div>
                 </div>
                 <!-- MTD Section -->
-                <h3 class="mtd-section-title">Month-to-Date</h3>
+                <h3 class="mtd-section-title">Month-to-Date <small style="color: rgba(255,255,255,0.5); font-size: 0.6em; font-weight: 400; margin-left: 8px;">vs last month same period</small></h3>
                 <div class="metrics-row">
                     <div class="metric-card">
                         <div class="metric-label">GMV (USD)</div>
                         <div class="metric-value" id="vn-mtd-gmv">$0</div>
+                        <div class="metric-change" id="vn-mtd-gmv-change">-</div>
                     </div>
                     <div class="metric-card">
                         <div class="metric-label">Orders</div>
                         <div class="metric-value" id="vn-mtd-orders">0</div>
+                        <div class="metric-change" id="vn-mtd-orders-change">-</div>
                     </div>
                     <div class="metric-card">
                         <div class="metric-label">AOV (USD)</div>
                         <div class="metric-value" id="vn-mtd-aov">$0</div>
+                        <div class="metric-change" id="vn-mtd-aov-change">-</div>
                     </div>
                 </div>
                 <div class="metrics-row">
                     <div class="metric-card">
                         <div class="metric-label">Buyers</div>
                         <div class="metric-value" id="vn-mtd-buyers">0</div>
+                        <div class="metric-change" id="vn-mtd-buyers-change">-</div>
                     </div>
                     <div class="metric-card">
                         <div class="metric-label">Frequency</div>
                         <div class="metric-value" id="vn-mtd-frequency">0.00</div>
+                        <div class="metric-change" id="vn-mtd-frequency-change">-</div>
                     </div>
                     <div class="metric-card">
                         <div class="metric-label">GMV/POCs</div>
                         <div class="metric-value" id="vn-mtd-gmv-poc">$0</div>
+                        <div class="metric-change" id="vn-mtd-gmv-poc-change">-</div>
                     </div>
                 </div>
             </section>
         </main>
     </div>
 
-    <script src="app.js?v=2.0"></script>
+    <script src="app.js?v=2.1"></script>
 </body>
 </html>

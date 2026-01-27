@@ -21,6 +21,7 @@ from config import (
     get_today,
     get_same_day_last_week,
     get_mtd_start,
+    get_last_month_mtd_range,
     get_hk_time,
     get_hk_now_utc,
 )
@@ -359,7 +360,7 @@ def calculate_moving_average(daily_metrics, window):
     }
 
 
-def generate_json_output(country, metrics_today, metrics_last_week, metrics_mtd, daily_metrics, ma_7d, ma_15d, channel_metrics_today=None, channel_metrics_mtd=None):
+def generate_json_output(country, metrics_today, metrics_last_week, metrics_mtd, metrics_mtd_last_month, daily_metrics, ma_7d, ma_15d, channel_metrics_today=None, channel_metrics_mtd=None):
     """
     Generate JSON output structure for a country.
 
@@ -368,6 +369,7 @@ def generate_json_output(country, metrics_today, metrics_last_week, metrics_mtd,
         metrics_today: Today's metrics dict
         metrics_last_week: Same day last week metrics dict
         metrics_mtd: Month-to-date metrics dict
+        metrics_mtd_last_month: Last month MTD metrics dict
         daily_metrics: List of daily metrics dicts
         ma_7d: 7-day moving average dict
         ma_15d: 15-day moving average dict
@@ -380,6 +382,7 @@ def generate_json_output(country, metrics_today, metrics_last_week, metrics_mtd,
     today = get_today()
     same_day_last_week = get_same_day_last_week()
     mtd_start = get_mtd_start()
+    last_month_mtd_start, last_month_mtd_end = get_last_month_mtd_range()
 
     output = {
         "last_updated": datetime.now().isoformat() + "Z",
@@ -395,6 +398,11 @@ def generate_json_output(country, metrics_today, metrics_last_week, metrics_mtd,
             "start_date": str(mtd_start),
             "end_date": str(today),
             **metrics_mtd
+        },
+        "mtd_last_month": {
+            "start_date": str(last_month_mtd_start),
+            "end_date": str(last_month_mtd_end),
+            **metrics_mtd_last_month
         },
         "daily_history": daily_metrics,
         "moving_averages": {
@@ -504,6 +512,7 @@ def main():
         today = get_today()
         same_day_last_week = get_same_day_last_week()
         mtd_start = get_mtd_start()
+        last_month_mtd_start, last_month_mtd_end = get_last_month_mtd_range()
         history_start = today - timedelta(days=15)
 
         # Track versioned filenames for manifest
@@ -529,8 +538,12 @@ def main():
             # Query last week data with same hour limit
             df_last_week = query_orders(connection, country, same_day_last_week, same_day_last_week, hour_limit=current_hour)
 
+            # Query last month MTD data (same date range but one month ago)
+            df_mtd_last_month = query_orders(connection, country, last_month_mtd_start, last_month_mtd_end)
+
             logger.info(f"{country} - Today (up to {current_hour}:00): {len(df_today_limited)} orders")
             logger.info(f"{country} - Last week (up to {current_hour}:00): {len(df_last_week)} orders")
+            logger.info(f"{country} - Last month MTD ({last_month_mtd_start} to {last_month_mtd_end}): {len(df_mtd_last_month)} orders")
 
             if df_all.empty:
                 logger.warning(f"No data for {country}, creating empty output...")
@@ -538,6 +551,7 @@ def main():
                 empty_metrics = calculate_metrics(pd.DataFrame(), country)
                 data = generate_json_output(
                     country,
+                    empty_metrics,
                     empty_metrics,
                     empty_metrics,
                     empty_metrics,
@@ -559,6 +573,7 @@ def main():
             metrics_today = calculate_metrics(df_today_limited, country)
             metrics_last_week = calculate_metrics(df_last_week, country)
             metrics_mtd = calculate_metrics(df_mtd, country)
+            metrics_mtd_last_month = calculate_metrics(df_mtd_last_month, country)
 
             # Calculate daily history
             daily_metrics = calculate_daily_metrics(df_all, country)
@@ -600,6 +615,7 @@ def main():
                 metrics_today,
                 metrics_last_week,
                 metrics_mtd,
+                metrics_mtd_last_month,
                 daily_metrics,
                 ma_7d,
                 ma_15d,
