@@ -113,6 +113,10 @@ def query_orders(connection, country, start_date, end_date, hour_limit=None):
         WHERE TO_DATE(DATE_TRUNC('DAY', createAt + INTERVAL {tz_offset} HOUR)) >= '{start_date}'
         AND TO_DATE(DATE_TRUNC('DAY', createAt + INTERVAL {tz_offset} HOUR)) <= '{end_date}'
         AND channel NOT IN ('SALESMAN')
+        AND vendorAccountId NOT LIKE '%BEE%'
+        AND vendorAccountId NOT LIKE '%DUM%'
+        AND vendorAccountId LIKE '%#_%' ESCAPE '#'
+        AND status NOT IN ('DENIED', 'CANCELLED', 'PENDING CANCELLATION')
         {hour_filter}
         QUALIFY ROW_NUMBER() OVER(PARTITION BY orderNumber ORDER BY createAt DESC) = 1
         """
@@ -132,6 +136,10 @@ def query_orders(connection, country, start_date, end_date, hour_limit=None):
         WHERE TO_DATE(DATE_TRUNC('DAY', createAt + INTERVAL {tz_offset} HOUR)) >= '{start_date}'
         AND TO_DATE(DATE_TRUNC('DAY', createAt + INTERVAL {tz_offset} HOUR)) <= '{end_date}'
         AND channel NOT IN ('SALESMAN', 'NON-BEES')
+        AND vendorAccountId NOT LIKE '%BEE%'
+        AND vendorAccountId NOT LIKE '%DUM%'
+        AND vendorAccountId LIKE '%#_%' ESCAPE '#'
+        AND status NOT IN ('DENIED', 'CANCELLED', 'PENDING CANCELLATION')
         {hour_filter}
         QUALIFY ROW_NUMBER() OVER(PARTITION BY orderNumber ORDER BY createAt DESC) = 1
         """
@@ -373,7 +381,7 @@ def calculate_moving_average(daily_metrics, window):
     }
 
 
-def generate_json_output(country, metrics_today, metrics_last_week, metrics_mtd, metrics_mtd_last_month, daily_metrics, ma_7d, ma_15d, channel_metrics_today=None, channel_metrics_mtd=None):
+def generate_json_output(country, metrics_today, metrics_last_week, metrics_mtd, metrics_mtd_last_month, daily_metrics, ma_7d, ma_15d, channel_metrics_today=None, channel_metrics_last_week=None, channel_metrics_mtd=None, channel_metrics_mtd_last_month=None):
     """
     Generate JSON output structure for a country.
 
@@ -387,7 +395,9 @@ def generate_json_output(country, metrics_today, metrics_last_week, metrics_mtd,
         ma_7d: 7-day moving average dict
         ma_15d: 15-day moving average dict
         channel_metrics_today: Today's channel breakdown dict
+        channel_metrics_last_week: Last week same day channel breakdown dict
         channel_metrics_mtd: MTD channel breakdown dict
+        channel_metrics_mtd_last_month: Last month MTD channel breakdown dict
 
     Returns:
         dict ready for JSON serialization
@@ -427,8 +437,12 @@ def generate_json_output(country, metrics_today, metrics_last_week, metrics_mtd,
     # Add channel metrics if available
     if channel_metrics_today:
         output["channel_breakdown_today"] = channel_metrics_today
+    if channel_metrics_last_week:
+        output["channel_breakdown_last_week"] = channel_metrics_last_week
     if channel_metrics_mtd:
         output["channel_breakdown_mtd"] = channel_metrics_mtd
+    if channel_metrics_mtd_last_month:
+        output["channel_breakdown_mtd_last_month"] = channel_metrics_mtd_last_month
 
     return output
 
@@ -620,7 +634,9 @@ def main():
 
             # Calculate channel metrics using full day data
             channel_metrics_today = calculate_channel_metrics(df_today_full, country)
+            channel_metrics_last_week = calculate_channel_metrics(df_last_week, country)
             channel_metrics_mtd = calculate_channel_metrics(df_mtd, country)
+            channel_metrics_mtd_last_month = calculate_channel_metrics(df_mtd_last_month, country)
 
             # Generate and save JSON
             data = generate_json_output(
@@ -633,7 +649,9 @@ def main():
                 ma_7d,
                 ma_15d,
                 channel_metrics_today,
+                channel_metrics_last_week,
                 channel_metrics_mtd,
+                channel_metrics_mtd_last_month,
             )
             versioned_file = save_json_file(data, country)
             manifest[country.lower()] = versioned_file.split('/')[-1]

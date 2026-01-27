@@ -448,30 +448,52 @@ function updateChannelSplit(country, data) {
     }
 
     const dailyBreakdown = data.channel_breakdown_today;
+    const dailyLastWeek = data.channel_breakdown_last_week || {};
     const mtdBreakdown = data.channel_breakdown_mtd;
+    const mtdLastMonth = data.channel_breakdown_mtd_last_month || {};
 
     console.log(`[UI] Updating ${country.toUpperCase()} channel split:`, {daily: dailyBreakdown, mtd: mtdBreakdown});
 
-    // Update daily channel split
+    // Update daily channel split with comparison
     const dailyGrowEl = document.getElementById(`${country}-daily-grow-buyers`);
+    const dailyGrowChangeEl = document.getElementById(`${country}-daily-grow-buyers-change`);
     const dailyCustomerEl = document.getElementById(`${country}-daily-customer-buyers`);
+    const dailyCustomerChangeEl = document.getElementById(`${country}-daily-customer-buyers-change`);
 
     if (dailyGrowEl && dailyBreakdown.cx_tlp) {
         dailyGrowEl.textContent = `${dailyBreakdown.cx_tlp.buyers_percent || 0}%`;
+        if (dailyGrowChangeEl && dailyLastWeek.cx_tlp) {
+            const change = (dailyBreakdown.cx_tlp.buyers_percent || 0) - (dailyLastWeek.cx_tlp.buyers_percent || 0);
+            updateChangeIndicator(dailyGrowChangeEl, change, false);
+        }
     }
     if (dailyCustomerEl && dailyBreakdown.customer) {
         dailyCustomerEl.textContent = `${dailyBreakdown.customer.buyers_percent || 0}%`;
+        if (dailyCustomerChangeEl && dailyLastWeek.customer) {
+            const change = (dailyBreakdown.customer.buyers_percent || 0) - (dailyLastWeek.customer.buyers_percent || 0);
+            updateChangeIndicator(dailyCustomerChangeEl, change, false);
+        }
     }
 
-    // Update MTD channel split
+    // Update MTD channel split with comparison
     const mtdGrowEl = document.getElementById(`${country}-mtd-grow-buyers`);
+    const mtdGrowChangeEl = document.getElementById(`${country}-mtd-grow-buyers-change`);
     const mtdCustomerEl = document.getElementById(`${country}-mtd-customer-buyers`);
+    const mtdCustomerChangeEl = document.getElementById(`${country}-mtd-customer-buyers-change`);
 
     if (mtdGrowEl && mtdBreakdown.cx_tlp) {
         mtdGrowEl.textContent = `${mtdBreakdown.cx_tlp.buyers_percent || 0}%`;
+        if (mtdGrowChangeEl && mtdLastMonth.cx_tlp) {
+            const change = (mtdBreakdown.cx_tlp.buyers_percent || 0) - (mtdLastMonth.cx_tlp.buyers_percent || 0);
+            updateChangeIndicator(mtdGrowChangeEl, change, false);
+        }
     }
     if (mtdCustomerEl && mtdBreakdown.customer) {
         mtdCustomerEl.textContent = `${mtdBreakdown.customer.buyers_percent || 0}%`;
+        if (mtdCustomerChangeEl && mtdLastMonth.customer) {
+            const change = (mtdBreakdown.customer.buyers_percent || 0) - (mtdLastMonth.customer.buyers_percent || 0);
+            updateChangeIndicator(mtdCustomerChangeEl, change, false);
+        }
     }
 }
 
