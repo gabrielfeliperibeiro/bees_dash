@@ -336,11 +336,9 @@ function updateUI() {
 
     updateCountry('ph', state.data.ph);
     updateCountry('vn', state.data.vn);
+    updateCountryMTD('ph', state.data.ph);
+    updateCountryMTD('vn', state.data.vn);
     updateStatusIndicator();
-
-    // Update charts
-    createChart('ph', state.data.ph);
-    createChart('vn', state.data.vn);
 
     console.log('[UI] UI updated successfully');
 }
@@ -392,6 +390,38 @@ function updateCountry(country, data) {
         today.gmv_per_poc_usd,
         lastWeek.gmv_per_poc_usd,
         true);
+}
+
+function updateCountryMTD(country, data) {
+    if (!data || !data.mtd) {
+        console.warn(`[UI] No MTD data for ${country}`);
+        return;
+    }
+
+    const mtd = data.mtd;
+
+    console.log(`[UI] Updating ${country.toUpperCase()} MTD:`, mtd);
+
+    // Update MTD metrics (no change indicators for MTD)
+    updateMetricSimple(country, 'mtd-gmv', mtd.total_gmv_usd, true);
+    updateMetricSimple(country, 'mtd-orders', mtd.orders, false);
+    updateMetricSimple(country, 'mtd-aov', mtd.aov_usd, true);
+    updateMetricSimple(country, 'mtd-buyers', mtd.unique_buyers, false);
+    updateMetricSimple(country, 'mtd-frequency', mtd.frequency, false, 2);
+    updateMetricSimple(country, 'mtd-gmv-poc', mtd.gmv_per_poc_usd, true);
+}
+
+function updateMetricSimple(country, metricName, value, isCurrency, decimals = 0) {
+    const valueEl = document.getElementById(`${country}-${metricName}`);
+
+    if (!valueEl) {
+        console.warn(`[UI] Element not found: ${country}-${metricName}`);
+        return;
+    }
+
+    // Format and display value
+    const formattedValue = formatValue(value, isCurrency, decimals);
+    valueEl.textContent = formattedValue;
 }
 
 function updateMetric(country, metricName, currentValue, previousValue, isCurrency, decimals = 0) {

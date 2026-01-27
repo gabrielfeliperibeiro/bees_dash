@@ -295,6 +295,16 @@ body.loaded {
     font-size: var(--font-title);
 }
 
+.mtd-section-title {
+    font-size: clamp(1.5rem, 3vw, 4rem);
+    font-weight: 800;
+    color: var(--bees-gold);
+    text-align: center;
+    margin: clamp(16px, 2vh, 32px) 0 clamp(8px, 1vh, 16px) 0;
+    text-shadow: 0 0 20px rgba(245, 224, 3, 0.4);
+    opacity: 0.9;
+}
+
 /* ===================================================================
    METRIC CARDS - Huge & Adaptive
    =================================================================== */

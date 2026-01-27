@@ -11,7 +11,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
 <body>
     <script>
@@ -94,9 +93,35 @@
                         <div class="metric-change" id="ph-gmv-poc-change">-</div>
                     </div>
                 </div>
-                <!-- Charts Section -->
-                <div class="charts-section">
-                    <canvas id="ph-chart"></canvas>
+                <!-- MTD Section -->
+                <h3 class="mtd-section-title">Month-to-Date</h3>
+                <div class="metrics-row">
+                    <div class="metric-card">
+                        <div class="metric-label">GMV (USD)</div>
+                        <div class="metric-value" id="ph-mtd-gmv">$0</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Orders</div>
+                        <div class="metric-value" id="ph-mtd-orders">0</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">AOV (USD)</div>
+                        <div class="metric-value" id="ph-mtd-aov">$0</div>
+                    </div>
+                </div>
+                <div class="metrics-row">
+                    <div class="metric-card">
+                        <div class="metric-label">Buyers</div>
+                        <div class="metric-value" id="ph-mtd-buyers">0</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Frequency</div>
+                        <div class="metric-value" id="ph-mtd-frequency">0.00</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">GMV/POCs</div>
+                        <div class="metric-value" id="ph-mtd-gmv-poc">$0</div>
+                    </div>
                 </div>
             </section>
 
@@ -141,9 +166,35 @@
                         <div class="metric-change" id="vn-gmv-poc-change">-</div>
                     </div>
                 </div>
-                <!-- Charts Section -->
-                <div class="charts-section">
-                    <canvas id="vn-chart"></canvas>
+                <!-- MTD Section -->
+                <h3 class="mtd-section-title">Month-to-Date</h3>
+                <div class="metrics-row">
+                    <div class="metric-card">
+                        <div class="metric-label">GMV (USD)</div>
+                        <div class="metric-value" id="vn-mtd-gmv">$0</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Orders</div>
+                        <div class="metric-value" id="vn-mtd-orders">0</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">AOV (USD)</div>
+                        <div class="metric-value" id="vn-mtd-aov">$0</div>
+                    </div>
+                </div>
+                <div class="metrics-row">
+                    <div class="metric-card">
+                        <div class="metric-label">Buyers</div>
+                        <div class="metric-value" id="vn-mtd-buyers">0</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Frequency</div>
+                        <div class="metric-value" id="vn-mtd-frequency">0.00</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">GMV/POCs</div>
+                        <div class="metric-value" id="vn-mtd-gmv-poc">$0</div>
+                    </div>
                 </div>
             </section>
         </main>
