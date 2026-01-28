@@ -311,10 +311,12 @@ def calculate_metrics(df, country=None):
 
 def calculate_channel_metrics(df, country=None):
     """
-    Calculate channel breakdown metrics (Customer vs CX_TLP).
+    Calculate channel breakdown metrics (Customer vs Grow).
 
-    Customer channels: B2B_APP, B2B_WEB, B2B_FORCE (not CX_TLP)
-    Grow channel: CX_TLP
+    MUTUALLY EXCLUSIVE BUYER CLASSIFICATION:
+    - If buyer has ANY Customer channel orders (B2B_APP, B2B_WEB, B2B_FORCE), classify as Customer
+    - Else, classify as Grow (CX_TLP only)
+    - This ensures buyers sum to exactly 100%
 
     Args:
         df: pandas DataFrame with order data including channel column
@@ -342,28 +344,36 @@ def calculate_channel_metrics(df, country=None):
     total_orders = df["order_number"].nunique()
     total_buyers = df["account_id"].nunique()
 
-    # Customer channels (B2B_APP, B2B_WEB, B2B_FORCE - not CX_TLP)
-    df_customer = df[df["channel"] != "CX_TLP"]
+    # MUTUALLY EXCLUSIVE BUYER CLASSIFICATION
+    # Get buyers who have at least one Customer channel order
+    customer_buyers_set = set(df[df["channel"] != "CX_TLP"]["account_id"].unique())
+
+    # All other buyers are Grow (only CX_TLP orders)
+    all_buyers_set = set(df["account_id"].unique())
+    grow_buyers_set = all_buyers_set - customer_buyers_set
+
+    # Customer metrics (all orders from customer-classified buyers)
+    df_customer = df[df["account_id"].isin(customer_buyers_set)]
     customer_gmv = df_customer["order_gmv"].sum()
     customer_gmv_usd = customer_gmv / usd_rate
     customer_orders = df_customer["order_number"].nunique()
-    customer_buyers = df_customer["account_id"].nunique()
+    customer_buyers = len(customer_buyers_set)
 
-    # CX_TLP channel (Grow)
-    df_cx_tlp = df[df["channel"] == "CX_TLP"]
-    cx_tlp_gmv = df_cx_tlp["order_gmv"].sum()
-    cx_tlp_gmv_usd = cx_tlp_gmv / usd_rate
-    cx_tlp_orders = df_cx_tlp["order_number"].nunique()
-    cx_tlp_buyers = df_cx_tlp["account_id"].nunique()
+    # Grow metrics (all orders from grow-classified buyers)
+    df_grow = df[df["account_id"].isin(grow_buyers_set)]
+    grow_gmv = df_grow["order_gmv"].sum()
+    grow_gmv_usd = grow_gmv / usd_rate
+    grow_orders = df_grow["order_number"].nunique()
+    grow_buyers = len(grow_buyers_set)
 
     # Calculate percentages
     customer_gmv_pct = (customer_gmv_usd / total_gmv_usd * 100) if total_gmv_usd > 0 else 0
     customer_orders_pct = (customer_orders / total_orders * 100) if total_orders > 0 else 0
     customer_buyers_pct = (customer_buyers / total_buyers * 100) if total_buyers > 0 else 0
 
-    cx_tlp_gmv_pct = (cx_tlp_gmv_usd / total_gmv_usd * 100) if total_gmv_usd > 0 else 0
-    cx_tlp_orders_pct = (cx_tlp_orders / total_orders * 100) if total_orders > 0 else 0
-    cx_tlp_buyers_pct = (cx_tlp_buyers / total_buyers * 100) if total_buyers > 0 else 0
+    grow_gmv_pct = (grow_gmv_usd / total_gmv_usd * 100) if total_gmv_usd > 0 else 0
+    grow_orders_pct = (grow_orders / total_orders * 100) if total_orders > 0 else 0
+    grow_buyers_pct = (grow_buyers / total_buyers * 100) if total_buyers > 0 else 0
 
     return {
         "customer": {
@@ -375,12 +385,12 @@ def calculate_channel_metrics(df, country=None):
             "buyers_percent": round(customer_buyers_pct, 1)
         },
         "cx_tlp": {
-            "gmv_usd": round(cx_tlp_gmv_usd, 2),
-            "orders": cx_tlp_orders,
-            "buyers": cx_tlp_buyers,
-            "gmv_percent": round(cx_tlp_gmv_pct, 1),
-            "orders_percent": round(cx_tlp_orders_pct, 1),
-            "buyers_percent": round(cx_tlp_buyers_pct, 1)
+            "gmv_usd": round(grow_gmv_usd, 2),
+            "orders": grow_orders,
+            "buyers": grow_buyers,
+            "gmv_percent": round(grow_gmv_pct, 1),
+            "orders_percent": round(grow_orders_pct, 1),
+            "buyers_percent": round(grow_buyers_pct, 1)
         }
     }
 
