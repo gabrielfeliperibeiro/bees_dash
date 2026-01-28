@@ -110,6 +110,7 @@ def query_gold_orders(connection, country, start_date, end_date):
         AND first_channel IN ('B2B_APP', 'CX_TLP', 'B2B_WEB', 'B2B_FORCE')
         """
     else:  # VN
+        # VN may not have underscore in vendor IDs, so don't require it
         query = f"""
         SELECT
             'VN' AS country,
@@ -127,7 +128,6 @@ def query_gold_orders(connection, country, start_date, end_date):
         AND TO_DATE(placement_date) <= '{end_date}'
         AND vendor_account_id NOT LIKE '%BEE%'
         AND vendor_account_id NOT LIKE '%DUM%'
-        AND vendor_account_id LIKE '%#_%' ESCAPE '#'
         AND current_status NOT IN ('DENIED', 'CANCELLED', 'PENDING CANCELLATION')
         AND first_channel IN ('B2B_APP', 'CX_TLP', 'B2B_WEB', 'B2B_FORCE')
         """
@@ -203,6 +203,7 @@ def query_orders(connection, country, start_date, end_date, hour_limit=None):
         QUALIFY ROW_NUMBER() OVER(PARTITION BY orderNumber ORDER BY createAt DESC) = 1
         """
     else:  # VN
+        # VN may not have underscore in vendor IDs, so make that filter optional
         query = f"""
         SELECT
             'VN' AS country,
@@ -220,7 +221,6 @@ def query_orders(connection, country, start_date, end_date, hour_limit=None):
         AND channel NOT IN ('SALESMAN', 'NON-BEES')
         AND vendorAccountId NOT LIKE '%BEE%'
         AND vendorAccountId NOT LIKE '%DUM%'
-        AND vendorAccountId LIKE '%#_%' ESCAPE '#'
         AND status NOT IN ('DENIED', 'CANCELLED', 'PENDING CANCELLATION')
         {hour_filter}
         QUALIFY ROW_NUMBER() OVER(PARTITION BY orderNumber ORDER BY createAt DESC) = 1
