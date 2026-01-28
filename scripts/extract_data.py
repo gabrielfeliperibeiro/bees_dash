@@ -657,6 +657,11 @@ def main():
                 df_mtd_gold = query_gold_orders(connection, country, mtd_start, yesterday)
                 logger.info(f"{country} - MTD GOLD ({mtd_start} to {yesterday}): {len(df_mtd_gold)} orders")
 
+            # Also query GOLD for today (with full data) for channel metrics
+            # Silver may not have channel populated yet for today's orders
+            df_today_gold = query_gold_orders(connection, country, today, today)
+            logger.info(f"{country} - Today GOLD (full day): {len(df_today_gold)} orders")
+
             logger.info(f"{country} - Today (up to {current_hour}:00): {len(df_today_limited)} orders")
             logger.info(f"{country} - Last week (up to {current_hour}:00): {len(df_last_week)} orders")
             logger.info(f"{country} - Last month MTD ({last_month_mtd_start} to {last_month_mtd_end}): {len(df_mtd_last_month)} orders")
@@ -739,8 +744,19 @@ def main():
             ma_15d = calculate_moving_average(daily_metrics, 15)
 
             # Calculate channel metrics
-            # Use hour-limited data for today to match the daily comparison timing
-            channel_metrics_today = calculate_channel_metrics(df_today_limited, country)
+            # Use GOLD data for today's channels (silver may not have channel populated yet)
+            # Filter by hour to match the hour-limited comparison
+            if not df_today_gold.empty:
+                df_today_gold["placement_date"] = pd.to_datetime(df_today_gold["placement_date"], format='mixed', utc=True)
+                df_today_gold_limited = df_today_gold[
+                    df_today_gold["placement_date"].dt.hour <= current_hour
+                ].copy()
+                logger.info(f"{country} - Today GOLD hour-limited ({current_hour}:00): {len(df_today_gold_limited)} orders")
+                channel_metrics_today = calculate_channel_metrics(df_today_gold_limited, country)
+            else:
+                # Fallback to silver if GOLD has no data
+                channel_metrics_today = calculate_channel_metrics(df_today_limited, country)
+
             channel_metrics_last_week = calculate_channel_metrics(df_last_week, country)
             channel_metrics_mtd = calculate_channel_metrics(df_mtd, country)
             channel_metrics_mtd_last_month = calculate_channel_metrics(df_mtd_last_month, country)
