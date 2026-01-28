@@ -339,10 +339,14 @@ body.loaded {
 
 .channel-label-grow {
     color: var(--bees-gold);
+    font-size: clamp(2rem, 4vw, 7rem);
+    font-weight: 900;
 }
 
 .channel-label-customer {
     color: var(--success);
+    font-size: clamp(2rem, 4vw, 7rem);
+    font-weight: 900;
 }
 
 .channel-separator {
@@ -427,6 +431,11 @@ body.loaded {
 
     .metric-value-split {
         font-size: clamp(2.2rem, 4.5vw, 8rem);
+    }
+
+    .channel-label-grow,
+    .channel-label-customer {
+        font-size: clamp(2.5rem, 5vw, 9rem);
     }
 }
 
