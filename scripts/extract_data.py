@@ -107,7 +107,7 @@ def query_gold_orders(connection, country, start_date, end_date):
         AND vendor_account_id NOT LIKE '%DUM%'
         AND vendor_account_id LIKE '%#_%' ESCAPE '#'
         AND current_status NOT IN ('DENIED', 'CANCELLED', 'PENDING CANCELLATION')
-        AND first_channel IN ('B2B_APP', 'CX_TLP', 'B2B_WEB', 'B2B_FORCE')
+        AND first_channel IN ('B2B_APP', 'B2B_WEB', 'B2B_LNK', 'B2B_FORCE', 'CX_TLP')
         """
     else:  # VN
         # VN may not have underscore in vendor IDs, so don't require it
@@ -129,7 +129,7 @@ def query_gold_orders(connection, country, start_date, end_date):
         AND vendor_account_id NOT LIKE '%BEE%'
         AND vendor_account_id NOT LIKE '%DUM%'
         AND current_status NOT IN ('DENIED', 'CANCELLED', 'PENDING CANCELLATION')
-        AND first_channel IN ('B2B_APP', 'CX_TLP', 'B2B_WEB', 'B2B_FORCE')
+        AND first_channel IN ('B2B_APP', 'B2B_WEB', 'B2B_LNK', 'B2B_FORCE', 'CX_TLP')
         """
 
     try:
@@ -178,7 +178,7 @@ def query_orders(connection, country, start_date, end_date, hour_limit=None):
 
     # Build query based on country for silver tables
     # Use QUALIFY to deduplicate append-only table data
-    # Exclude SALESMAN channel from analysis
+    # Use channel whitelist for consistent filtering
     if country == 'PH':
         query = f"""
         SELECT
@@ -194,7 +194,7 @@ def query_orders(connection, country, start_date, end_date, hour_limit=None):
         FROM ptn_am.silver.daily_orders_consolidated
         WHERE TO_DATE(DATE_TRUNC('DAY', createAt + INTERVAL {tz_offset} HOUR)) >= '{start_date}'
         AND TO_DATE(DATE_TRUNC('DAY', createAt + INTERVAL {tz_offset} HOUR)) <= '{end_date}'
-        AND channel NOT IN ('SALESMAN')
+        AND channel IN ('B2B_APP', 'B2B_WEB', 'B2B_LNK', 'B2B_FORCE', 'CX_TLP')
         AND vendorAccountId NOT LIKE '%BEE%'
         AND vendorAccountId NOT LIKE '%DUM%'
         AND vendorAccountId LIKE '%#_%' ESCAPE '#'
@@ -218,7 +218,7 @@ def query_orders(connection, country, start_date, end_date, hour_limit=None):
         FROM ptn_am.silver.vn_daily_orders_consolidated
         WHERE TO_DATE(DATE_TRUNC('DAY', createAt + INTERVAL {tz_offset} HOUR)) >= '{start_date}'
         AND TO_DATE(DATE_TRUNC('DAY', createAt + INTERVAL {tz_offset} HOUR)) <= '{end_date}'
-        AND channel NOT IN ('SALESMAN', 'NON-BEES')
+        AND channel IN ('B2B_APP', 'B2B_WEB', 'B2B_LNK', 'B2B_FORCE', 'CX_TLP')
         AND vendorAccountId NOT LIKE '%BEE%'
         AND vendorAccountId NOT LIKE '%DUM%'
         AND status NOT IN ('DENIED', 'CANCELLED', 'PENDING CANCELLATION')

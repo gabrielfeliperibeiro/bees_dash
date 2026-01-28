@@ -47,8 +47,8 @@ body.loaded {
     height: 100vh;
     display: flex;
     flex-direction: column;
-    padding: 0.5vh 0.5vw;
-    gap: 0.5vh;
+    padding: 0.2vh 0.2vw;
+    gap: 0.3vh;
 }
 
 /* ===================================================================
@@ -57,10 +57,10 @@ body.loaded {
 
 .header {
     width: 100%;
-    padding: 0.8vh 1.5vw;
+    padding: 0.4vh 1vw;
     background: linear-gradient(135deg, var(--charcoal) 0%, #0A0A0A 100%);
     border: 2px solid var(--bees-gold);
-    border-radius: 12px;
+    border-radius: 8px;
     box-shadow:
         0 4px 16px rgba(245, 224, 3, 0.15),
         inset 0 1px 0 rgba(245, 224, 3, 0.1);
@@ -198,7 +198,7 @@ body.loaded {
     flex: 1;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.5vw;
+    gap: 0.3vw;
     overflow: hidden;
     min-height: 0;
 }
@@ -210,11 +210,11 @@ body.loaded {
 .country-section {
     background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(10, 10, 10, 0.95) 100%);
     border: 2px solid rgba(245, 224, 3, 0.3);
-    border-radius: 12px;
-    padding: 1vh 1vw;
+    border-radius: 8px;
+    padding: 0.5vh 0.5vw;
     display: flex;
     flex-direction: column;
-    gap: 0.5vh;
+    gap: 0.3vh;
     overflow-y: auto;
     overflow-x: hidden;
 }
@@ -239,18 +239,18 @@ body.loaded {
 }
 
 .country-title {
-    font-size: clamp(1.3rem, 2.2vw, 3rem);
+    font-size: clamp(1.8rem, 3.5vw, 5rem);
     font-weight: 900;
     color: var(--bees-gold);
     display: flex;
     align-items: center;
     gap: 0.8vw;
-    margin-bottom: 0.5vh;
+    margin-bottom: 0.3vh;
     flex-shrink: 0;
 }
 
 .flag {
-    font-size: clamp(1.5rem, 2.5vw, 3.5rem);
+    font-size: clamp(2rem, 4vw, 6rem);
 }
 
 /* ===================================================================
@@ -260,17 +260,17 @@ body.loaded {
 .metrics-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 0.5vw;
+    gap: 0.3vw;
 }
 
 .metric-card {
     background: linear-gradient(135deg, rgba(245, 224, 3, 0.05) 0%, rgba(245, 224, 3, 0.02) 100%);
     border: 1px solid rgba(245, 224, 3, 0.2);
-    border-radius: 10px;
-    padding: 0.8vh 0.6vw;
+    border-radius: 8px;
+    padding: 0.5vh 0.4vw;
     display: flex;
     flex-direction: column;
-    gap: 0.3vh;
+    gap: 0.2vh;
     transition: all 0.3s;
 }
 
@@ -281,7 +281,7 @@ body.loaded {
 }
 
 .metric-label {
-    font-size: clamp(0.65rem, 0.85vw, 1.2rem);
+    font-size: clamp(0.8rem, 1.2vw, 2rem);
     font-weight: 600;
     color: rgba(255, 255, 255, 0.6);
     text-transform: uppercase;
@@ -289,7 +289,7 @@ body.loaded {
 }
 
 .metric-value {
-    font-size: clamp(1.5rem, 3vw, 5rem);
+    font-size: clamp(2rem, 4.5vw, 8rem);
     font-weight: 900;
     color: #FFFFFF;
     line-height: 1;
@@ -297,7 +297,7 @@ body.loaded {
 }
 
 .metric-change {
-    font-size: clamp(0.7rem, 1.2vw, 2rem);
+    font-size: clamp(1rem, 1.8vw, 3rem);
     font-weight: 700;
     display: flex;
     align-items: center;
@@ -324,7 +324,7 @@ body.loaded {
     grid-column: 1 / -1;
     background: linear-gradient(135deg, rgba(245, 224, 3, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
     border: 1px solid rgba(245, 224, 3, 0.3);
-    padding: 1vh 1vw;
+    padding: 0.5vh 0.6vw;
 }
 
 .metric-value-split {
@@ -332,7 +332,7 @@ body.loaded {
     align-items: center;
     justify-content: center;
     gap: 1.5vw;
-    font-size: clamp(1.2rem, 2.5vw, 4rem);
+    font-size: clamp(1.8rem, 3.5vw, 6rem);
     font-weight: 900;
     margin-top: 0.3vh;
 }
@@ -355,11 +355,11 @@ body.loaded {
    =================================================================== */
 
 .mtd-section-title {
-    font-size: clamp(0.95rem, 1.6vw, 2.2rem);
+    font-size: clamp(1.2rem, 2.2vw, 3.5rem);
     font-weight: 700;
     color: rgba(245, 224, 3, 0.9);
-    margin-top: 0.5vh;
-    padding-bottom: 0.3vh;
+    margin-top: 0.3vh;
+    padding-bottom: 0.2vh;
     border-bottom: 1px solid rgba(245, 224, 3, 0.2);
     flex-shrink: 0;
 }
@@ -371,29 +371,62 @@ body.loaded {
 /* Large screens / TVs - maximize space */
 @media (min-width: 1920px) {
     .dashboard-container {
-        padding: 0.3vh 0.3vw;
-        gap: 0.3vh;
+        padding: 0.1vh 0.1vw;
+        gap: 0.2vh;
     }
 
     .header {
-        padding: 0.6vh 1vw;
+        padding: 0.3vh 0.5vw;
     }
 
     .country-section {
-        padding: 0.8vh 0.8vw;
-        gap: 0.4vh;
+        padding: 0.4vh 0.4vw;
+        gap: 0.2vh;
     }
 
     .metric-card {
-        padding: 0.7vh 0.5vw;
+        padding: 0.4vh 0.3vw;
+        gap: 0.1vh;
     }
 
     .metrics-row {
-        gap: 0.4vw;
+        gap: 0.2vw;
     }
 
     .main-content {
-        gap: 0.4vw;
+        gap: 0.2vw;
+    }
+
+    /* Even bigger fonts for TV */
+    .metric-value {
+        font-size: clamp(2.5rem, 5.5vw, 10rem);
+    }
+
+    .metric-label {
+        font-size: clamp(1rem, 1.5vw, 2.5rem);
+    }
+
+    .metric-change {
+        font-size: clamp(1.2rem, 2.2vw, 4rem);
+    }
+
+    .country-title {
+        font-size: clamp(2.2rem, 4.5vw, 6.5rem);
+        margin-bottom: 0.2vh;
+    }
+
+    .flag {
+        font-size: clamp(2.5rem, 5vw, 7.5rem);
+    }
+
+    .mtd-section-title {
+        font-size: clamp(1.5rem, 2.8vw, 4.5rem);
+        margin-top: 0.2vh;
+        padding-bottom: 0.1vh;
+    }
+
+    .metric-value-split {
+        font-size: clamp(2.2rem, 4.5vw, 8rem);
     }
 }
 

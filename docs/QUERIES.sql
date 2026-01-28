@@ -26,7 +26,7 @@ SELECT
 FROM ptn_am.silver.daily_orders_consolidated
 WHERE TO_DATE(DATE_TRUNC('DAY', createAt + INTERVAL 8 HOUR)) >= '{start_date}'
 AND TO_DATE(DATE_TRUNC('DAY', createAt + INTERVAL 8 HOUR)) <= '{end_date}'
-AND channel NOT IN ('SALESMAN')
+AND channel IN ('B2B_APP', 'B2B_WEB', 'B2B_LNK', 'B2B_FORCE', 'CX_TLP')
 AND vendorAccountId NOT LIKE '%BEE%'
 AND vendorAccountId NOT LIKE '%DUM%'
 AND vendorAccountId LIKE '%#_%' ESCAPE '#'
@@ -40,7 +40,7 @@ QUALIFY ROW_NUMBER() OVER(PARTITION BY orderNumber ORDER BY createAt DESC) = 1;
 -- - Deduplication using QUALIFY to handle append-only table
 -- - Vendor filters exclude test/dummy accounts
 -- - Status filters exclude cancelled/denied orders
--- - Channel filter excludes SALESMAN channel
+-- - Channel whitelist: B2B_APP, B2B_WEB, B2B_LNK, B2B_FORCE, CX_TLP
 
 -- ============================================================================
 -- 2. VIETNAM SILVER TABLE QUERY (Daily/Historical Data)
@@ -63,7 +63,7 @@ SELECT
 FROM ptn_am.silver.vn_daily_orders_consolidated
 WHERE TO_DATE(DATE_TRUNC('DAY', createAt + INTERVAL 7 HOUR)) >= '{start_date}'
 AND TO_DATE(DATE_TRUNC('DAY', createAt + INTERVAL 7 HOUR)) <= '{end_date}'
-AND channel NOT IN ('SALESMAN', 'NON-BEES')
+AND channel IN ('B2B_APP', 'B2B_WEB', 'B2B_LNK', 'B2B_FORCE', 'CX_TLP')
 AND vendorAccountId NOT LIKE '%BEE%'
 AND vendorAccountId NOT LIKE '%DUM%'
 AND vendorAccountId LIKE '%#_%' ESCAPE '#'
@@ -74,8 +74,8 @@ QUALIFY ROW_NUMBER() OVER(PARTITION BY orderNumber ORDER BY createAt DESC) = 1;
 
 -- Notes:
 -- - UTC+7 timezone offset for Vietnam
--- - Additional filter: excludes 'NON-BEES' channel
--- - Same vendor and status filters as PH
+-- - Channel whitelist: B2B_APP, B2B_WEB, B2B_LNK, B2B_FORCE, CX_TLP
+-- - Same vendor and status filters as PH (except no underscore requirement)
 
 -- ============================================================================
 -- 3. PHILIPPINES GOLD TABLE QUERY (MTD Historical Data D-1 and earlier)
@@ -103,13 +103,13 @@ AND vendor_account_id NOT LIKE '%BEE%'
 AND vendor_account_id NOT LIKE '%DUM%'
 AND vendor_account_id LIKE '%#_%' ESCAPE '#'
 AND current_status NOT IN ('DENIED', 'CANCELLED', 'PENDING CANCELLATION')
-AND first_channel IN ('B2B_APP', 'CX_TLP', 'B2B_WEB', 'B2B_FORCE');
+AND first_channel IN ('B2B_APP', 'B2B_WEB', 'B2B_LNK', 'B2B_FORCE', 'CX_TLP');
 
 -- Notes:
 -- - Uses current_total (not total) for GMV
 -- - Uses current_status (not status)
 -- - Uses first_channel (not channel)
--- - Channel whitelist instead of blacklist
+-- - Channel whitelist: B2B_APP, B2B_WEB, B2B_LNK, B2B_FORCE, CX_TLP
 -- - No QUALIFY needed (GOLD is already deduplicated)
 -- - Combined with today's silver data to get complete MTD
 
@@ -139,7 +139,7 @@ AND vendor_account_id NOT LIKE '%BEE%'
 AND vendor_account_id NOT LIKE '%DUM%'
 AND vendor_account_id LIKE '%#_%' ESCAPE '#'
 AND current_status NOT IN ('DENIED', 'CANCELLED', 'PENDING CANCELLATION')
-AND first_channel IN ('B2B_APP', 'CX_TLP', 'B2B_WEB', 'B2B_FORCE');
+AND first_channel IN ('B2B_APP', 'B2B_WEB', 'B2B_LNK', 'B2B_FORCE', 'CX_TLP');
 
 -- Notes:
 -- - Same structure as PH GOLD query
@@ -165,7 +165,7 @@ AND vendor_account_id NOT LIKE '%BEE%'
 AND vendor_account_id NOT LIKE '%DUM%'
 AND vendor_account_id LIKE '%#_%' ESCAPE '#'
 AND current_status NOT IN ('DENIED', 'CANCELLED', 'PENDING CANCELLATION')
-AND first_channel IN ('B2B_APP', 'CX_TLP', 'B2B_WEB', 'B2B_FORCE');
+AND first_channel IN ('B2B_APP', 'B2B_WEB', 'B2B_LNK', 'B2B_FORCE', 'CX_TLP');
 
 -- Expected Output (as of 2026-01-28):
 -- total_gmv_usd: ~2,565,000
@@ -194,7 +194,7 @@ WITH buyer_channels AS (
     AND vendor_account_id NOT LIKE '%DUM%'
     AND vendor_account_id LIKE '%#_%' ESCAPE '#'
     AND current_status NOT IN ('DENIED', 'CANCELLED', 'PENDING CANCELLATION')
-    AND first_channel IN ('B2B_APP', 'CX_TLP', 'B2B_WEB', 'B2B_FORCE')
+    AND first_channel IN ('B2B_APP', 'B2B_WEB', 'B2B_LNK', 'B2B_FORCE', 'CX_TLP')
 ),
 -- Step 2: Classify buyers (Customer first, then Grow)
 buyer_classification AS (
@@ -252,7 +252,7 @@ AND vendor_account_id LIKE '%#_%' ESCAPE '#'
 AND current_status NOT IN ('DENIED', 'CANCELLED', 'PENDING CANCELLATION')
 GROUP BY first_channel
 ORDER BY order_count DESC;
--- Expected channels: B2B_APP, CX_TLP, B2B_WEB, B2B_FORCE
+-- Expected channels: B2B_APP, B2B_WEB, B2B_LNK, B2B_FORCE, CX_TLP
 
 -- Check 3: Verify status distribution
 SELECT
