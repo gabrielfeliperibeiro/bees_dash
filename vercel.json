@@ -9,6 +9,17 @@
   "github": {
     "silent": true
   },
+  "crons": [
+    {
+      "path": "/api/update-data",
+      "schedule": "*/15 * * * *"
+    }
+  ],
+  "functions": {
+    "api/update-data.js": {
+      "maxDuration": 300
+    }
+  },
   "headers": [
     {
       "source": "/data/(.*)",
