@@ -367,13 +367,16 @@ def calculate_channel_metrics(df, country=None):
     grow_buyers = len(grow_buyers_set)
 
     # Calculate percentages
+    # For buyers, use the sum of classified buyers to ensure 100% sum
+    classified_buyers_total = customer_buyers + grow_buyers
+
     customer_gmv_pct = (customer_gmv_usd / total_gmv_usd * 100) if total_gmv_usd > 0 else 0
     customer_orders_pct = (customer_orders / total_orders * 100) if total_orders > 0 else 0
-    customer_buyers_pct = (customer_buyers / total_buyers * 100) if total_buyers > 0 else 0
+    customer_buyers_pct = (customer_buyers / classified_buyers_total * 100) if classified_buyers_total > 0 else 0
 
     grow_gmv_pct = (grow_gmv_usd / total_gmv_usd * 100) if total_gmv_usd > 0 else 0
     grow_orders_pct = (grow_orders / total_orders * 100) if total_orders > 0 else 0
-    grow_buyers_pct = (grow_buyers / total_buyers * 100) if total_buyers > 0 else 0
+    grow_buyers_pct = (grow_buyers / classified_buyers_total * 100) if classified_buyers_total > 0 else 0
 
     return {
         "customer": {
