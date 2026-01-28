@@ -368,6 +368,35 @@ body.loaded {
    RESPONSIVE ADJUSTMENTS
    =================================================================== */
 
+/* Large screens / TVs - maximize space */
+@media (min-width: 1920px) {
+    .dashboard-container {
+        padding: 0.3vh 0.3vw;
+        gap: 0.3vh;
+    }
+
+    .header {
+        padding: 0.6vh 1vw;
+    }
+
+    .country-section {
+        padding: 0.8vh 0.8vw;
+        gap: 0.4vh;
+    }
+
+    .metric-card {
+        padding: 0.7vh 0.5vw;
+    }
+
+    .metrics-row {
+        gap: 0.4vw;
+    }
+
+    .main-content {
+        gap: 0.4vw;
+    }
+}
+
 /* Very small screens - single column */
 @media (max-width: 1200px) {
     .main-content {

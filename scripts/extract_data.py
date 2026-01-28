@@ -738,8 +738,9 @@ def main():
             ma_7d = calculate_moving_average(daily_metrics, 7)
             ma_15d = calculate_moving_average(daily_metrics, 15)
 
-            # Calculate channel metrics using full day data
-            channel_metrics_today = calculate_channel_metrics(df_today_full, country)
+            # Calculate channel metrics
+            # Use hour-limited data for today to match the daily comparison timing
+            channel_metrics_today = calculate_channel_metrics(df_today_limited, country)
             channel_metrics_last_week = calculate_channel_metrics(df_last_week, country)
             channel_metrics_mtd = calculate_channel_metrics(df_mtd, country)
             channel_metrics_mtd_last_month = calculate_channel_metrics(df_mtd_last_month, country)

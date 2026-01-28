@@ -464,14 +464,14 @@ function updateChannelSplit(country, data) {
         dailyGrowEl.textContent = `${dailyBreakdown.cx_tlp.buyers_percent || 0}%`;
         if (dailyGrowChangeEl && dailyLastWeek.cx_tlp) {
             const change = (dailyBreakdown.cx_tlp.buyers_percent || 0) - (dailyLastWeek.cx_tlp.buyers_percent || 0);
-            updateChangeIndicator(dailyGrowChangeEl, change, false);
+            updatePercentageChange(dailyGrowChangeEl, change);
         }
     }
     if (dailyCustomerEl && dailyBreakdown.customer) {
         dailyCustomerEl.textContent = `${dailyBreakdown.customer.buyers_percent || 0}%`;
         if (dailyCustomerChangeEl && dailyLastWeek.customer) {
             const change = (dailyBreakdown.customer.buyers_percent || 0) - (dailyLastWeek.customer.buyers_percent || 0);
-            updateChangeIndicator(dailyCustomerChangeEl, change, false);
+            updatePercentageChange(dailyCustomerChangeEl, change);
         }
     }
 
@@ -485,16 +485,26 @@ function updateChannelSplit(country, data) {
         mtdGrowEl.textContent = `${mtdBreakdown.cx_tlp.buyers_percent || 0}%`;
         if (mtdGrowChangeEl && mtdLastMonth.cx_tlp) {
             const change = (mtdBreakdown.cx_tlp.buyers_percent || 0) - (mtdLastMonth.cx_tlp.buyers_percent || 0);
-            updateChangeIndicator(mtdGrowChangeEl, change, false);
+            updatePercentageChange(mtdGrowChangeEl, change);
         }
     }
     if (mtdCustomerEl && mtdBreakdown.customer) {
         mtdCustomerEl.textContent = `${mtdBreakdown.customer.buyers_percent || 0}%`;
         if (mtdCustomerChangeEl && mtdLastMonth.customer) {
             const change = (mtdBreakdown.customer.buyers_percent || 0) - (mtdLastMonth.customer.buyers_percent || 0);
-            updateChangeIndicator(mtdCustomerChangeEl, change, false);
+            updatePercentageChange(mtdCustomerChangeEl, change);
         }
     }
+}
+
+function updatePercentageChange(element, change) {
+    // For percentage points (already a percentage), show absolute difference
+    const arrow = change >= 0 ? '▲' : '▼';
+    const sign = change >= 0 ? '+' : '';
+    const changeText = `${arrow} ${sign}${change.toFixed(1)}pp`;
+
+    element.textContent = changeText;
+    element.className = 'metric-change ' + (change >= 0 ? 'positive' : change < 0 ? 'negative' : 'neutral');
 }
 
 function updateMetricSimple(country, metricName, value, isCurrency, decimals = 0) {
