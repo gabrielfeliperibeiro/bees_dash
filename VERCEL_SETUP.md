@@ -1,6 +1,8 @@
-# Vercel Setup - Auto Update Every 15 Minutes
+# Vercel Setup - Auto Update Daily
 
-This guide will help you deploy the BEES Dashboard to Vercel with automatic data updates every 15 minutes.
+This guide will help you deploy the BEES Dashboard to Vercel with automatic data updates once per day.
+
+**Note**: Vercel Hobby (free) plan only supports daily cron jobs. For more frequent updates (every 15 minutes), you would need to upgrade to Vercel Pro plan.
 
 ## Prerequisites
 
@@ -90,10 +92,12 @@ After deployment, add these environment variables in Vercel:
 
 Vercel Cron Jobs are automatically enabled when you have a `vercel.json` with `crons` configuration (already included in this project).
 
-The cron job is configured to run every 15 minutes:
-- Schedule: `*/15 * * * *`
+The cron job is configured to run once per day:
+- Schedule: `0 2 * * *` (2:00 AM UTC = 10:00 AM Hong Kong time)
 - Endpoint: `/api/update-data`
 - This triggers the GitHub Actions workflow to update data
+
+**Note**: Hobby plan only supports daily cron jobs. For more frequent updates, see the "Alternatives for More Frequent Updates" section below.
 
 ---
 
@@ -144,7 +148,7 @@ Expected response:
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  Every 15 minutes:                                      │
+│  Daily at 2:00 AM UTC (10:00 AM HK):                   │
 │                                                         │
 │  1. Vercel Cron Job                                    │
 │     └─> Calls /api/update-data                        │
@@ -164,6 +168,8 @@ Expected response:
 │                                                         │
 │  5. Dashboard Updates                                  │
 │     └─> Users see fresh data                         │
+│                                                         │
+│  Note: GitHub Actions also runs hourly (free)         │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -231,19 +237,44 @@ GitHub Repository → Actions → "Update Dashboard Data" workflow
 ### Check Data Freshness
 
 Dashboard shows "Last Updated" timestamp at the top
-- Should update every 15 minutes
+- Vercel cron: Updates daily at 2:00 AM UTC (10:00 AM Hong Kong)
+- GitHub Actions: Updates hourly (already active)
 - Format: "Updated: X minutes ago"
 
 ---
 
+## Alternatives for More Frequent Updates
+
+Since Vercel Hobby plan only supports daily cron jobs, here are alternatives for more frequent updates:
+
+### Option 1: Manual Updates (Free)
+Run the manual update script whenever you need fresh data:
+```bash
+sh manual-update.sh
+```
+This is instant and free!
+
+### Option 2: GitHub Actions Hourly (Free)
+The GitHub Actions workflow is already configured to run hourly:
+- Automatically runs every hour at minute 1 (00:01, 01:01, 02:01, etc.)
+- No Vercel cron needed
+- Completely free (GitHub Actions free tier: 2,000 minutes/month)
+- See: `.github/workflows/update-dashboard.yml`
+
+**This is already active!** Your dashboard updates hourly via GitHub Actions without needing Vercel cron at all.
+
+### Option 3: Upgrade to Vercel Pro ($20/month)
+- Supports cron jobs running every minute
+- Change schedule to `*/15 * * * *` for 15-minute updates
+- Includes more bandwidth and function execution time
+
 ## Cost Estimate
 
-**Vercel Free Tier**:
-- ✅ Cron Jobs: 100 hours/month (enough for 15-min intervals)
+**Vercel Hobby (Free) Tier**:
+- ✅ Daily cron jobs
 - ✅ Serverless Functions: 100 GB-hours/month
 - ✅ Bandwidth: 100 GB/month
-
-Your setup uses ~2-3 hours/month of cron execution time, well within the free tier.
+- ✅ Your setup is well within free tier limits
 
 ---
 
