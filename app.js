@@ -553,18 +553,30 @@ function formatValue(value, isCurrency, decimals = 0) {
         return isCurrency ? '$0' : '0';
     }
 
-    // For large numbers, use K/M abbreviations to prevent overflow
+    // For large numbers, use K/M abbreviations with decimal precision
     let displayValue = value;
     let suffix = '';
 
     if (isCurrency && value >= 1000000) {
+        // Millions: 2.834M format (3 decimals for precision)
         displayValue = value / 1000000;
         suffix = 'M';
-        decimals = Math.max(decimals, 1);
-    } else if (isCurrency && value >= 10000) {
+        decimals = 3;
+    } else if (isCurrency && value >= 1000) {
+        // Thousands: 104.8K format (1 decimal for precision)
         displayValue = value / 1000;
         suffix = 'K';
-        decimals = Math.max(decimals, 0);
+        decimals = 1;
+    } else if (!isCurrency && value >= 1000000) {
+        // Non-currency millions (orders/buyers): 1.2M format
+        displayValue = value / 1000000;
+        suffix = 'M';
+        decimals = 1;
+    } else if (!isCurrency && value >= 10000) {
+        // Non-currency thousands: 134.3K format
+        displayValue = value / 1000;
+        suffix = 'K';
+        decimals = 1;
     }
 
     const formatted = displayValue.toLocaleString('en-US', {
@@ -572,7 +584,7 @@ function formatValue(value, isCurrency, decimals = 0) {
         maximumFractionDigits: decimals
     });
 
-    return isCurrency ? `$${formatted}${suffix}` : formatted;
+    return isCurrency ? `$${formatted}${suffix}` : `${formatted}${suffix}`;
 }
 
 /* ============================================================================
