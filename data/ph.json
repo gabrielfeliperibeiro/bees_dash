@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-01-29T03:55:51.931272Z",
+  "last_updated": "2026-01-29T04:00:02.947682Z",
   "today": {
     "date": "2026-01-29",
     "total_gmv": 2644835.26,
@@ -29,16 +29,16 @@
   "mtd": {
     "start_date": "2026-01-01",
     "end_date": "2026-01-29",
-    "total_gmv": 156051726.8,
-    "total_gmv_usd": 2785792.29,
-    "orders": 134265,
-    "unique_buyers": 95528,
-    "unique_vendors": 95528,
-    "aov": 1162.27,
-    "aov_usd": 20.75,
+    "total_gmv": 156727828.63,
+    "total_gmv_usd": 2797861.87,
+    "orders": 135175,
+    "unique_buyers": 96049,
+    "unique_vendors": 96049,
+    "aov": 1159.44,
+    "aov_usd": 20.7,
     "frequency": 1.41,
-    "gmv_per_poc": 1633.57,
-    "gmv_per_poc_usd": 29.16
+    "gmv_per_poc": 1631.75,
+    "gmv_per_poc_usd": 29.13
   },
   "mtd_last_month": {
     "start_date": "2025-12-01",
@@ -333,20 +333,20 @@
   },
   "channel_breakdown_mtd": {
     "customer": {
-      "gmv_usd": 2007656.62,
-      "orders": 69668,
-      "buyers": 44675,
+      "gmv_usd": 2016142.15,
+      "orders": 70068,
+      "buyers": 44866,
       "gmv_percent": 72.1,
-      "orders_percent": 51.9,
-      "buyers_percent": 46.8
+      "orders_percent": 51.8,
+      "buyers_percent": 46.7
     },
     "cx_tlp": {
-      "gmv_usd": 778135.67,
-      "orders": 64597,
-      "buyers": 50853,
+      "gmv_usd": 781719.72,
+      "orders": 65107,
+      "buyers": 51183,
       "gmv_percent": 27.9,
-      "orders_percent": 48.1,
-      "buyers_percent": 53.2
+      "orders_percent": 48.2,
+      "buyers_percent": 53.3
     }
   },
   "channel_breakdown_mtd_last_month": {
