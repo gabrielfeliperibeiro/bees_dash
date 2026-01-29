@@ -1,30 +1,30 @@
 {
-  "last_updated": "2026-01-29T04:00:02.947682Z",
+  "last_updated": "2026-01-29T04:05:33.973017Z",
   "today": {
     "date": "2026-01-29",
-    "total_gmv": 2644835.26,
-    "total_gmv_usd": 47214.87,
-    "orders": 2676,
-    "unique_buyers": 2642,
-    "unique_vendors": 2642,
-    "aov": 988.35,
-    "aov_usd": 17.64,
-    "frequency": 1.01,
-    "gmv_per_poc": 1001.07,
-    "gmv_per_poc_usd": 17.87
+    "total_gmv": 3320937.09,
+    "total_gmv_usd": 59284.45,
+    "orders": 3586,
+    "unique_buyers": 3532,
+    "unique_vendors": 3532,
+    "aov": 926.08,
+    "aov_usd": 16.53,
+    "frequency": 1.02,
+    "gmv_per_poc": 940.24,
+    "gmv_per_poc_usd": 16.78
   },
   "same_day_last_week": {
     "date": "2026-01-22",
-    "total_gmv": 3158067.69,
-    "total_gmv_usd": 56376.95,
-    "orders": 3200,
-    "unique_buyers": 3159,
-    "unique_vendors": 3159,
-    "aov": 986.9,
-    "aov_usd": 17.62,
+    "total_gmv": 3614183.37,
+    "total_gmv_usd": 64519.4,
+    "orders": 3827,
+    "unique_buyers": 3771,
+    "unique_vendors": 3771,
+    "aov": 944.39,
+    "aov_usd": 16.86,
     "frequency": 1.01,
-    "gmv_per_poc": 999.7,
-    "gmv_per_poc_usd": 17.85
+    "gmv_per_poc": 958.42,
+    "gmv_per_poc_usd": 17.11
   },
   "mtd": {
     "start_date": "2026-01-01",
@@ -264,71 +264,71 @@
       "date": "2026-01-28"
     },
     {
-      "total_gmv": 2644835.26,
-      "total_gmv_usd": 47214.87,
-      "orders": 2676,
-      "unique_buyers": 2642,
-      "unique_vendors": 2642,
-      "aov": 988.35,
-      "aov_usd": 17.64,
-      "frequency": 1.01,
-      "gmv_per_poc": 1001.07,
-      "gmv_per_poc_usd": 17.87,
+      "total_gmv": 3320937.09,
+      "total_gmv_usd": 59284.45,
+      "orders": 3586,
+      "unique_buyers": 3532,
+      "unique_vendors": 3532,
+      "aov": 926.08,
+      "aov_usd": 16.53,
+      "frequency": 1.02,
+      "gmv_per_poc": 940.24,
+      "gmv_per_poc_usd": 16.78,
       "date": "2026-01-29"
     }
   ],
   "moving_averages": {
     "ma_7d": {
-      "gmv": 89190.95,
-      "orders": 4898.71,
-      "aov": 20.72,
-      "unique_buyers": 4786.86,
+      "gmv": 90915.17,
+      "orders": 5028.71,
+      "aov": 20.56,
+      "unique_buyers": 4914.0,
       "frequency": 1.02,
-      "gmv_per_poc": 21.25
+      "gmv_per_poc": 21.1
     },
     "ma_15d": {
-      "gmv": 94691.12,
-      "orders": 5209.13,
-      "aov": 20.6,
-      "unique_buyers": 5084.33,
+      "gmv": 95495.76,
+      "orders": 5269.8,
+      "aov": 20.52,
+      "unique_buyers": 5143.67,
       "frequency": 1.03,
-      "gmv_per_poc": 21.16
+      "gmv_per_poc": 21.09
     }
   },
   "channel_breakdown_today": {
     "customer": {
-      "gmv_usd": 25307.6,
-      "orders": 881,
-      "buyers": 857,
-      "gmv_percent": 53.6,
-      "orders_percent": 32.9,
-      "buyers_percent": 32.4
+      "gmv_usd": 32626.44,
+      "orders": 1218,
+      "buyers": 1182,
+      "gmv_percent": 55.0,
+      "orders_percent": 34.0,
+      "buyers_percent": 33.5
     },
     "cx_tlp": {
-      "gmv_usd": 21907.27,
-      "orders": 1795,
-      "buyers": 1785,
-      "gmv_percent": 46.4,
-      "orders_percent": 67.1,
-      "buyers_percent": 67.6
+      "gmv_usd": 26658.01,
+      "orders": 2368,
+      "buyers": 2350,
+      "gmv_percent": 45.0,
+      "orders_percent": 66.0,
+      "buyers_percent": 66.5
     }
   },
   "channel_breakdown_last_week": {
     "customer": {
-      "gmv_usd": 31640.86,
-      "orders": 1276,
-      "buyers": 1250,
-      "gmv_percent": 56.1,
-      "orders_percent": 39.9,
-      "buyers_percent": 39.6
+      "gmv_usd": 38125.13,
+      "orders": 1707,
+      "buyers": 1666,
+      "gmv_percent": 59.1,
+      "orders_percent": 44.6,
+      "buyers_percent": 44.2
     },
     "cx_tlp": {
-      "gmv_usd": 24736.09,
-      "orders": 1924,
-      "buyers": 1909,
-      "gmv_percent": 43.9,
-      "orders_percent": 60.1,
-      "buyers_percent": 60.4
+      "gmv_usd": 26394.28,
+      "orders": 2120,
+      "buyers": 2105,
+      "gmv_percent": 40.9,
+      "orders_percent": 55.4,
+      "buyers_percent": 55.8
     }
   },
   "channel_breakdown_mtd": {
