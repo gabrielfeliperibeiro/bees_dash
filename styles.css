@@ -339,13 +339,13 @@ body.loaded {
 
 .channel-label-grow {
     color: var(--success);
-    font-size: clamp(2rem, 4vw, 7rem);
+    font-size: clamp(1.5rem, 3vw, 5rem);
     font-weight: 900;
 }
 
 .channel-label-customer {
     color: var(--bees-gold);
-    font-size: clamp(2rem, 4vw, 7rem);
+    font-size: clamp(1.5rem, 3vw, 5rem);
     font-weight: 900;
 }
 
@@ -435,7 +435,7 @@ body.loaded {
 
     .channel-label-grow,
     .channel-label-customer {
-        font-size: clamp(2.5rem, 5vw, 9rem);
+        font-size: clamp(1.8rem, 3.5vw, 6rem);
     }
 }
 
