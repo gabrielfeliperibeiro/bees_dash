@@ -72,88 +72,6 @@ def connect_to_databricks(max_retries=3, retry_delay_seconds=[0, 10, 20]):
     return None
 
 
-def query_gold_orders(connection, country, start_date, end_date):
-    """
-    Query historical orders from GOLD fact table (for D-1 and earlier).
-
-    Args:
-        connection: Databricks connection
-        country: Country code (PH or VN)
-        start_date: Start date (inclusive)
-        end_date: End date (inclusive)
-
-    Returns:
-        pandas DataFrame with order data
-    """
-    logger.info(f"[GOLD] Querying {country} from {start_date} to {end_date}")
-
-    if country == 'PH':
-        query = f"""
-        SELECT
-            'PH' AS country,
-            placement_date,
-            order_number,
-            current_total AS order_gmv,
-            current_total/56.017 AS order_gmv_usd,
-            account_id,
-            vendor_account_id,
-            current_status AS order_status,
-            first_channel AS channel
-        FROM wh_am.gold.fact_orders
-        WHERE country = 'PH'
-        AND TO_DATE(placement_date) >= '{start_date}'
-        AND TO_DATE(placement_date) <= '{end_date}'
-        AND vendor_account_id NOT LIKE '%BEE%'
-        AND vendor_account_id NOT LIKE '%DUM%'
-        AND vendor_account_id LIKE '%#_%' ESCAPE '#'
-        AND current_status NOT IN ('DENIED', 'CANCELLED', 'PENDING CANCELLATION')
-        AND first_channel IN ('B2B_APP', 'B2B_WEB', 'B2B_LNK', 'B2B_FORCE', 'CX_TLP')
-        """
-    else:  # VN
-        # VN may not have underscore in vendor IDs, so don't require it
-        query = f"""
-        SELECT
-            'VN' AS country,
-            placement_date,
-            order_number,
-            current_total AS order_gmv,
-            current_total/26416 AS order_gmv_usd,
-            account_id,
-            vendor_account_id,
-            current_status AS order_status,
-            first_channel AS channel
-        FROM wh_am.gold.fact_orders
-        WHERE country = 'VN'
-        AND TO_DATE(placement_date) >= '{start_date}'
-        AND TO_DATE(placement_date) <= '{end_date}'
-        AND vendor_account_id NOT LIKE '%BEE%'
-        AND vendor_account_id NOT LIKE '%DUM%'
-        AND current_status NOT IN ('DENIED', 'CANCELLED', 'PENDING CANCELLATION')
-        AND first_channel IN ('B2B_APP', 'B2B_WEB', 'B2B_LNK', 'B2B_FORCE', 'CX_TLP')
-        """
-
-    try:
-        cursor = connection.cursor()
-        cursor.execute(query)
-
-        columns = [desc[0] for desc in cursor.description]
-        rows = cursor.fetchall()
-
-        if not rows:
-            logger.warning(f"[GOLD] No data returned for {country}")
-            return pd.DataFrame()
-
-        df = pd.DataFrame(rows, columns=columns)
-        logger.info(f"[GOLD] Retrieved {len(df)} orders for {country}")
-
-        cursor.close()
-        return df
-
-    except Exception as e:
-        logger.error(f"[GOLD] Query failed for {country}: {e}")
-        raise
-
-
 def query_orders(connection, country, start_date, end_date, hour_limit=None):
     """
     Query orders from Databricks silver layer for a specific country and date range.
@@ -663,17 +581,9 @@ def main():
             # Query last month MTD data (same date range but one month ago)
             df_mtd_last_month = query_orders(connection, country, last_month_mtd_start, last_month_mtd_end)
 
-            # Query GOLD for MTD historical (D-1 and earlier) - use yesterday as end date
-            yesterday = today - timedelta(days=1)
-            df_mtd_gold = pd.DataFrame()
-            if mtd_start < today:
-                df_mtd_gold = query_gold_orders(connection, country, mtd_start, yesterday)
-                logger.info(f"{country} - MTD GOLD ({mtd_start} to {yesterday}): {len(df_mtd_gold)} orders")
-
-            # Also query GOLD for today (with full data) for channel metrics
-            # Silver may not have channel populated yet for today's orders
-            df_today_gold = query_gold_orders(connection, country, today, today)
-            logger.info(f"{country} - Today GOLD (full day): {len(df_today_gold)} orders")
+            # Query MTD data from Silver (full month to date)
+            df_mtd_silver = query_orders(connection, country, mtd_start, today)
+            logger.info(f"{country} - MTD Silver ({mtd_start} to {today}): {len(df_mtd_silver)} orders")
 
             logger.info(f"{country} - Today (up to {current_hour}:00): {len(df_today_limited)} orders")
             logger.info(f"{country} - Last week (up to {current_hour}:00): {len(df_last_week)} orders")
@@ -700,23 +610,8 @@ def main():
             # Filter for different time periods (handle mixed ISO8601 formats)
             df_all["date"] = pd.to_datetime(df_all["placement_date"], format='mixed', utc=True).dt.date
 
-            df_today_full = df_all[df_all["date"] == today]
-
-            # Merge GOLD (D-1) + Silver (today) for complete MTD
-            # Use full today data (not hour-limited) for MTD calculation
-            if not df_mtd_gold.empty:
-                # Ensure consistent column types before merging
-                df_mtd_gold["date"] = pd.to_datetime(df_mtd_gold["placement_date"], format='mixed', utc=True).dt.date
-
-                # Combine GOLD + today's full silver data
-                df_mtd = pd.concat([df_mtd_gold, df_today_full], ignore_index=True)
-
-                # Deduplicate on order_number to avoid double counting
-                df_mtd = df_mtd.drop_duplicates(subset=['order_number'], keep='first')
-                logger.info(f"{country} - Combined MTD (GOLD + today) after deduplication: {len(df_mtd)} orders")
-            else:
-                # Fallback to silver only if no GOLD data
-                df_mtd = df_all[df_all["date"] >= mtd_start]
+            # Use Silver MTD data directly
+            df_mtd = df_mtd_silver
 
             # Calculate metrics using hour-limited data for fair comparison
             metrics_today = calculate_metrics(df_today_limited, country)
@@ -756,19 +651,8 @@ def main():
             ma_7d = calculate_moving_average(daily_metrics, 7)
             ma_15d = calculate_moving_average(daily_metrics, 15)
 
-            # Calculate channel metrics
-            # Use GOLD data for today's channels (silver may not have channel populated yet)
-            # Filter by hour to match the hour-limited comparison
-            if not df_today_gold.empty:
-                df_today_gold["placement_date"] = pd.to_datetime(df_today_gold["placement_date"], format='mixed', utc=True)
-                df_today_gold_limited = df_today_gold[
-                    df_today_gold["placement_date"].dt.hour <= current_hour
-                ].copy()
-                logger.info(f"{country} - Today GOLD hour-limited ({current_hour}:00): {len(df_today_gold_limited)} orders")
-                channel_metrics_today = calculate_channel_metrics(df_today_gold_limited, country)
-            else:
-                # Fallback to silver if GOLD has no data
-                channel_metrics_today = calculate_channel_metrics(df_today_limited, country)
+            # Calculate channel metrics using Silver data
+            channel_metrics_today = calculate_channel_metrics(df_today_limited, country)
 
             channel_metrics_last_week = calculate_channel_metrics(df_last_week, country)
             channel_metrics_mtd = calculate_channel_metrics(df_mtd, country)
