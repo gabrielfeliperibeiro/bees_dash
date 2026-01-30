@@ -74,7 +74,6 @@ while [ $attempt -lt $max_attempts ]; do
 
             echo ""
             echo "🌐 Dashboard will update in ~5-15 minutes (GitHub Pages)"
-            echo "   Or ~30 seconds if you're using Vercel/Netlify"
             echo ""
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             exit 0
